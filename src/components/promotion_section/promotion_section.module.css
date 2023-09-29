@@ -1,0 +1,59 @@
+.promotion__card
+{
+    position: relative;
+    aspect-ratio: 1 / 1;
+    box-shadow: var(--bs-box-shadow)
+}
+
+.promotion__card > img
+{
+    height: 100%;
+    object-fit: cover;
+}
+
+.card__cost
+{
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: var(--bs-primary) linear-gradient(90deg, rgba(223,105,81,1) 0%, rgb(0 0 0 / 10%) 100%);
+}
+
+.content__img{
+    /* top: 20%; */
+    /* right: 0; */
+    z-index: -1;
+    position: absolute;
+    bottom: -5%;
+    height: 100%;
+    /* width: 35%; */
+    /* padding: 2% 6% 0% 2%; */
+}
+
+.archedImg__wrp_honeymoon
+{
+    aspect-ratio: 1 / 1.7;
+    max-height: 80vh;
+}
+
+.archedImg__img_honeymoon 
+{
+    margin: 4% 14% 0% 7%;
+    background-image: url("/src//assets/images/decorative/arched_img-promotion.png");
+    background-position: 25% 75%;
+    background-size: auto 100%;
+}
+
+.archedImg__img_honeymoon::before 
+{
+    right: 10px;
+    left: -17px;
+}
+
+.archedImg__img_honeymoon .archedImg_txt__honeymoon 
+{
+    top: 100%;
+    left: 100%;
+    padding-top: 10px;
+    transform-origin: top left;
+}

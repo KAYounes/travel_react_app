@@ -1,0 +1,23 @@
+.logo{
+    font-weight: var(--bs-fw-bold);
+    position: relative;
+    font-family: var(--bs-ff-serif);
+    text-decoration: none;
+    color: white;
+}
+
+.logo__txt{
+    position: relative;
+    display: inline-block;
+}
+
+.logo__arrow{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transform: translate(1.5ch, 0.6ch);
+}
+
+.logo_dark{
+    color: var(--bs-dark-blue);
+}

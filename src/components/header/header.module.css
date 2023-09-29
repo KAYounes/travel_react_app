@@ -1,0 +1,157 @@
+/* Header */
+.header {
+  position: relative;
+  min-height: 99vh;
+  padding-bottom: 60px;
+  overflow: hidden;
+  background : url("/assets/images/decorative/woman_walking_mountains.png"), rgba(0 0 0 / 35%);
+  background-position   : center 40%;
+  background-size       : cover;
+  background-repeat     : no-repeat;
+  background-blend-mode : multiply;
+  isolation : isolate;
+}
+
+.title__decoration{
+  width : 2.2ch;
+}
+
+.title{
+  text-wrap : balance;
+  color: var(--bs-white);
+  font-weight: var(--bs-fw-bold);
+}
+
+.header__form{
+  backdrop-filter: var(--bs-glass-blur);
+  background-color: var(--bs-glass);
+}
+
+/* Header Form */
+.header__form :is(input, select){
+  height           : 100%;
+  border           : none;
+  background-color : transparent;
+  color            : var(--bs-light);
+}
+
+.header__form hr {
+  width   : 3px;
+  padding : 0;
+  opacity : 50%;
+}
+
+.header__form :is(input, select):focus {
+  background-color : transparent;
+}
+
+.header__form input::placeholder {
+  color : var(--bs-light);
+}
+
+.header__form input:focus::placeholder {
+  opacity : 0;
+}
+
+
+option{
+  color : var(--bs-dark-blue);
+}
+
+select{
+  cursor : pointer;
+}
+
+.scrollIndicator {
+  z-index   : -1;
+  position: absolute;
+  bottom    : 0;
+  left      : 0;
+  transform : translate(0%, 50%);
+}
+
+.scrollIndicator span {
+  animation-duration        : 1s;
+  animation-timing-function : ease-in-out;
+  animation-iteration-count : infinite;
+  animation-direction       : alternate;
+  animation-fill-mode       : backwards;
+  animation-name            : pulse;
+}
+
+.scrollIndicator > span {
+  display         : inline-block;
+  padding         : 80px;
+  border          : 1px white dashed;
+  border-radius   : 50%;
+  animation-delay : 500ms;
+}
+
+.scrollIndicator > span > span{
+  display         : inline-flex;
+  align-items     : center;
+  justify-content : center;
+  width           : 134px;
+  height          : 134px;
+  padding-bottom  : 30px;
+  border          : 1px white dashed;
+  border-radius   : 50%;
+  color           : white;
+}
+
+@keyframes pulse {
+  0% {
+    border-color : rgba(255 255 255 / 0);
+  }
+
+  100% {
+    border-color : rgba(255 255 255 / 100%);
+  }
+}
+
+.profileImage {
+  width            : 36px;
+  height           : 36px;
+  object-fit       : cover;
+  border           : 3px white solid;
+  border-radius    : 50%;
+  background-color : var(--bs-primary);
+  max-width: 100%;
+}
+
+.profileAdd {
+  display         : inline-flex;
+  align-items     : center;
+  justify-content : center;
+  width            : 36px;
+  height           : 36px;
+  object-fit       : cover;
+  border           : 3px white solid;
+  border-radius    : 50%;
+  background-color : var(--bs-primary);
+  color           : white;
+}
+
+:is(.profileImage, .profileAdd):not(:first-child) {
+  margin-left : -12px;
+}
+
+
+
+
+@media (width <= 1320px) and (height <= 670px) {
+  .scrollIndicator {
+    right     : 0;
+    left      : auto;
+    transform : translate(0%, 50%);
+  }
+}
+
+
+@media (max-width: 575px) {
+  .scrollIndicator {
+    right     : auto;
+    left      : 50%;
+    transform : translate(-50%, 50%);
+  }
+}

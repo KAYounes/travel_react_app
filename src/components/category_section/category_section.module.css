@@ -1,0 +1,104 @@
+.service_card__img_bg{
+    position: absolute;
+    width: 60%;
+    height: 60%;
+    background-color: var(--bs-orange-100);
+  }
+  
+  .service_card__wrapper:nth-child(1) .service_card__img_bg{
+    border-radius: 5px 10px 5px 18px;
+    left: -10px;
+    bottom: -10px;
+  }
+  
+  .service_card__wrapper:nth-child(2) .service_card__img_bg{
+    border-radius: 5px 18px 5px 10px;
+    right: -10px;
+    top: -10px;
+  }
+  
+  .service_card__wrapper:nth-child(3) .service_card__img_bg{
+    border-radius: 18px 5px 10px 5px;
+    left: -5px;
+    top: -5px;
+  
+  }
+  
+  .service_card__wrapper:nth-child(4) .service_card__img_bg{
+    border-radius: 10px 5px 18px 5px;
+    right: -8px;
+    bottom: -8px;
+  }
+  
+  
+  .service_card__txt{
+    text-wrap: balance
+  }
+  
+  .service_card__hover{
+      /* display: none; */
+    opacity          : 0;
+    width            : 30%;
+    aspect-ratio: 1;
+    background-color : var(--bs-orange-500);
+    /* border-radius: var(--bs-rounded-5); */
+    border-radius: 30%;
+    position   : absolute;
+    z-index    : -1;
+    transition : all 250ms ease;
+  }
+  
+  .service_card:hover > .service_card__hover{
+    opacity: 1;
+  }
+  .service_card__wrapper:nth-child(1) > .service_card > .service_card__hover{
+    right     : 0;
+    top       : 0;
+    transform : translate(30%, -30%);
+  }
+  
+  .service_card__wrapper:nth-child(2) > .service_card > .service_card__hover{
+    left      : 0;
+    bottom    : 0;
+    transform : translate(-30%, 30%);
+  }
+  
+  .service_card__wrapper:nth-child(3) > .service_card > .service_card__hover{
+    right     : 0;
+    bottom    : 0;
+    transform : translate(30%, 30%);
+  }
+  
+  .service_card__wrapper:nth-child(4) > .service_card > .service_card__hover{
+    left      : 0;
+    top       : 0;
+    transform : translate(-30%, -30%);
+  }
+  
+  .service_card{
+    /* position: relative; */
+    transition : background-color 350ms step-end;
+    
+  }
+  
+  .service_card:hover{
+    box-shadow: var(--bs-box-shadow-lg);
+    transition : none;
+    background-color: var(--bs-white);
+    /* transform: scale(1.1); */
+    /* z-index: 1; */
+  }
+  
+  .service_card__wrapper{
+    position: relative;
+    transition-property: transform z-index;
+    transition-duration: 350ms;
+    transition-timing-function: ease;
+    /* transition: transform 350ms ease, z-index 5s;
+    z-index: 0;  */
+  }
+  
+  .service_card__wrapper:hover{
+    transform: scale(1.1);
+    z-index: 1;
+  }

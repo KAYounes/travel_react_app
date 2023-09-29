@@ -1,0 +1,378 @@
+@import "d:/kyounes/web_programming/bootstrap_files/bootstrap-5.0.2/scss/_functions.scss";
+@import "d:/kyounes/web_programming/bootstrap_files/bootstrap-5.0.2/scss/_mixins.scss";
+@import "d:/kyounes/web_programming/bootstrap_files/bootstrap-5.0.2/scss/mixins/_breakpoints.scss";
+
+//# COLORS //
+//
+$white     : #ffffff;
+$gray-100  : #f7f7f7;  // custom
+$gray-200  : #e9ecef;
+$gray-300  : #dee2e6;
+$gray-400  : #ced4da;
+$gray-500  : #7d7d7d;  // custom
+$gray-600  : #6c757d;
+$gray-700  : #495057;
+$gray-800  : #343a40;
+$gray-900  : #212529;  // custom
+$black-900 : #2f2f2f;  // custom
+$black     : #000000;
+//
+
+//
+$blue      : #0d6efd;
+$dark-blue : #181e4b;                // custom
+$indigo    : #6610f2;
+$purple    : #6f42c1;
+$pink      : #d63384;
+$red       : #dc3545;
+$orange    : #df6951;                // custom
+$yellow    : #f0bb1f;                // custom
+$green     : #198754;
+$teal      : #20c997;
+$cyan      : #0dcaf0;
+$glass     : hsla(0, 0%, 85%, 34%);  // custom
+
+$glass_theme: (
+  "glass": $glass,
+  "glass-dark": hsla(0 0 85% / 55%),
+  "glass_blur": 10px
+);
+
+$colors: (
+  "blue"      : $blue,
+  "dark-blue" : $dark-blue,
+  "indigo"    : $indigo,
+  "purple"    : $purple,
+  "pink"      : $pink,
+  "red"       : $red,
+  "orange"    : $orange,
+  "yellow"    : $yellow,
+  "green"     : $green,
+  "teal"      : $teal,
+  "cyan"      : $cyan,
+  "black"     : $black,
+  "white"     : $white,
+  "gray"      : $gray-600,
+  "gray-dark" : $gray-800,
+  "glass"     : $glass,
+);
+//
+
+//
+$blue-300 : #3b90fb;
+
+$pink-800 : #a7327a;
+
+$orange-100 : #fff1da;
+$orange-200 : #f15a2b;
+
+$yellow-400 : #f0bb1f;
+
+$cyan-600 : #59b1e6;
+$cyan-800: #006380;
+
+$dark-blue-100 : #5e6282;
+$dark-blue-700 : #006380;
+$dark-blue-800 : #1e1d4c;
+$dark-blue-900 : $dark-blue;
+
+$dark-blues: (
+  "dark-blue-100" : $dark-blue-100,
+        // "dark-blue-200" : $dark-blue-200,
+        //   "dark-blue-300": $dark-blue-300,
+        //   "dark-blue-400": $dark-blue-400,
+        //   "dark-blue-500": $dark-blue-500,
+        //   "dark-blue-600": $dark-blue-600,
+  "dark-blue-700" : $dark-blue-700,
+  "dark-blue-800" : $dark-blue-800,
+  "dark-blue-900" : $dark-blue-900,
+);
+
+// $glass-500 : hsla(0, 0%, 85%, 34%);
+
+// $glasses: (
+//         // "glass-100" : $glass-100,
+//         // "glass-200" : $glass-200,
+//         //   "glass-300": $glass-300,
+//         //   "glass-400": $glass-400,
+//   "glass-500" : $glass-500,
+//         //   "glass-600": $glass-600,
+//         //   "glass-700": $glass-700,
+//         //   "glass-800": $glass-800,
+//         //   "glass-900": $glass-900
+// );
+//
+
+
+//
+$primary : $orange;
+// $secondary:     $gray-200;
+// $success:       $green;
+// $info:          $cyan;
+// $warning:       $yellow;
+// $danger:        $red;
+// $light:         $gray-100;
+// $dark:          $gray-900;
+//
+
+$body-secondary-color: $gray-500;
+// =============================================
+
+//# FONT //
+// $font-size-root:              null;
+$font-size-base:              1rem;// Assumes the browser default, typically `16px`
+// $font-size-sm:                $font-size-base * .875;
+// $font-size-lg:                $font-size-base * 1.25;
+
+// $font-weight-lighter:         lighter;
+// $font-weight-light:           300;
+// $font-weight-normal:          400;
+// $font-weight-medium:          500;
+// $font-weight-semibold:        600;
+// $font-weight-bold:            700;
+// $font-weight-bolder:          bolder;
+
+// $font-weight-base:            $font-weight-normal;
+
+// $line-height-base:            1.5;
+// $line-height-sm:              1.25;
+// $line-height-lg:              2;
+
+$h1-font-size : $font-size-base * 2.5;
+$h2-font-size : $font-size-base * 2;
+$h3-font-size : $font-size-base * 1.75;
+$h4-font-size : $font-size-base * 1.5;
+$h5-font-size : $font-size-base * 1.25;
+$h6-font-size : $font-size-base;
+// scss-docs-end font-variables
+
+// scss-docs-start font-sizes
+$font-sizes: (
+  'xsm'  : $font-size-base * 0.5,
+  'sm'   : $font-size-base * 0.75,
+  'nm'   : $font-size-base * 1,
+  'lg'   : $font-size-base * 1.25,
+  'xlg'  : $font-size-base * 1.5,
+  'lg-1' : $font-size-base * 1.75,
+  'lg-2' : $font-size-base * 2,
+  'lg-3' : $font-size-base * 2.5,
+  'lg-4' : $font-size-base * 3,
+  'lg-5' : $font-size-base * 5,
+  'lg-6' : $font-size-base * 6,
+);
+
+
+$font-family-sans-serif : "poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+$font-family-base       : "poppins";
+
+// ======================================================
+
+//# Heading
+// $headings-margin-bottom:      $spacer * .5 !default;
+$headings-font-family : 'Volkhov';
+$headings-color       : $dark-blue;
+// $headings-font-style:         null !default;
+// $headings-font-weight:        500 !default;
+// $headings-line-height:        1.2 !default;
+
+
+//# Display
+$display-font-family : $font-family-base;
+// $display-font-style:  null !default;
+// $display-font-weight: 300 !default;
+// $display-line-height: $headings-line-height !default;
+
+$display-font-sizes: (
+  1 : map-get($map: $font-sizes, $key: 'lg-6'),
+  2 : map-get($map: $font-sizes, $key: 'lg-5'),
+  3 : map-get($map: $font-sizes, $key: 'lg-4'),
+  4 : map-get($map: $font-sizes, $key: 'lg-3'),
+  5 : map-get($map: $font-sizes, $key: 'lg-2'),
+  6 : map-get($map: $font-sizes, $key: 'lg-1'),
+);
+
+// =======================================================
+
+//# Spacing
+
+$spacer : 1rem !default;
+
+$spacers: (
+  0  : 0,
+  1  : $spacer * .25,
+  2  : $spacer * .5,
+  3  : $spacer,
+  4  : $spacer * 1.25,
+  5  : $spacer * 1.5,
+  6  : $spacer * 1.75,
+  7  : $spacer * 2,
+  8  : $spacer * 2.25,
+  9  : $spacer * 3,
+  10 : $spacer * 5,
+);
+
+//  ===========================================
+
+$grid-breakpoints: (
+  xs: 0,
+  xsm: 380px,
+  msm: 500px,
+  sm: 576px,
+  md: 768px,  
+  mid: 850px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+);
+
+$container-max-widths: (
+  sm: 540px,
+  mid: 850px,
+  lg: 960px,
+  xl: 1080px,
+  xxl:1080px
+);
+
+//# Containers
+// $container-max-widths: (
+//   sm: 540px,        // 576px
+//   md: 640px,        // 768px
+//   lg: 750px,        // 992px
+//   xl: 900px,        // 1200px
+//   xxl: 1080px      // 1400px
+// );
+////////////////////////////////////////////////////
+
+$navbar-light-color                : $white;
+$navbar-light-brand-color          : $white;
+$navbar-light-brand-hover-color    : $primary;
+$navbar-light-active-color         : $white;
+$navbar-light-hover-color          : $primary;
+$navbar-light-toggler-icon-bg      : $primary;
+$navbar-light-toggler-border-color : $primary;
+$navbar-light-toggler-icon-bg      : url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke='#{$navbar-light-color}' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg>");
+$navbar-toggler-focus-width        : 0.1rem;
+// $navbar-nav-link-padding-x: $spacer * 1.5;
+$dropdown-padding-y           : 1rem;
+$dropdown-item-padding-x      : 1.5rem;
+$dropdown-item-padding-y      : 0.5rem;
+$dropdown-border-radius       : 1rem;
+$dropdown-inner-border-radius : 4rem;
+$dropdown-link-color          : $white;
+$dropdown-link-hover-color    : $white;
+$dropdown-link-hover-bg       : $glass;
+
+$form-select-color           : $red; //map-get($text-colors, "base");
+$form-select-indicator-color : $white; //#ffffff;
+$form-select-indicator       : url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='#{$form-select-indicator-color}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/></svg>") !default;
+
+$carousel-control-prev-icon-bg: url('../assets/icons/arrow_left.svg');
+$carousel-control-next-icon-bg: url('../assets//icons/arrow_right.svg');
+
+// scss-docs-start carousel-variables
+// $carousel-control-color:             red;
+// $carousel-control-width:             15%;
+// $carousel-control-opacity:           .5;
+// $carousel-control-hover-opacity:     .9;
+// $carousel-control-transition:        opacity .15s ease;
+
+// $carousel-indicator-width:           30px;
+// $carousel-indicator-height:          3px;
+// $carousel-indicator-hit-area-height: 10px;
+// $carousel-indicator-spacer:          3px;
+// $carousel-indicator-opacity:         .5;
+$carousel-indicator-active-bg:       $primary;
+// $carousel-indicator-active-opacity:  1;
+// $carousel-indicator-transition:      opacity .6s ease;
+
+// $carousel-caption-width:             70%;
+// $carousel-caption-color:             blue;
+// $carousel-caption-padding-y:         1.25rem;
+// $carousel-caption-spacer:            1.25rem;
+
+// $carousel-control-icon-width:        2rem;
+
+// $carousel-control-prev-icon-bg:      url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{$carousel-control-color}'><path d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/></svg>");
+// $carousel-control-next-icon-bg:      url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{$carousel-control-color}'><path d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/></svg>");
+
+// $carousel-transition-duration:       5s;
+// $carousel-transition:                transform $carousel-transition-duration ease-in-out; // Define transform transition first if using multiple transitions (e.g., `transform 2s ease, opacity .5s ease-out`)
+// scss-docs-end carousel-variables
+
+// scss-docs-start carousel-dark-variables
+// $carousel-dark-indicator-active-bg:  $black;
+// $carousel-dark-caption-color:        $black;
+// $carousel-dark-control-icon-filter:  invert(1) grayscale(100);
+// scss-docs-end carousel-dark-variables
+
+
+@import "d:/kyounes/web_programming/bootstrap_files/bootstrap-5.0.2/scss/_variables.scss";
+@import "d:/kyounes/web_programming/bootstrap_files/bootstrap-5.3.1/scss/bootstrap.scss";
+
+:root {
+  @each $color, $value in $glass_theme {
+    --#{$prefix}#{$color}: #{$value};
+  }
+
+  @each $color, $value in $blues {
+    --#{$prefix}#{$color}: #{$value};
+  }
+
+  @each $color, $value in $reds {
+    --#{$prefix}#{$color}: #{$value};
+  }
+
+  @each $color, $value in $oranges {
+    --#{$prefix}#{$color}: #{$value};
+  }
+
+  @each $color, $value in $yellows {
+    --#{$prefix}#{$color}: #{$value};
+  }
+
+  @each $color, $value in $cyans {
+    --#{$prefix}#{$color}: #{$value};
+  }
+
+  @each $space, $value in $spacers {
+    --#{$prefix}#{p-}#{$space}: #{$value};
+  }
+
+  --#{$prefix}#{"fw-lighter"}: #{$font-weight-lighter};
+  --#{$prefix}#{"fw-light"}: #{$font-weight-light};
+  --#{$prefix}#{"fw-normal"}: #{$font-weight-normal};
+  --#{$prefix}#{"fw-medium"}: #{$font-weight-medium};
+  --#{$prefix}#{"fw-semibold"}: #{$font-weight-semibold};
+  --#{$prefix}#{"fw-bold"}: #{$font-weight-bold};
+  --#{$prefix}#{"fw-bolder"}: #{$font-weight-bolder};
+
+  --#{$prefix}rounded-0: 0;
+  --#{$prefix}rounded-1: #{$border-radius-sm};
+  --#{$prefix}rounded-2: #{$border-radius};
+  --#{$prefix}rounded-3: #{$border-radius-lg};
+  --#{$prefix}rounded-4: #{$border-radius-xl};
+  --#{$prefix}rounded-5: #{$border-radius-xxl};
+  --#{$prefix}rounded-pill: #{$border-radius-pill};
+
+  --#{$prefix}#{"ff-serif"}: "volkhov";
+  --#{$prefix}#{"ff-sans"}: "poppins"
+}
+
+.navbar-nav .nav-link.active:hover{
+  color : $navbar-light-hover-color;
+}
+
+
+.btn-primary{
+  @extend .p-3, .text-light, .fw-medium, .rounded-3;
+}
+
+.navbar-nav .dropdown-toggle.show{
+  color : $primary;
+}
+
+// .navbar-nav .nav-link.active:hover{
+//     color : $navbar-light-hover-color;
+// }
+
+// @import "../components/navbar/navbar.module.scss"

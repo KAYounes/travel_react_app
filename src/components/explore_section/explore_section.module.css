@@ -1,0 +1,36 @@
+.hero{
+    /* height: 450px; */
+    /* padding: var(--bs-p-10); */
+    /* border-radius: var(--bs-rounded-3); */
+    /* box-shadow: var(--bs-box-shadow); */
+    /* overflow: hidden; */
+    /* height: 100%; */
+    /* height: 450px; */
+}
+
+.hero__wrp{
+    background-size: cover;
+    background-position: center;
+    height: 350px;
+    /* height: 100%; */
+    background-color: rgba(0 0 0 / 0.48);
+    background-blend-mode: multiply;
+}
+
+.hero__wrp:first-of-type{
+    background-image: url("/assets/images/decorative/explore_nature.png");
+}
+
+.hero__wrp:last-of-type{
+    background-image: url("/assets/images/decorative/explore_city.png");
+}
+
+.cta{
+    --bs-btn-active-bg: hsl(0deg 0% 80%);
+    box-shadow: 0px 4px 24px 0px rgba(155, 248, 255, 0.3);
+    transition: all 250ms ease;
+}
+
+.cta:hover{
+    transform: scale(1.1)
+}

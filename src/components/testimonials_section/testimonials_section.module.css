@@ -1,0 +1,162 @@
+/* .carouselWrp .section-header{
+    padding-top: 130px;
+} */
+
+.main{
+    height: 100%;
+    background-image: url('/assets/images/decorative/travel_items.png'), url('/assets/images/decorative/travel.png');
+    background-size: clamp(200px, 25%, 25%), cover;
+    background-position: right bottom, top left;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.review__card{
+    width: 500px;
+    height: 350px;
+    position: relative;
+}
+
+.review__txt{
+    line-height: 2rem;
+}
+.review__imgWrp{
+    width: 120px;
+    height: 120px;
+    border-radius: 100%;
+    overflow: hidden;
+    position: absolute;
+    border: 5px solid white;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 12px 24px -8px rgba(0 0 0 / 0.2);
+}
+
+.review__imgWrp::before{
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    box-shadow: inset 0px 6px 18px -4px rgba(0 0 0 / 0.5);
+    border-radius: inherit;
+    inset: 0;
+}
+
+.review__imgWrp > img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.carousel__tabs{
+    position: static;
+}
+
+.carousel__tabWrp{
+    transition: all 250ms ease;
+}
+.carousel__tabWrp:hover, .carousel__tabWrp:has([class*="active"]){
+    transform: translateY(-20%);
+}
+.carousel__tab{
+    border: none !important;
+    background-clip: border-box !important;
+    border-radius: 10px !important;
+    height: 5px !important;
+    /* padding: 10px !important; */
+}
+
+.carousel__tab:hover{
+}
+
+.controls__btn{
+    --shadow-x: 18px;
+    --shadow-y: 0px;
+    --shadow-b: 24px;
+    --shadow-s: -12px;
+    --shadow-o: 0.04;
+    opacity: 1;
+    position: relative;
+    border-radius: 5px;
+    height: 500px;
+    width: 100px;
+    /* flex-grow: 1; */
+}
+
+.controls__btn_prev{
+    box-shadow: var(--shadow-x) var(--shadow-y) var(--shadow-b) var(--shadow-s) hsl(0deg 0% 0% / var(--shadow-o));
+}
+
+.controls__btn_next{
+    box-shadow:  calc(var(--shadow-x) * -1) var(--shadow-y) var(--shadow-b) var(--shadow-s) hsl(0deg 0% 0% / var(--shadow-o));
+}
+
+.controls__btn:hover{
+    opacity: 1;
+}
+
+.controls__btn:hover .controls__btn__icon
+{
+    opacity: 0.5;
+}
+
+.controls__btn__icon{
+    background-color: #737373;
+    aspect-ratio: 1 / 1;
+    border-radius: 100%;
+    width: 50px;
+    height: 50px;
+    background-size: 30px;
+    position: absolute;
+    top: 50%;
+    box-shadow: var(--bs-box-shadow);
+}
+
+.controls__btn__icon_prev{
+    right: -2%;
+    transform: translate(50%, -50%);
+}
+
+.controls__btn__icon_next{
+    left: -2%;
+    transform: translate(-50%, -50%);
+}
+
+.controls__btn_prev:hover .controls__btn__icon{
+    transform: translate(30%, -50%);
+}
+.controls__btn_next:hover .controls__btn__icon{
+    transform: translate(-30%, -50%);
+}
+
+.carousel__inner{
+    width: 540px;
+    /* padding: 0 20px; */
+}
+
+.carousel__item{
+    /* transition-timing-function: cubic-bezier(0.99,-0.54, 0.58, 1); */
+    /* transition-duration: 1s; */
+    transition-timing-function: cubic-bezier(0.31, 0.44, 0.26, 1.08);
+    transition-duration: 800ms;
+}
+
+@media (width < 768px){
+    .carousel__inner{
+        width: 100%;
+    }
+
+    .reviewWrp{
+        height: 350px;
+    }
+    .review__card{
+        width: unset;
+        /* height: fit-content; */
+        /* position: relative; */
+    }
+}
+/* 
+.carouselWrp .section-cnt{
+    padding-top: 9%;
+} */

@@ -1,0 +1,41 @@
+.hero{
+    position: relative;
+    height: 100%;
+    height: 450px;
+    padding: var(--bs-p-10);
+    /* border-radius: var(--bs-rounded-3); */
+    /* box-shadow: var(--bs-box-shadow); */
+    /* overflow: hidden; */
+}
+
+.hero::before{
+    z-index             : -1;
+    position            : absolute;
+    width               : 100%;
+    height              : 100%;
+    inset               : 0;
+    transform           : scaleX(-1);
+    background-image    : url("/assets/images/decorative/statue_of_liberty.png");
+    background-position : 33% 20%;
+    background-size : cover;
+    content         : "";
+}
+
+.hero__txt_scribbled{
+    position: relative;
+}
+
+.hero__txt_scribbled > img{
+    position: absolute;
+    bottom    : 0;
+    left      : 0;
+    width     : 150%;
+    transform : translateY(100%);    
+}
+
+@media (width < 768px){
+    .hero{
+        text-align: center;
+        text-wrap: wrap;
+    }
+}

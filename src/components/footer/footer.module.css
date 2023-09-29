@@ -1,0 +1,30 @@
+.main{
+    min-height: unset;
+    color: var(--bs-dark-blue);
+    padding: 10vh var(--bs-p-3);
+}
+
+.main{
+    background-color: rgba(255 255 255 / 0.8);
+    background-image: url("/assets/images/decorative/footer_bg.png");
+    background-position: right bottom;
+    background-blend-mode: color;
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+    /* height: 300px; */
+}
+
+.main a{
+    text-decoration: none;
+    color: var(--bs-dark-blue);
+}
+
+.main a:hover{
+    text-decoration: underline;
+}
+
+@media (width < 500px){
+    .col-socials, .col-company, .col-destinations, .col-newsletter{
+        text-align: center;
+    }
+}

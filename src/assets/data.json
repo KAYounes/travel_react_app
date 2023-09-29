@@ -1,0 +1,205 @@
+[
+    {
+        "thumbnailSrc":"/assets/images/trendyPackages/thmb-switzerland.jpg",
+        "countryFlagSrc":"/assets/images/trendyPackages/flag-switzerland.png",
+        "duration":21,
+        "popularity":7928,
+        "city":"Bern",
+        "rating":4.0,
+        "country":"Switzerland",
+        "priceNow":1000,
+        "priceBefore":1200,
+        "description":"Discover the enchanting city of Bern, where medieval charm meets modern elegance. Lose yourself in its cobbled streets, adorned with historical landmarks and breathtaking views of the Aare River.",
+        "poi":"center",
+        "id":"01"
+    },
+    {
+        "thumbnailSrc":"/assets/images/trendyPackages/thmb-brazil.jpg",
+        "countryFlagSrc":"/assets/images/trendyPackages/flag-brazil.png",
+        "duration":14,
+        "popularity":2263,
+        "city":"Rio De Janerio",
+        "rating":3.5,
+        "country":"Brazil",
+        "priceNow":900,
+        "priceBefore":1000,
+        "description":"Immerse yourself in the vibrant spirit of Rio de Janeiro, with its iconic beaches, samba rhythms, and the iconic Christ the Redeemer statue standing tall on Corcovado Mountain.",
+        "poi":"center",
+        "id":"02"
+    },
+    {
+        "thumbnailSrc":"/assets/images/trendyPackages/thmb-egypt.jpg",
+        "countryFlagSrc":"/assets/images/trendyPackages/flag-egypt.png",
+        "duration":7,
+        "popularity":4166,
+        "city":"Giza",
+        "rating":4.5,
+        "country":"Egypt",
+        "priceNow":700,
+        "priceBefore":850,
+        "description":"Explore the timeless wonders of Giza, home to the majestic Pyramids of Egypt and the enigmatic Sphinx, transporting you back to the fascinating era of ancient civilization.",
+        "poi":"center",
+        "id":"03"
+    },
+    {
+        "thumbnailSrc":"/assets/images/trendyPackages/thmb-japan.jpg",
+        "countryFlagSrc":"/assets/images/trendyPackages/flag-japan.png",
+        "duration":14,
+        "popularity":2188,
+        "city":"Tokyo",
+        "rating":5.0,
+        "country":"Japan",
+        "priceNow":1800,
+        "priceBefore":2500,
+        "description":"Experience the bustling metropolis of Tokyo, where tradition and innovation harmoniously coexist, offering a captivating blend of ancient temples, futuristic technology, and mouthwatering cuisine.",
+        "poi":"center",
+        "id":"04"
+    },
+    {
+        "thumbnailSrc":"/assets/images/trendyPackages/thmb-saudiArabia.jpg",
+        "countryFlagSrc":"/assets/images/trendyPackages/flag-saudiArabia.png",
+        "duration":5,
+        "popularity":5316,
+        "city":"Riyadh",
+        "rating":3.0,
+        "country":"Saudi Arabia",
+        "priceNow":1000,
+        "priceBefore":1300,
+        "description":"Indulge in the opulence of Riyadh, a city where Arabian hospitality meets modern luxury, boasting gleaming skyscrapers, traditional souks, and captivating desert landscapes.",
+        "poi":"top",
+        "id":"05"
+    },
+    {
+        "thumbnailSrc":"/assets/images/trendyPackages/thmb-france.jpg",
+        "countryFlagSrc":"/assets/images/trendyPackages/flag-france.png",
+        "duration":20,
+        "popularity":5220,
+        "city":"Paris",
+        "rating":4.5,
+        "country":"France",
+        "priceNow":1550,
+        "priceBefore":2000,
+        "description":"Fall in love with the timeless beauty of Paris, the City of Lights, with its iconic landmarks like the Eiffel Tower and Louvre Museum, charming neighborhoods, and world-class cuisine.",
+        "poi":"top",
+        "id":"06"
+    },
+    
+    
+    {
+        "thumbnailSrc":"/assets/images/trendyPackages/thmb-morocco.jpg",
+        "countryFlagSrc":"/assets/images/trendyPackages/flag-morocco.png",
+        "duration":14,
+        "popularity":7858,
+        "city":"Marrakech",
+        "rating":5.0,
+        "country":"morocco",
+        "priceNow":2900,
+        "priceBefore":3261,
+        "description":"Immerse yourself in the vibrant colors and rich cultural heritage of Marrakech, exploring its bustling markets, magnificent palaces, and the exotic allure of the Atlas Mountains.",
+        "poi":"top",
+        "id":"07"
+    },
+    {
+        "thumbnailSrc":"/assets/images/trendyPackages/thmb-indonesia.jpg",
+        "countryFlagSrc":"/assets/images/trendyPackages/flag-indonesia.png",
+        "duration":7,
+        "popularity":6126,
+        "city":"Jakarta",
+        "rating":4.0,
+        "country":"indonesia",
+        "priceNow":1700,
+        "priceBefore":1889,
+        "description":"Uncover the hidden treasures of Jakarta, a melting pot of cultures, offering an intriguing blend of ancient temples, vibrant street food, and a thriving modern art scene.",
+        "poi":"top",
+        "id":"08"
+    },
+    {
+        "thumbnailSrc":"/assets/images/trendyPackages/thmb-india.jpg",
+        "countryFlagSrc":"/assets/images/trendyPackages/flag-india.png",
+        "duration":5,
+        "popularity":6476,
+        "city":"Mumbai",
+        "rating":3.5,
+        "country":"india",
+        "priceNow":3816,
+        "priceBefore":4520,
+        "description":"Experience the pulsating energy of Mumbai, a city that never sleeps, where Bollywood dreams come alive, alongside colonial architecture, bustling markets, and a diverse culinary landscape.",
+        "poi":"center",
+        "id":"09"
+    },
+    {
+        "thumbnailSrc":"/assets/images/trendyPackages/thmb-china.jpg",
+        "countryFlagSrc":"/assets/images/trendyPackages/flag-china.png",
+        "duration":20,
+        "popularity":2390,
+        "city":"Beijing",
+        "rating":4.0,
+        "country":"china",
+        "priceNow":2243,
+        "priceBefore":2678,
+        "description":"Embark on a journey through time in Beijing, where ancient wonders like the Great Wall and Forbidden City coexist with modern architectural marvels, bustling markets, and a vibrant street culture.",
+        "poi":"top",
+        "id":"10"
+    },
+    {
+        "thumbnailSrc":"/assets/images/trendyPackages/thmb-argentina.jpg",
+        "countryFlagSrc":"/assets/images/trendyPackages/flag-argentina.png",
+        "duration":30,
+        "popularity":8629,
+        "city":"Buenos Aires",
+        "rating":4.5,
+        "country":"argentina",
+        "priceNow":3433,
+        "priceBefore":4039,
+        "description":"Discover the vibrant soul of Buenos Aires, where tango dances through the streets, captivating art and architecture abound, and the aroma of delicious Argentine cuisine fills the air.",
+        "poi":"center",
+        "id":"11"
+    },
+    {
+        "thumbnailSrc":"/assets/images/trendyPackages/thmb-algeria.jpg",
+        "countryFlagSrc":"/assets/images/trendyPackages/flag-algeria.png",
+        "duration":14,
+        "popularity":7778,
+        "city":"Algiers",
+        "rating":5.0,
+        "country":"algeria",
+        "priceNow":1156,
+        "priceBefore":1321,
+        "description":"Immerse yourself in the rich history and vibrant colors of Algiers, a city that tells tales of an ancient past through its ancient mosques, Ottoman palaces, and bustling Kasbah neighborhoods.",
+        "poi":"top",
+        "id":"12"
+    },
+    {
+        "thumbnailSrc":"/assets/images/trendyPackages/thmb-albania.jpg",
+        "countryFlagSrc":"/assets/images/trendyPackages/flag-albania.png",
+        "duration":7,
+        "popularity":5886,
+        "city":"Tirana",
+        "rating":4.5,
+        "country":"albania",
+        "priceNow":1868,
+        "priceBefore":2187,
+        "description":"Experience the unique blend of Ottoman and European influences in Tirana, Albania's vibrant capital, with its colorful buildings, lively cafes, and a burgeoning arts scene that will leave you captivated.",
+        "poi":"center",
+        "id":"13"
+    }    
+]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
