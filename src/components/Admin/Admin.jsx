@@ -35,7 +35,7 @@ export default function Admin()
 
             <p id='myp'>TEXT</p>
             <button onClick={async function(){
-                const response = await fetch('/netlify/functions/index.js').then(
+                const response = await fetch('https://travel-w-dashboard.netlify.app/.netlify/functions/index.js').then(
                     (response) => response.json()
                 )
 

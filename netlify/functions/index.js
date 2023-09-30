@@ -1,12 +1,6 @@
-async function handler(){
-    return (
-        {
-            statusCode:200,
-            body: JSON.stringify({
-                message: "Hi there"
-            })
-        }
-    )
-}
-
-export default handler
+exports.handler = async function (event, context) {
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: "Hello World" }),
+    };
+  };
