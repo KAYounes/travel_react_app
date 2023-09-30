@@ -32,6 +32,18 @@ export default function Admin()
                     </Col>
                 </Row>
             </SectionFluid>
+
+            <p id='myp'>TEXT</p>
+            <button onClick={async function(){
+                const response = await fetch('/netlify/functions/index.js').then(
+                    (response) => response.json()
+                )
+
+
+                const myp = document.querySelector('#myp')
+                console.log(response)
+                // myp.innerText = response.message
+            }}>Click me please</button>
             <AdminDashboard/>
         </>
     )
