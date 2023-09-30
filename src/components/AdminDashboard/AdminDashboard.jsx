@@ -23,8 +23,15 @@ function AdminDashboard() {
         <IKUpload
           onError={onError}
           onSuccess={onSuccess}
+          className="form-control"
         />  
       </IKContext>
+      <button className="btn btn-dark" onClick={async function(){
+        let data = await fetch('/.netlify/functions/auth').then((res) => res.json()).catch((err) => console.log(err))
+        console.log(data, data.message)
+
+
+      }}>Delete</button>
     </Section>
   );
 }
