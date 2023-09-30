@@ -1,5 +1,5 @@
-const ImageKit = require('imagekit');
-// import 
+// const ImageKit = require('imagekit');
+import ImageKit from "imagekit";
 
 export async function handler (event, context)
 {
