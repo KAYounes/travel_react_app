@@ -36,7 +36,7 @@ export default function Admin()
             <p id='myp'>TEXT</p>
             <button onClick={async function(){
                 const response = await fetch('https://ntl-functions--resilient-marigold-856c5e.netlify.app/.netlify/functions/index.js').then(
-                    (response) => response.json()
+                    (res) => console.log("response ", res)
                 ).catch(
                     (data) => console.log("My Data", data)
                 )
