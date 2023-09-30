@@ -6,7 +6,7 @@ function Logo(props) {
     // cls = cls.replace(/\s\s+/g, ' ').trim()
 
     return (
-        <a href="#" className={clsx(styles.logo, props.dark && styles.logo_dark, props.brand && 'navbar-brand')}>
+        <a href="#" className={clsx(styles.logo, props.dark && styles.logo_dark, props.brand && 'navbar-brand', props.mods)}>
                 Travel
                 <img 
                     src="src/assets/images/decorative/logo_arrow.png" 

@@ -106,16 +106,31 @@ $dark-blues: (
 
 //
 $primary : $orange;
-// $secondary:     $gray-200;
-// $success:       $green;
-// $info:          $cyan;
-// $warning:       $yellow;
-// $danger:        $red;
-// $light:         $gray-100;
-// $dark:          $gray-900;
+$secondary:     $gray-200;
+$success:       $green;
+$info:          $cyan;
+$warning:       $yellow;
+$danger:        $red;
+$light:         $gray-100;
+$dark:          $gray-900;
 //
 
 $body-secondary-color: $gray-500;
+
+
+
+$theme-colors: (
+  "primary":    $primary,
+  "secondary":  $secondary,
+  "success":    $success,
+  "info":       $info,
+  "warning":    $warning,
+  "danger":     $danger,
+  "light":      $light,
+  "dark":       $dark
+);
+
+$theme-colors: map-merge($theme-colors, $colors);
 // =============================================
 
 //# FONT //

@@ -7,17 +7,22 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "build-preview":"vite build | vite preview"
+    "preview": "vite preview"
   },
   "dependencies": {
     "classnames": "^2.3.2",
     "clsx": "^2.0.0",
+    "imagekitio-react": "^3.0.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.16.0",
+    "regenerator-runtime": "^0.14.0",
     "sass": "^1.66.1"
   },
+  "browserslist": [
+    "last 2 Chrome versions"
+  ],
   "devDependencies": {
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",

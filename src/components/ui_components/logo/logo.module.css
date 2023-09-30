@@ -15,7 +15,8 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    transform: translate(1.5ch, 0.6ch);
+    transform: translate(1ch, 0.6ch);
+    width: 90%;
 }
 
 .logo_dark{
