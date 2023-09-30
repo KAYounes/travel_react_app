@@ -35,16 +35,15 @@ export default function Admin()
 
             <p id='myp'>TEXT</p>
             <button onClick={async function(){
-                const response = await fetch('https://ntl-functions--resilient-marigold-856c5e.netlify.app/.netlify/functions/index.js').then(
-                    (res) => console.log("response ", res)
+                const response = await fetch('/.netlify/functions/index').then(
+                    (res) => res.json()
                 ).catch(
-                    (data) => console.log("My Data", data)
+                    (data) => console.log("My Error", data)
                 )
 
-
-                // const myp = document.querySelector('#myp')
-                // console.log(response)
-                // myp.innerText = response.message
+                const myp = document.querySelector('#myp')
+                console.log(response)
+                myp.innerText = response.message
             }}>Click me please</button>
             <AdminDashboard/>
         </>
