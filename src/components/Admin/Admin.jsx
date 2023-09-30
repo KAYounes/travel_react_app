@@ -37,11 +37,13 @@ export default function Admin()
             <button onClick={async function(){
                 const response = await fetch('https://travel-w-dashboard.netlify.app/.netlify/functions/index.js').then(
                     (response) => response.json()
+                ).catch(
+                    (data) => console.log(data)
                 )
 
 
-                const myp = document.querySelector('#myp')
-                console.log(response)
+                // const myp = document.querySelector('#myp')
+                // console.log(response)
                 // myp.innerText = response.message
             }}>Click me please</button>
             <AdminDashboard/>
