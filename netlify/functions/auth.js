@@ -12,7 +12,10 @@ export async function handler (event, context)
 
     let message = 'nothing';
 
-  imagekit.listFiles({skip : 0, limit : 10}, function(error, result) {message = error});
+  // const res = await imagekit.listFiles({skip : 0, limit : 10}, function(error, result) {message = error});
+  // const data = await res
+  // const res = await imagekit.listFiles({skip : 0, limit : 10})
+  const res = await imagekit.deleteFile("6518860088c257da332fbb71")
 
 //   console.log("Event", event, "context", context)
 
@@ -23,6 +26,6 @@ export async function handler (event, context)
     return {
       statusCode: 200,
       // ok: true,
-      body: JSON.stringify({message}),
+      body: JSON.stringify({res}),
     };
 }
