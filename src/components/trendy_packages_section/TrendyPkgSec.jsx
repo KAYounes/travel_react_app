@@ -8,6 +8,9 @@ import Row from "/src/components/ui_components/wrappers/Row.jsx";
 import Col from "/src/components/ui_components/wrappers/Col.jsx";
 import Button from "/src/components/ui_components/buttons//Button.jsx";
 import { useState, useEffect } from 'react'
+import { MOCKAPI_ENDPOINT } from "../../constants";
+import TourCard from "../TourCard/TourCard";
+import { IKContext } from 'imagekitio-react'
 
 function Card(props) {
     function StarRating(props){
@@ -190,7 +193,7 @@ function HoneymoonPkgSec() {
     const [fetchedData, setFetchedData] = useState([])
 
     function fetchData(){
-      return fetch(ENDPOINT).then((response) => response.json()).then((data) => setFetchedData(data)).catch(() => [])
+      return fetch(MOCKAPI_ENDPOINT).then((response) => response.json()).then((data) => setFetchedData(data)).catch(() => [])
     }
 
     useEffect(function(){
@@ -214,38 +217,13 @@ function HoneymoonPkgSec() {
 
 
     const cardsDOM = fetchedData.map(
-        function({
-          thumbnailSrc,
-          countryFlagSrc,
-          duration,
-          popularity,
-          city,
-          rating,
-          country,
-          priceOriginal,
-          priceOffered,
-          details,
-          poi,
-          id
-        }){
+        function(cardData){
             return(
                 <Col 
-                    key={id}
+                    key={cardData.id}
                     mods={clsx(styles.cardWrp, 'col py-8 px-0 px-xsm-4 px-lg-8')}
                 >
-                    <Card
-                        card_thumbnail={thumbnailSrc}
-                        card_flag={countryFlagSrc}
-                        duration={duration}
-                        count={popularity}
-                        city={city}
-                        rating={rating}
-                        country={country}
-                        price_now={priceOriginal}
-                        price_old={priceOffered}
-                        details={details}
-                        poi={poi}
-                    />
+                    <TourCard cardData={cardData}/>
                 </Col>
             )
         }
@@ -264,10 +242,14 @@ function HoneymoonPkgSec() {
           }
           mods={"text-center"}
         />
-
-        <Row mods={clsx("row-cols-1 row-cols-sm-2 row-cols-mid-3")}>
+              <IKContext
+        urlEndpoint="https://ik.imagekit.io/lgd9ykfw6/"
+        publicKey="public_jYTemusiZpt+yCs8inkps77IdKo="
+      >
+                <Row mods={clsx("row-cols-1 row-cols-sm-2 row-cols-mid-3")}>
             {cardsDOM}
         </Row>
+      </IKContext>
       </Content>
     </Section>
   );
