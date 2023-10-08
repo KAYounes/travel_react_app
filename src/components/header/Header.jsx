@@ -60,7 +60,9 @@ function Header() {
                                 </div>
 
                                 {/* <button className="btn btn-primary col">Submit</button> */}
-                                <Button value="Get in Touch" mods={'col'}/>
+                                <Button mods={'col'}>
+                                    Get In Touch
+                                </Button>
                             </form>
                         </div>
                     </div>

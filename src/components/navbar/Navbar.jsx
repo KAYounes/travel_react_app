@@ -47,7 +47,9 @@ function Navbar(props) {
                         </NavbarNavItem>
                     </ul>
                     
-                    <Button value="Get in Touch" mods={clsx(styles.navbar__cta)} to='/admin'/>
+                    <Button mods={clsx(styles.navbar__cta)} to='/admin'>
+                        Get in Touch
+                    </Button>
                 </div>
             </div>
         </nav>

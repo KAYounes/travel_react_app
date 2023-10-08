@@ -16,35 +16,7 @@ export default function Admin()
 {
     return(
         <>
-            <SectionFluid>
-                <Row mods='align-items-center p-5'>
-                    <Col mods={'col-4'}>
-                        <Button to='/'>
-                            Back to Home Page
-                        </Button>
-                    </Col>
-
-                    <Col mods='col-4 text-center'>
-                        <span className='display-6 fw-medium text-dark-blue'>
-                            <Logo dark mods="me-7"/>
-                            Admin
-                        </span>
-                    </Col>
-                </Row>
-            </SectionFluid>
-
-            <p id='myp'>TEXT</p>
-            <button onClick={async function(){
-                const response = await fetch('/.netlify/functions/index').then(
-                    (res) => res.json()
-                ).catch(
-                    (data) => console.log("My Error", data)
-                )
-
-                const myp = document.querySelector('#myp')
-                console.log(response)
-                myp.innerText = response.message
-            }}>Click me please</button>
+            <AdminNavbar backButtonText='Back Home' subTitle='Admin' showLogo/>
             <AdminDashboard/>
         </>
     )

@@ -98,10 +98,12 @@ function Card(props) {
             <small className={clsx(styles.price_old)}>{$(props.price_old).addCommas().addCurrency().value()}</small>
           </div>
           <small className="card-text mb-auto text-wrap">
-            {props.description}
+            {props.details}
           </small>
           {/* <button className="btn btn-primary mt-5">Explore Now</button> */}
-          <Button value={'Explore Now'} mods={'mt-5'}/>
+          <Button mods={'mt-5'}>
+            Explore Now
+          </Button>
         </div>
       </div>
     // </div>
@@ -120,7 +122,7 @@ function HoneymoonPkgSec() {
     //         country:'Switzerland',
     //         price_now:'1,000',
     //         price_old:'1,200',
-    //         description:'Omnis similique consequuntur. Commodi incidunt nihil et. Consectetur eum aut exercitationem nostrum nisi reprehenderit quaerat commodi non.',
+    //         details:'Omnis similique consequuntur. Commodi incidunt nihil et. Consectetur eum aut exercitationem nostrum nisi reprehenderit quaerat commodi non.',
     //     },
     //     {
     //         card_thumbnail:'/assets/images/descriptive/card_image-toucan.png',
@@ -132,7 +134,7 @@ function HoneymoonPkgSec() {
     //         country:'Brazil',
     //         price_now:'900',
     //         price_old:'1,000',
-    //         description:'Possimus laboriosam minus tenetur voluptatem consequatur ab eligendi dolore veniam. Ut dolor dicta. Iure reiciendis praesentium. Omnis cumque corrupti earum. Occaecati beatae eos.',
+    //         details:'Possimus laboriosam minus tenetur voluptatem consequatur ab eligendi dolore veniam. Ut dolor dicta. Iure reiciendis praesentium. Omnis cumque corrupti earum. Occaecati beatae eos.',
     //     },
     //     {
     //         card_thumbnail:'/assets/images/descriptive/card_image-pharo.png',
@@ -144,7 +146,7 @@ function HoneymoonPkgSec() {
     //         country:'Egypt',
     //         price_now:'700',
     //         price_old:'850 ',
-    //         description:'Quis harum aspernatur quisquam cum. Eum quo nulla. Ut cum velit atque at laborum fuga veniam dolor. Voluptas nisi optio incidunt fuga illum voluptas sint quam sit. Dolorem nihil tenetur reiciendis ad ',
+    //         details:'Quis harum aspernatur quisquam cum. Eum quo nulla. Ut cum velit atque at laborum fuga veniam dolor. Voluptas nisi optio incidunt fuga illum voluptas sint quam sit. Dolorem nihil tenetur reiciendis ad ',
     //     },
     //     {
     //         card_thumbnail:'/assets/images/descriptive/card_image-chureito_pagoda.png',
@@ -156,7 +158,7 @@ function HoneymoonPkgSec() {
     //         country:'Japan',
     //         price_now:'1,800',
     //         price_old:'2,500 ',
-    //         description:'Et optio qui dolorem sed. Nesciunt dolores blanditiis officia. Optio quis temporibus nobis eum dolore dolorum quas quia est. Qui tenetur quibusdam.',
+    //         details:'Et optio qui dolorem sed. Nesciunt dolores blanditiis officia. Optio quis temporibus nobis eum dolore dolorum quas quia est. Qui tenetur quibusdam.',
     //     },
     //     {
     //         card_thumbnail:'/assets/images/descriptive/card_image-riyadh_city.png',
@@ -168,7 +170,7 @@ function HoneymoonPkgSec() {
     //         country:'Saudi Arabia',
     //         price_now:'1,000',
     //         price_old:'1,300 ',
-    //         description:'Rerum voluptas commodi. Sint distinctio incidunt voluptatem sunt quia at tempore. Dolorem ut quia animi suscipit. Consequuntur magnam tempora aliquam illum sequi sed ut. Ea enim cumque.',
+    //         details:'Rerum voluptas commodi. Sint distinctio incidunt voluptatem sunt quia at tempore. Dolorem ut quia animi suscipit. Consequuntur magnam tempora aliquam illum sequi sed ut. Ea enim cumque.',
     //     },
     //     {
     //         card_thumbnail:'/assets/images/descriptive/card_image-effiel_tower.png',
@@ -180,7 +182,7 @@ function HoneymoonPkgSec() {
     //         country:'France',
     //         price_now:'1,550',
     //         price_old:'2,000 ',
-    //         description:'Illum molestiae eos nihil culpa similique quaerat. Ipsa rem quam fuga sint consectetur doloremque. Repellendus aut molestiae. Placeat ut qui quisquam qui exercitationem perferendis saepe sapiente.',
+    //         details:'Illum molestiae eos nihil culpa similique quaerat. Ipsa rem quam fuga sint consectetur doloremque. Repellendus aut molestiae. Placeat ut qui quisquam qui exercitationem perferendis saepe sapiente.',
     //     }
     // ]
 
@@ -220,13 +222,12 @@ function HoneymoonPkgSec() {
           city,
           rating,
           country,
-          priceNow,
-          priceBefore,
-          description,
+          priceOriginal,
+          priceOffered,
+          details,
           poi,
           id
         }){
-          console.log(thumbnailSrc)
             return(
                 <Col 
                     key={id}
@@ -240,9 +241,9 @@ function HoneymoonPkgSec() {
                         city={city}
                         rating={rating}
                         country={country}
-                        price_now={priceNow}
-                        price_old={priceBefore}
-                        description={description}
+                        price_now={priceOriginal}
+                        price_old={priceOffered}
+                        details={details}
                         poi={poi}
                     />
                 </Col>

@@ -320,9 +320,41 @@ $carousel-indicator-active-bg:       $primary;
 // $carousel-dark-control-icon-filter:  invert(1) grayscale(100);
 // scss-docs-end carousel-dark-variables
 
+$placeholder-opacity-max: 0.5;
+$placeholder-opacity-min: 0.35;
+// $progress-bar-color:                red;
+// $progress-bar-bg:                   green;
+// $progress-bg:                       blue;
 
+$form-select-indicator-color: $gray-500;
+$form-select-indicator: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='#{$form-select-indicator-color}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/></svg>");
+
+// $input-focus-border-color: #248ced;
+
+$focus-color: #4400ff;
+$focus-color: #005eff;
+
+$focus-ring-width:      .25rem;
+$focus-ring-opacity:    .25;
+$focus-ring-color:      rgba($focus-color, $focus-ring-opacity);
+$focus-ring-blur:       0;
+$focus-ring-box-shadow: 0 0 $focus-ring-blur $focus-ring-width $focus-ring-color;
+
+
+$input-btn-focus-width:         $focus-ring-width;
+$input-btn-focus-color-opacity: $focus-ring-opacity;
+$input-btn-focus-color:         $focus-ring-color;
+$input-btn-focus-blur:          $focus-ring-blur;
+$input-btn-focus-box-shadow:    $focus-ring-box-shadow;
+$component-active-bg:         $focus-color;
 @import "d:/kyounes/web_programming/bootstrap_files/bootstrap-5.0.2/scss/_variables.scss";
 @import "d:/kyounes/web_programming/bootstrap_files/bootstrap-5.3.1/scss/bootstrap.scss";
+
+$focus-ring-width:      .25rem;
+$focus-ring-opacity:    .25;
+$focus-ring-color:      rgba(#4400ff, $focus-ring-opacity);
+$focus-ring-blur:       0;
+$focus-ring-box-shadow: 0 0 $focus-ring-blur $focus-ring-width $focus-ring-color;
 
 :root {
   @each $color, $value in $glass_theme {

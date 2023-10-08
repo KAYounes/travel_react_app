@@ -1,6 +1,6 @@
 import styles from "./navbar.module.css";
 import PropTypes from "prop-types";
-import cleanClass from "/src/utils/clean_class";
+import clsx from 'clsx'
 import { useState } from "react";
 
 function NavbarNavItem(props) {
@@ -20,13 +20,10 @@ function NavbarNavItem(props) {
     styles.navbar__link
   } ${props.dropdown ? "dropdown-toggle" : ""} nav-link p-3 p-mid-0`;
 
-  navItemCls = cleanClass(navItemCls);
-  navLinkCls = cleanClass(navLinkCls);
-
   return (
-    <li className={navItemCls}>
+    <li className={clsx(navItemCls)}>
       <a
-        className={navLinkCls}
+        className={clsx(navLinkCls)}
         href={props.href}
         role={props.dropdown ? "button" : null}
         data-bs-toggle={props.dropdown ? "dropdown" : null}

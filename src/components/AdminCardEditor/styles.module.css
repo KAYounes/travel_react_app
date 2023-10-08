@@ -1,0 +1,3 @@
+.inputNumber__noArrows::-webkit-inner-spin-button, .inputNumber__noArrows::-webkit-outer-spin-button{
+    display: none;
+}

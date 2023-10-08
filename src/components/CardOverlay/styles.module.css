@@ -1,0 +1,89 @@
+.cardWrp
+{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    /* overflow: hidden; */
+}
+
+.cardWrp:hover .cardOverlay{
+    /* transform: translate(0, 0); */
+    opacity: 1;
+    transform: scale(1);
+}
+.cardOverlay{
+    position: absolute;
+    inset: 0;
+    background-color: hsla(0deg 0% 0% / 0.5);
+    backdrop-filter: blur(3px);
+    /* box-shadow: 0px 0px 10px 0px hsla(0deg 0% 0% / 1); */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10%;
+    border-radius: 10px;
+    /* transform: translate(0, -100%); */
+    transform: scale(0.8);
+    opacity: 0;
+    transition: all 400ms ease;
+}
+
+.optionWrap
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background-color: red; */
+    /* flex-grow: 1; */
+}
+
+.option{
+    --bg-color: 255 0 0;
+    /* background-color: blueviolet; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin: 0 30%;
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    /* background-image: linear-gradient(rgba(var(--bg-color) / 0.5), rgba(var(--bg-color) / 0.9)); */
+    text-decoration: none;
+}
+
+.option:hover{
+    background-image: linear-gradient(rgba(0 0 0 / 0.2), rgba(0 0 0 / 0.2));
+    background-blend-mode: darken;
+}
+
+.optionWrap:first-child .option{
+    /* --bg-color: hsl(0deg 50% 50%); */
+    /* background-color: hsla(54, 100%, 51%, 0.7); */
+    background-color: hsla(65, 89%, 50%, 0.2);
+    border: 3px solid #DEF10E;
+    color: #DEF10E;
+}
+
+.optionWrap:last-child .option{
+    background-color: hsla(350, 91%, 57%, 0.2);
+    border: 3px solid #E60B2F;
+    color: #E60B2F;
+}
+
+.option-icon{
+    font-size: 2rem;
+    vertical-align: middle;
+    line-height: 1;
+    height: fit-content;
+}
+
+.option-icon::before{
+    list-style: 1;
+    display: block;
+    height: fit-content;
+    line-height: 1;
+}

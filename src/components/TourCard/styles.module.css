@@ -27,12 +27,12 @@
     width: 50px;
     border-radius: 100%;
     overflow: hidden;
-    border: 5px solid white;
+    /* border: 5px solid white; */
     bottom: 0;
     left: 10%;
     transform: translateY(50%);
     box-shadow: var(--bs-box-shadow);
-    background-color: var(--bs-gray-500);
+    background-color: var(--bs-gray-400);
 }
 
 .card .card__flagWrp::before{
@@ -76,7 +76,7 @@
 }
 
 .card:hover .card__imgWrap{
-    transform: scale(1.15);
+    transform: scale(1.05);
 }
 
 

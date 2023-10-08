@@ -1,44 +1,34 @@
-import React from 'react';
-import Logo from '../ui_components/logo/Logo.jsx'
+import React from "react";
+import clsx from 'clsx'
+//
+import styles from './styles.module.css'
+import Logo from "../ui_components/logo/Logo.jsx";
+import Row from "../ui_components/wrappers/Row.jsx";
+import Col from "../ui_components/wrappers/Col.jsx";
+import Button from "../ui_components/buttons/Button.jsx";
+import Content from "../ui_components/wrappers/Content.jsx";
+//
 
-function AdminNavbar() 
-{
+function AdminNavbar({ backButtonText, subTitle, showLogo }) {
+
   return (
-    <nav className="navbar navbar-expand-lg bg-dark">
-      <div className="container-fluid">
-        <Logo brand dark mods={"me-10"}/>
-
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <a className="nav-link active" aria-current="page" href="#">
-                Home
-              </a>
-            </li>
-          </ul>
-
-          <form className="d-flex" role="search">
-            <input
-              className="form-control me-2"
-              type="search"
-              placeholder="Search"
-              aria-label="Search"
-            />
-            <button className="btn btn-outline-success" type="submit">
-              Search
-            </button>
-          </form>
-        </div>
-      </div>
+    <nav className={clsx(styles.nav, "navbar navbar-expand-lg")}>
+      <Content>
+        <Row mods="align-items-center p-5">
+          <Col mods={"col-4"}>
+            <Button isBackButton>
+              <i className="bi bi-arrow-left-short fs-3 icon-left me-3"></i>
+              {backButtonText}
+            </Button>
+          </Col>
+          <Col mods="col-4 text-center">
+            <h2 className="mb-0 fw-medium">
+              {showLogo && <Logo dark mods="me-7" />}
+              {subTitle}
+            </h2>
+          </Col>
+        </Row>
+      </Content>
     </nav>
   );
 }

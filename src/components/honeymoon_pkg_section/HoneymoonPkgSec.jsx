@@ -47,7 +47,9 @@ function HoneymoonPkgSec() {
                                 ducimus illum aut optio quibusdam!
                             </p>
                             {/* <button className="btn btn-primary w-100">View Packages</button> */}
-                            <Button value={"View Packages"} mods={"w-100"}/>
+                            <Button mods={"w-100"}>
+                                View Packages
+                            </Button>
                         </Content>
                     </ContentMin>
                 </Col>

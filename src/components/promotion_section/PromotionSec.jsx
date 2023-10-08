@@ -52,7 +52,9 @@ function PromotionSec() {
                             corrupti et fugiat nulla qui soluta recusandae in maxime quasi aut
                             ducimus illum aut optio quibusdam!
                         </p>
-                        <Button value={"View Packages"} mods={"w-100"} />
+                        <Button mods={"w-100"}>
+                            View Packages
+                        </Button>
                     </Content>
 
                 </ContentMin>
