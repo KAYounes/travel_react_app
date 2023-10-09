@@ -6,7 +6,7 @@ import { IKImage } from "imagekitio-react";
 import { Link } from "react-router-dom";
 //
 import clsx from "clsx";
-import { numberFormatter } from "../../utils";
+import { addPadding, addSeparator, asCurrency } from "../../utils";
 import StarRating from "../ui_components/StarRating/StarRating";
 //
 export default function TourCard({ cardData }) {
@@ -34,7 +34,7 @@ export default function TourCard({ cardData }) {
       <IKImage
         path={thumbnailSrc ? thumbnailSrc : country + ".jpg"}
         lqip={{ active: true, quality: 1, blur: 5 }}
-        transformation={[{width: 300, quality: 50}]}
+        transformation={[{quality: 50}]}
       />
     );
   } else if (thumbnailSrc) {
@@ -68,7 +68,7 @@ export default function TourCard({ cardData }) {
     popularityDOM = (
       <span className="d-flex align-items-center gap-2">
         <img src="/assets/icons/avatar.svg" alt="" className={styles.icon} />{" "}
-        {numberFormatter(popularity).addCommas().value()} Going
+        {addSeparator(popularity)} Going
       </span>
     );
   } else {
@@ -84,7 +84,7 @@ export default function TourCard({ cardData }) {
     durationDOM = (
       <span className="d-flex align-items-center gap-2">
         <img src="/assets/icons/calender.svg" alt="" className={styles.icon} />{" "}
-        {numberFormatter(duration).addPadding().value()} Days
+        {addPadding(duration)} Days
       </span>
     );
   } else {
@@ -131,10 +131,10 @@ export default function TourCard({ cardData }) {
     pricingDOM = (
       <>
         <span className="text-primary lead fw-medium">
-          {numberFormatter(priceOffered).addCommas().addCurrency().value()}
+          {asCurrency(priceOffered)}
         </span>
         <small className={clsx(styles.price_old)}>
-          {numberFormatter(priceOriginal).addCommas().addCurrency().value()}
+          {asCurrency(priceOriginal)}
         </small>
       </>
     );

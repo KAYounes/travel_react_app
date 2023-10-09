@@ -28,9 +28,34 @@ export const numberFormatter = function (num) {
   };
 };
 
-export function removeCommas(value){
+export function removeSeparator(value, sep=','){
+  if(Number(value) === 'number') return value
+  let regex = new RegExp('\\' + sep, 'g')
+  return value.replaceAll(regex, '')
+}
+
+export function addSeparator(value, sep=','){
   value = value.toString()
-  return value.replaceAll(/,/g, '')
+  let [whole, ...other] = value.split('.')
+  
+  if(!Number(value)){
+    whole = removeSeparator(whole)
+  }
+
+  return whole.replaceAll(/(?<=\d)(?=(\d{3})+$)/g, sep) + (other.length ? '.' + other.join('.') : '');
+}
+
+export function addPadding(value, length=2, fill='0'){
+  return value.toString().padStart(length, fill)
+}
+
+export function addCurrency(value, symbol='$'){
+  return symbol + value
+}
+
+export function asCurrency(value, sep=',', symbol='$'){
+  value = value.toString()
+  return addCurrency(addSeparator(value, sep), symbol)
 }
 
 // function _generateEndpoint(path, params) {

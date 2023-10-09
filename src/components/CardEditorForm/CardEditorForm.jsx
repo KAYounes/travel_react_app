@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import clsx from "clsx";
 import { IKUpload } from "imagekitio-react";
@@ -20,8 +21,8 @@ import {
     MAX_DETAILS_LENGTH,
     MIN_DETAILS_LENGTH,
 } from "./constants";
-import { numberFormatter, removeCommas } from "../../utils";
-import { requestFromServer, updateTour, uploadTour } from "./helpers";
+import { addSeparator, asCurrency, removeSeparator } from "../../utils";
+import { updateTour, uploadTour } from "./helpers";
 //
 
 export default function CardEditorForm({ updateCardDate }) {
@@ -31,9 +32,7 @@ export default function CardEditorForm({ updateCardDate }) {
     const [isImageUploaded, setIsImageUploaded] = React.useState(false);
     const [isCardUploaded, setIsCardUploaded] = React.useState(false);
 
-    const cardID = window.location.pathname.match(/(?<=edit\/)\d*/)
-
-
+    const cardID = window.location.pathname.match(/(?<=edit\/)\d*/);
 
     const countriesOptions = [];
 
@@ -77,22 +76,25 @@ export default function CardEditorForm({ updateCardDate }) {
         // id: false,
     });
 
-    React.useEffect(function(){
-        if (!cardID) return
+    React.useEffect(function () {
+        if (!cardID) return;
 
         async function get() {
-            let response = await fetch(MOCKAPI_ENDPOINT + '/' + cardID).then((r) => r.json());
-            console.log('res' , response)
-            setFormData(response)
+            let response = await fetch(MOCKAPI_ENDPOINT + "/" + cardID).then((r) =>
+                r.json()
+            );
+            console.log("res", response);
+            setFormData(response);
         }
-        
+
         get();
-    }, [])
+    }, []);
 
     React.useEffect(
         function () {
             for (let key in formErrors) {
                 if (!formErrors[key]) updateCardDate(key, formData[key]);
+                else updateCardDate(key, '');
             }
         },
         [formData]
@@ -115,17 +117,17 @@ export default function CardEditorForm({ updateCardDate }) {
             // }
             // get();
 
-            if(cardID){
-                updateTour(cardID, formData)
-            }else{
-                uploadTour(formData)
+            if (cardID) {
+                updateTour(cardID, formData);
+            } else {
+                uploadTour(formData);
             }
         },
         [isImageUploaded]
     );
 
     function onSuccess(response) {
-        setIsImageUploaded(true)
+        setIsImageUploaded(true);
         updateFormData("thumbnailSrc", response.filePath);
         updateFormData("thumbnailID", response.fileId);
     }
@@ -182,7 +184,7 @@ export default function CardEditorForm({ updateCardDate }) {
                             name="thumbnailPosition"
                             id="posTop"
                             checked={formData.poi === "top"}
-                            onChange={(e) => updateFormData("poi", "top")}
+                            onChange={() => updateFormData("poi", "top")}
                             disabled={!!uploadProgress}
                         />
                         <label htmlFor="posTop" className="btn btn-light">
@@ -199,7 +201,7 @@ export default function CardEditorForm({ updateCardDate }) {
                             name="thumbnailPosition"
                             id="posCenter"
                             checked={formData.poi === "center"}
-                            onChange={(e) => updateFormData("poi", "center")}
+                            onChange={() => updateFormData("poi", "center")}
                             disabled={!!uploadProgress}
                         />
                         <label htmlFor="posCenter" className="btn btn-light">
@@ -216,7 +218,7 @@ export default function CardEditorForm({ updateCardDate }) {
                             name="thumbnailPosition"
                             id="posBottom"
                             checked={formData.poi === "bottom"}
-                            onChange={(e) => updateFormData("poi", "bottom")}
+                            onChange={() => updateFormData("poi", "bottom")}
                             disabled={!!uploadProgress}
                         />
                         <label htmlFor="posBottom" className="btn btn-light">
@@ -307,14 +309,14 @@ export default function CardEditorForm({ updateCardDate }) {
                             formErrors.popularity && "is-invalid",
                             "form-control"
                         )}
-                        value={formData.popularity}
+                        value={addSeparator(formData.popularity)}
                         onChange={handleChangePopularity}
                         disabled={!!uploadProgress}
                     />
                     <span className="input-group-text">people going</span>
                     <div className="invalid-feedback">
                         Please enter an integer between {MIN_POPULARITY} and{" "}
-                        {numberFormatter(MAX_POPULARITY).addCommas().value()}.
+                        {addSeparator(MAX_POPULARITY)}.
                     </div>
                 </div>
             </div>
@@ -350,6 +352,7 @@ export default function CardEditorForm({ updateCardDate }) {
                     Price Original
                 </label>
                 <div className="input-group has-validation">
+                    <span className="input-group-text">$</span>
                     <input
                         type="text"
                         className={clsx(
@@ -357,15 +360,14 @@ export default function CardEditorForm({ updateCardDate }) {
                             formErrors.priceOriginal && "is-invalid",
                             "form-control"
                         )}
-                        value={formData.priceOriginal}
+                        value={addSeparator(formData.priceOriginal)}
                         onChange={handleChangePriceOriginal}
                         disabled={!!uploadProgress}
                     />
-                    <span className="input-group-text">$</span>
 
                     <div className="invalid-feedback">
-                        Please enter a number between {MIN_PRICE} and{" "}
-                        {numberFormatter(MAX_PRICE).addCommas().value()}.
+                        Please enter a number between {asCurrency(MIN_PRICE)} and{" "}
+                        {asCurrency(MAX_PRICE)}.
                     </div>
                 </div>
             </div>
@@ -375,6 +377,7 @@ export default function CardEditorForm({ updateCardDate }) {
                     Price Offered
                 </label>
                 <div className="input-group has-validation">
+                    <span className="input-group-text">$</span>
                     <input
                         type="text"
                         className={clsx(
@@ -382,11 +385,10 @@ export default function CardEditorForm({ updateCardDate }) {
                             formErrors.priceOffered && "is-invalid",
                             "form-control"
                         )}
-                        value={formData.priceOffered}
+                        value={addSeparator(formData.priceOffered)}
                         onChange={handleChangePriceOffered}
                         disabled={!!uploadProgress}
                     />
-                    <span className="input-group-text">$</span>
 
                     {formErrors.priceOriginal ? (
                         <div className="invalid-feedback">
@@ -394,8 +396,8 @@ export default function CardEditorForm({ updateCardDate }) {
                         </div>
                     ) : (
                         <div className="invalid-feedback">
-                            Please enter a number between {MIN_PRICE} and less than{" "}
-                            {formData.priceOriginal}
+                            Please enter a number between {asCurrency(MIN_PRICE)} and less
+                            than {asCurrency(formData.priceOriginal)}
                         </div>
                     )}
                 </div>
@@ -477,11 +479,11 @@ export default function CardEditorForm({ updateCardDate }) {
 
     function handleChangePopularity(event) {
         let value = event.target.value;
-        value = value.replaceAll(/,/g, "");
+        value = removeSeparator(value);
 
         let isValid = isWithinRange(value, MIN_POPULARITY, MAX_POPULARITY);
 
-        value = numberFormatter(value).addCommas().value();
+        // value = addSeparator(value)
 
         updateFormData("popularity", value);
         updateFormErrors("popularity", !isValid);
@@ -504,10 +506,10 @@ export default function CardEditorForm({ updateCardDate }) {
 
     function handleChangePriceOriginal(event) {
         let value = event.target.value;
-        value = value.replaceAll(/,/g, "");
+        value = removeSeparator(value);
         const isValid = isWithinRange(value, MIN_PRICE, MAX_PRICE);
 
-        updateFormData("priceOriginal", numberFormatter(value).addCommas().value());
+        updateFormData("priceOriginal", value);
         updateFormErrors("priceOriginal", !isValid);
     }
 
@@ -515,9 +517,9 @@ export default function CardEditorForm({ updateCardDate }) {
         let value = event.target.value;
         value = value.replaceAll(/,/g, "");
 
-        let maxOfferedPrice = Number(removeCommas(formData.priceOriginal)) - 1;
+        let maxOfferedPrice = Number(removeSeparator(formData.priceOriginal)) - 1;
         const isValid = isWithinRange(value, MIN_PRICE, maxOfferedPrice);
-        updateFormData("priceOffered", numberFormatter(value).addCommas().value());
+        updateFormData("priceOffered", value);
         updateFormErrors("priceOffered", !isValid);
     }
 
@@ -554,25 +556,24 @@ export default function CardEditorForm({ updateCardDate }) {
     async function handleSubmit(event) {
         event.preventDefault();
         let isValidForm = triggerErrorsForEmptyFields();
-        console.table({isValidForm})
-        if (!isValidForm) return
+        console.table({ isValidForm });
+        if (!isValidForm) return;
 
-        if(!formData.thumbnailID) uploadImage();
-        else setIsImageUploaded(true)
+        if (!formData.thumbnailID) uploadImage();
+        else setIsImageUploaded(true);
     }
 
     function triggerErrorsForEmptyFields() {
-        let isValidForm = true
+        let isValidForm = true;
         for (let key in formData) {
-            // console.log(formData[key], key)
-            if(key === 'thumbnailID') continue
+            if (key === "thumbnailID") continue;
             if (!formData[key]) {
-                console.log(key, formData[key])
+                console.log(key, formData[key]);
                 updateFormErrors(key, true);
-                isValidForm = false
+                isValidForm = false;
             }
         }
-        return isValidForm
+        return isValidForm;
     }
 
     async function uploadImage() {
@@ -658,7 +659,7 @@ export default function CardEditorForm({ updateCardDate }) {
         let fractionPart = Number(value.split(".")[1]);
 
         debug && console.log(5);
-        //terminate if fractions are not allow but halves are, and the fraction part is neither none nor 0.5
+        //terminate if fractions are not allow but halves are, and the fraction part is neither empty nor 0.5
         if (allowHalves && !allowFraction)
             return fractionPart ? fractionPart === 5 : true;
 

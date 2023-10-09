@@ -1,4 +1,6 @@
+// const ImageKit = require('imagekit');
 import ImageKit from "imagekit";
+import multer from 'multer'
 
 export async function handler(event, context) {
   const imagekit = new ImageKit({
@@ -9,8 +11,7 @@ export async function handler(event, context) {
 
   const { headers, httpMethod, queryStringParameters, body } = event;
   let response;
-
-  // console.log(event)
+  console.log(event)
   // console.log('--------------------------')
   // console.log(headers)
   // console.log('--------------------------')
@@ -24,33 +25,28 @@ export async function handler(event, context) {
     case "getFileDetails":
       if (!queryStringParameters.fileId) return { statusCode: 400 };
       response = await imagekit.getFileDetails("651a931e88c257da336a0eb6");
-
-      return {
-        statusCode: 200,
-        body: JSON.stringify(response),
-      };
-
-    case "listFiles":
-      response = await imagekit.listFiles(queryStringParameters);
-
-      return {
-        statusCode: 200,
-        body: JSON.stringify(response),
-      };
-
-    case "auth":
-      console.log("auth");
-      response = imagekit.getAuthenticationParameters();
-
-      return {
-        statusCode: 200,
-        body: JSON.stringify(response),
-      };
-
-    case "upload":
       break;
 
+    case "listAndSearchFiles":
+      response = await imagekit.listFiles(queryStringParameters);
+      break;
+
+    case 'auth':
+      console.log('auth')
+      response = imagekit.getAuthenticationParameters()
+      break;
+    
+    case 'upload':
+      break;
+      
     default:
       return { statusCode: 400 };
   }
+
+  // console.log(response)
+  
+  return {
+    statusCode: 200,
+    body: JSON.stringify(response),
+  };
 }

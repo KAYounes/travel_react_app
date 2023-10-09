@@ -41,41 +41,55 @@
     --bg-color: 255 0 0;
     /* background-color: blueviolet; */
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    text-transform: uppercase;
+    text-transform: capitalize;
+    gap: 0.5em;
     font-weight: 600;
-    margin: 0 30%;
-    aspect-ratio: 1 / 1;
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
+    /* margin: 0 30%; */
+    /* aspect-ratio: 1 / 1; */
+    padding: 1em 0;
+    width: 80%;
+    /* height: 100%; */
+    border-radius: 100px;
     /* background-image: linear-gradient(rgba(var(--bg-color) / 0.5), rgba(var(--bg-color) / 0.9)); */
     text-decoration: none;
 }
 
 .option:hover{
-    background-image: linear-gradient(rgba(0 0 0 / 0.2), rgba(0 0 0 / 0.2));
+    background-image: linear-gradient(rgba(0 0 0 / 0.1), rgba(0 0 0 / 0.1));
     background-blend-mode: darken;
 }
 
 .optionWrap:first-child .option{
     /* --bg-color: hsl(0deg 50% 50%); */
     /* background-color: hsla(54, 100%, 51%, 0.7); */
-    background-color: hsla(65, 89%, 50%, 0.2);
-    border: 3px solid #DEF10E;
-    color: #DEF10E;
+
+    /* background-color: hsla(65, 89%, 50%, 0.2); */
+    /* border: 3px solid #DEF10E; */
+    /* color: #DEF10E; */
+
+    background-color: hsla(42 100% 36% / 0.4);
+    border: 3px solid #ECA400;
+    color: #ECA400;
 }
 
 .optionWrap:last-child .option{
-    background-color: hsla(350, 91%, 57%, 0.2);
-    border: 3px solid #E60B2F;
-    color: #E60B2F;
+    /* background-color: hsla(350, 91%, 57%, 0.4); */
+    /* border: 3px solid #E60B2F; */
+    /* color: #E60B2F; */
+    /* background-color: hsla(1 67% 35% / 0.4);
+    border: 3px solid #931F1D;
+    color: #931F1D; */
+    
+    background-color: hsla(335 84% 25% / 0.4);
+    border: 3px solid hsl(355, 84%, 55%);
+    color: hsl(355, 84%, 55%);
 }
 
 .option-icon{
-    font-size: 2rem;
+    font-size: 1.1rem;
     vertical-align: middle;
     line-height: 1;
     height: fit-content;

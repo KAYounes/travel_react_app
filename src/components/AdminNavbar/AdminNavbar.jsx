@@ -9,14 +9,14 @@ import Button from "../ui_components/buttons/Button.jsx";
 import Content from "../ui_components/wrappers/Content.jsx";
 //
 
-function AdminNavbar({ backButtonText, subTitle, showLogo }) {
+function AdminNavbar({ backButtonText, subTitle, showLogo, goseTo }) {
 
   return (
     <nav className={clsx(styles.nav, "navbar navbar-expand-lg")}>
       <Content>
         <Row mods="align-items-center p-5">
           <Col mods={"col-4"}>
-            <Button isBackButton>
+            <Button to={goseTo}>
               <i className="bi bi-arrow-left-short fs-3 icon-left me-3"></i>
               {backButtonText}
             </Button>

@@ -37,7 +37,7 @@ export default function AdminCardEditor() {
 
   return (
     <>
-      <AdminNavbar backButtonText="Dashboard" subTitle="Add Tour Package" />
+      <AdminNavbar goseTo='/admin' backButtonText="Dashboard" subTitle="Add Tour Package" />
       <Section>
         <IKContext
           urlEndpoint={IKIO_ENDPOINT}
@@ -46,7 +46,7 @@ export default function AdminCardEditor() {
         >
           <Row mods={clsx("gx-5")}>
             <Col mods={"col-4"}>
-              <div style={{height: 'min-content'}}>
+              <div className="position-sticky top-10" style={{height: 'min-content'}}>
                 <TourCard cardData={cardData} />
               </div>
             </Col>
