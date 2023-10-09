@@ -21,6 +21,7 @@ export default function AdminDashboard() {
 
   const navigator = useNavigate();
   const [cardData, setCardData] = React.useState([]);
+  const [deleteEvent, setDeleteEvent] = React.useState();
 
   const cardPlaceholdersDOM = range(placeholders).map(function (_, i) {
     return (
@@ -39,6 +40,10 @@ export default function AdminDashboard() {
       })
       .catch((err) => console.log(err));
   }, []);
+  // Fetch data from database
+  React.useEffect(function () {
+    removeCard(deleteEvent)
+  }, [deleteEvent]);
 
   const cardsDOM = cardData.map(function (card) {
     return (
@@ -46,6 +51,7 @@ export default function AdminDashboard() {
         <CardOverlay
           handleDelete={() => handelClickDelete(card.id)}
           handleEdit={() => handleClickEdit(card.id)}
+          // showSpinner={deleteEvent === card.id}
         >
           <TourCard cardData={card} />
         </CardOverlay>
@@ -76,9 +82,7 @@ export default function AdminDashboard() {
   }
 
   function handelClickDelete(id) {
-    fetch(MOCKAPI_ENDPOINT + '/' + id, {method: 'delete'}).then(() =>
-    removeCard(id))
-    
+    fetch(MOCKAPI_ENDPOINT + '/' + id, {method: 'delete'}).then(() => setDeleteEvent(id))    
   }
 
   function removeCard(id){

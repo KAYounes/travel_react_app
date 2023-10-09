@@ -62,7 +62,7 @@
     background-blend-mode: darken;
 }
 
-.optionWrap:first-child .option{
+.optionWrap:nth-child(1) .option{
     /* --bg-color: hsl(0deg 50% 50%); */
     /* background-color: hsla(54, 100%, 51%, 0.7); */
 
@@ -75,7 +75,7 @@
     color: #ECA400;
 }
 
-.optionWrap:last-child .option{
+.optionWrap:nth-child(2) .option{
     /* background-color: hsla(350, 91%, 57%, 0.4); */
     /* border: 3px solid #E60B2F; */
     /* color: #E60B2F; */
@@ -100,4 +100,11 @@
     display: block;
     height: fit-content;
     line-height: 1;
+}
+
+.spinner{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
