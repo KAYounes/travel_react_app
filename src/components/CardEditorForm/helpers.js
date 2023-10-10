@@ -94,3 +94,50 @@ async function _requestFromDatabase(url, method, headers, data){
 
 return response
 }
+
+export   function isWithinRange(
+  value,
+  min,
+  max,
+  // acceptEmpty = true,
+  allowFraction = false,
+  allowHalves = false
+) {
+  const debug = true;
+  min = +min;
+  max = +max;
+  debug && console.log(value, min, max);
+  
+  // terminate if min or max are not numbers
+  if (isNaN(min) || isNaN(max)) return false;
+  
+  // debug && console.log(1);
+  // // terminate if the value is empty
+  // if (!value) return acceptEmpty;
+  
+  debug && console.log(2);
+  // terminate if the value is not a number
+  if (Number.isNaN(Number(value))) return false;
+  
+  debug && console.log(3);
+  // terminate if number is outside range
+  if (value < min) return false;
+  
+  debug && console.log(4);
+  //terminate if number is outside range
+  if (value > max) return false;
+  
+  value = value.toString();
+  let fractionPart = Number(value.split(".")[1]);
+  
+  debug && console.log(5);
+  //terminate if fractions are not allow but halves are, and the fraction part is neither empty nor 0.5
+  if (allowHalves && !allowFraction)
+    return fractionPart ? fractionPart === 5 : true;
+
+  debug && console.log(6);
+  //terminate if fractions are not allowed and there is a fraction part
+  if (!allowFraction) return fractionPart ? fractionPart === 0 : true;
+
+  return true;
+}

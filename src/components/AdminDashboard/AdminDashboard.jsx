@@ -40,6 +40,7 @@ export default function AdminDashboard() {
       })
       .catch((err) => console.log(err));
   }, []);
+  
   // Fetch data from database
   React.useEffect(function () {
     removeCard(deleteEvent)
@@ -51,7 +52,6 @@ export default function AdminDashboard() {
         <CardOverlay
           handleDelete={() => handelClickDelete(card.id)}
           handleEdit={() => handleClickEdit(card.id)}
-          // showSpinner={deleteEvent === card.id}
         >
           <TourCard cardData={card} />
         </CardOverlay>

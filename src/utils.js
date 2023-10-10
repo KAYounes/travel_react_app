@@ -29,20 +29,42 @@ export const numberFormatter = function (num) {
 };
 
 export function removeSeparator(value, sep=','){
-  if(Number(value) === 'number') return value
+  if(Number(value)) return value
   let regex = new RegExp('\\' + sep, 'g')
+  return value.toString().replaceAll(regex, '')
+}
+
+// export function addSeparator(value, sep=','){
+//   value = value.toString()
+//   let [whole, ...other] = value.split('.')
+  
+//   if(!Number(value)){
+//     whole = removeSeparator(whole)
+//   }
+
+//   return whole.replaceAll(/(?<=\d)(?=(\d{3})+$)/g, sep) + (other.length ? '.' + other.join('.') : '');
+// }
+
+export function unformatNumber(value, decSep='.'){
+  value = value.toString()
+  let regex = new RegExp(`[^0-9${decSep}]`, 'g')
   return value.replaceAll(regex, '')
 }
 
-export function addSeparator(value, sep=','){
+export function extractNumber(value, decSep='.'){
   value = value.toString()
-  let [whole, ...other] = value.split('.')
-  
-  if(!Number(value)){
-    whole = removeSeparator(whole)
-  }
+  let regex = new RegExp(`[^0-9${decSep}]`, 'g')
+  return value.replaceAll(regex, '')
+}
 
-  return whole.replaceAll(/(?<=\d)(?=(\d{3})+$)/g, sep) + (other.length ? '.' + other.join('.') : '');
+export function addSeparator(value){
+  // value = removeSeparator(value)
+  if(!Number(value)) return value
+
+  let [whole, fraction] = value.toString().split('.')
+  let suffix = (fraction !== undefined ? '.' + fraction : '')
+
+  return whole.replaceAll(/(?<=\d)(?=(\d{3})+$)/g, ',') + suffix
 }
 
 export function addPadding(value, length=2, fill='0'){
@@ -53,9 +75,9 @@ export function addCurrency(value, symbol='$'){
   return symbol + value
 }
 
-export function asCurrency(value, sep=',', symbol='$'){
+export function asCurrency(value, symbol='$'){
   value = value.toString()
-  return addCurrency(addSeparator(value, sep), symbol)
+  return addCurrency(addSeparator(value), symbol)
 }
 
 // function _generateEndpoint(path, params) {
