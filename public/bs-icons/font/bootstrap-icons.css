@@ -11,14 +11,14 @@
 url("./fonts/bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2") format("woff");
 }
 
-.bi{
+.bi-thin{
   line-height: 0;
   display: inline-flex;
   align-items: center;
   height: 0px;
 }
 
-.bi::before,
+.bi-thin::before,
 [class^="bi-"]::before,
 [class*=" bi-"]::before {
   display: inline-block;
@@ -31,6 +31,21 @@ url("./fonts/bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2") format("wof
   line-height: 0;
   /* vertical-align: -.125em; */
   vertical-align: middle;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.bi::before,
+[class^="bi-"]::before,
+[class*=" bi-"]::before {
+  display: inline-block;
+  font-family: bootstrap-icons !important;
+  font-style: normal;
+  font-weight: normal !important;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: -.125em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

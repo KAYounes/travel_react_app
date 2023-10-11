@@ -17,7 +17,7 @@ function AdminNavbar({ backButtonText, subTitle, showLogo, goseTo }) {
         <Row mods="align-items-center p-5">
           <Col mods={"col-4"}>
             <Button to={goseTo}>
-              <i className="bi bi-arrow-left-short fs-3 icon-left me-3"></i>
+              <i className="bi-thin bi-arrow-left-short fs-3 icon-left me-3"></i>
               {backButtonText}
             </Button>
           </Col>

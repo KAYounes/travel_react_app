@@ -20,7 +20,7 @@ export default function CardOverlay({
           <div className={clsx(styles.option, "")} onClick={handleEdit}>
             <span>edit</span>
             <i
-              className={clsx(styles["option-icon"], "bi bi-pencil-square")}
+              className={clsx(styles["option-icon"], "bi-thin bi-pencil-square")}
             ></i>
           </div>
         </div>
@@ -28,7 +28,7 @@ export default function CardOverlay({
           <div className={clsx(styles.option, "")} onClick={() =>{setShowSpinner(true); handleDelete();}}>
             {/* <div className={clsx(styles.option, "")}> */}
             <span>delete</span>
-            <i className={clsx(styles["option-icon"], "bi bi-trash2-fill")}></i>
+            <i className={clsx(styles["option-icon"], "bi-thin bi-trash2-fill")}></i>
             {/* </div> */}
           </div>
         </div>

@@ -42,7 +42,7 @@ export default function TourCard({ cardData }) {
   } else {
     thumbnailDOM = (
       <div className="w-100 h-100 d-flex align-items-center justify-content-center">
-        <i className="bi bi-card-image fs-1"></i>
+        <i className="bi-thin bi-card-image fs-1"></i>
       </div>
     );
   }

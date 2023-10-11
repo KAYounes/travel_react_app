@@ -98,7 +98,7 @@ function AddCardButton(){
     to='./edit'
       className={clsx(styles.addCardBtn)}
     >
-      <i className="bi bi-file-plus-fill"></i>
+      <i className="bi-thin bi-file-plus-fill"></i>
       {/* <span className="p-5"></span>
       <span>
         Add

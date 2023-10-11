@@ -27,10 +27,6 @@ export default function InputNumeric({
   required = false,
   isValid = true,
   disabled,
-  // fraction = false,
-  // minValue = Number.NEGATIVE_INFINITY,
-  // maxValue = Number.POSITIVE_INFINITY,
-  // allowHaves = false,
   control,
 }) {
   const [cursorPosition, setCursorPosition] = React.useState(0);

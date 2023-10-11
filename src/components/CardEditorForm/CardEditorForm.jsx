@@ -62,162 +62,311 @@ export default function CardEditorForm({ updateCardDate }) {
     // id: "",
   });
 
-  const formValidation = {
-    city: {
-      type: "string",
+  // const formValidation = {
+  //   city: {
+  //     type: "string",
+  //     property: "city",
+  //     //   validate: function (strict = false) {
+  //     //     const value = formData[this.property];
+  //     //     return (
+  //     //       checkStringLength(value, this.validation) || checkEmpty(value, strict)
+  //     //     );
+  //     //   },
+  //     //   validationMessage: "",
+  //     validation: { max: 20 },
+  //   },
+  //   duration: {
+  //     type: "number",
+  //     property: "duration",
+  //     //   validate: function (strict = false) {
+  //     //     const value = formData[this.property];
+  //     //     return (
+  //     //       checkNumberRange(value, this.validation) || checkEmpty(value, strict)
+  //     //     );
+  //     //   },
+  //     //   validationMessage: "",
+  //     validation: {
+  //       min: 1,
+  //       max: 120,
+  //       fraction: false,
+  //       allowHaves: false,
+  //     },
+  //   },
+  //   popularity: {
+  //     type: "number",
+  //     property: "popularity",
+  //     //   validate: function (strict = false) {
+  //     //     const value = formData[this.property];
+  //     //     return (
+  //     //       checkNumberRange(value, this.validation) || checkEmpty(value, strict)
+  //     //     );
+  //     //   },
+  //     //   validationMessage: "",
+  //     validation: {
+  //       min: 0,
+  //       max: 1_000_000,
+  //       fraction: false,
+  //       allowHaves: false,
+  //     },
+  //   },
+  //   rating: {
+  //     type: "number",
+  //     property: "rating",
+  //     //   validate: function (strict = false) {
+  //     //     const value = formData[this.property];
+  //     //     return (
+  //     //       checkNumberRange(value, this.validation) || checkEmpty(value, strict)
+  //     //     );
+  //     //   },
+  //     //   validationMessage: "",
+  //     validation: {
+  //       min: 0.5,
+  //       max: 5,
+  //       fraction: false,
+  //       allowHaves: true,
+  //     },
+  //   },
+  //   priceOriginal: {
+  //     type: "number",
+  //     property: "priceOriginal",
+  //     //   validate: function (strict = false) {
+  //     //     const value = formData[this.property];
+  //     //     return (
+  //     //       checkNumberRange(value, this.validation) || checkEmpty(value, strict)
+  //     //     );
+  //     //   },
+  //     //   validationMessage: "",
+  //     value: function () {
+  //       return formData[this.property];
+  //     },
+
+  //     isValid: function () {
+  //       if(this.validate) return this.validate(this.type, this.value(), this.validation)
+  //       return validate(this.type, this.value(), this.validation);
+  //     },
+  //     validation: {
+  //       min: 150,
+  //       max: 10_000,
+  //       fraction: false,
+  //       allowHaves: false,
+  //     },
+  //   },
+  //   priceOffered: {
+  //     type: "number",
+  //     property: "priceOffered",
+  //     validate: function (strict = false) {
+  //       const value = formData[this.property];
+  //       console.log(formValidation.priceOriginal.isValid());
+  //       if (
+  //         !formValidation.priceOriginal.isValid()
+  //     )
+  //         return false;
+  //       return (
+  //         checkNumberRange(value, this.validation) || checkEmpty(value, strict)
+  //       );
+  //     },
+  //     validationMessage: function () {
+  //       if (
+  //           !formValidation.priceOriginal.isValid()
+  //       )
+  //         return undefined;
+
+  //       return "Please enter a valid price in the previous filed first. (Price Offered)";
+  //     },
+  //     validation: {
+  //       min: 100,
+  //       max: formData.priceOriginal - 1,
+  //       fraction: false,
+  //       allowHaves: false,
+  //     },
+  //   },
+  //   details: {
+  //     type: "string",
+  //     property: "details",
+  //     //   validate: function (strict = false) {
+  //     //     const value = formData[this.property];
+  //     //     return (
+  //     //       checkStringLength(value, this.validation) || checkEmpty(value, strict)
+  //     //     );
+  //     //   },
+  //     //   validationMessage: "",
+  //     validation: { min: 30, max: 150 },
+  //   },
+  // };
+
+  // const basicFormFields = [];
+  const basicFormFieldsData = [
+    {
       property: "city",
-      //   validate: function (strict = false) {
-      //     const value = formData[this.property];
-      //     return (
-      //       checkStringLength(value, this.validation) || checkEmpty(value, strict)
-      //     );
-      //   },
-      //   validationMessage: "",
+      type: "text",
       validation: { max: 20 },
     },
-    duration: {
-      type: "number",
+    {
       property: "duration",
-      //   validate: function (strict = false) {
-      //     const value = formData[this.property];
-      //     return (
-      //       checkNumberRange(value, this.validation) || checkEmpty(value, strict)
-      //     );
-      //   },
-      //   validationMessage: "",
-      validation: {
-        min: 1,
-        max: 120,
-        fraction: false,
-        allowHaves: false,
-      },
+      type: "numeric",
+      validation: { min: 1, max: 120 },
+      suffix: "days",
     },
-    popularity: {
-      type: "number",
+    {
       property: "popularity",
-      //   validate: function (strict = false) {
-      //     const value = formData[this.property];
-      //     return (
-      //       checkNumberRange(value, this.validation) || checkEmpty(value, strict)
-      //     );
-      //   },
-      //   validationMessage: "",
-      validation: {
-        min: 0,
-        max: 1_000_000,
-        fraction: false,
-        allowHaves: false,
-      },
+      type: "numeric",
+      validation: { max: 1_000_000 },
+      suffix: "people",
     },
-    rating: {
-      type: "number",
+    {
       property: "rating",
-      //   validate: function (strict = false) {
-      //     const value = formData[this.property];
-      //     return (
-      //       checkNumberRange(value, this.validation) || checkEmpty(value, strict)
-      //     );
-      //   },
-      //   validationMessage: "",
-      validation: {
-        min: 0.5,
-        max: 5,
-        fraction: false,
-        allowHaves: true,
-      },
+      type: "numeric",
+      validation: { min: 0.5, max: 5, allowHalves: true },
+      suffix: (<i className="bi bi-star-fill text-warning"></i>),
     },
-    priceOriginal: {
-      type: "number",
-      property: "priceOriginal",
-      //   validate: function (strict = false) {
-      //     const value = formData[this.property];
-      //     return (
-      //       checkNumberRange(value, this.validation) || checkEmpty(value, strict)
-      //     );
-      //   },
-      //   validationMessage: "",
-      value: function () {
-        return formData[this.property];
-      },
-      
-      isValid: function () {
-        if(this.validate) return this.validate(this.type, this.value(), this.validation)
-        return validate(this.type, this.value(), this.validation);
-      },
-      validation: {
-        min: 150,
-        max: 10_000,
-        fraction: false,
-        allowHaves: false,
-      },
+    {
+      property: 'priceOriginal',
+      type:'numeric',
+      // isValid: function(){
+        
+      // },
+      validation:{min:150, max:10_000},
+      suffix: '$'
     },
-    priceOffered: {
-      type: "number",
-      property: "priceOffered",
-      validate: function (strict = false) {
-        const value = formData[this.property];
-        console.log(formValidation.priceOriginal.isValid());
-        if (
-          !formValidation.priceOriginal.isValid()
-      )
-          return false;
-        return (
-          checkNumberRange(value, this.validation) || checkEmpty(value, strict)
-        );
+    {
+      property:'priceOffered',
+      type:'numeric',
+      isOriginalPriceValid: function(){
+        return basicFormFields['priceOriginal'].value() && basicFormFields['priceOriginal'].isValid
       },
-      validationMessage: function () {
-        if (
-            !formValidation.priceOriginal.isValid()
-        )
-          return undefined;
+      isValid: function(){
+        // console.log({_this: this})
+        if(!this.isOriginalPriceValid()) return false
 
-        return "Please enter a valid price in the previous filed first. (Price Offered)";
+        return validateNumber(this.value(), this.validation)
       },
-      validation: {
-        min: 100,
-        max: formData.priceOriginal - 1,
-        fraction: false,
-        allowHaves: false,
+      invalidFeedback: function(){
+        if(this.isOriginalPriceValid()) return undefined
+
+        return "Please enter a valid original price. (I.e. the previous field)"
       },
+      validation:{min:100, max: formData.priceOriginal},
+      suffix: '$'
     },
-    details: {
-      type: "string",
-      property: "details",
-      //   validate: function (strict = false) {
-      //     const value = formData[this.property];
-      //     return (
-      //       checkStringLength(value, this.validation) || checkEmpty(value, strict)
-      //     );
-      //   },
-      //   validationMessage: "",
-      validation: { min: 30, max: 150 },
+    {
+      property:'details',
+      type:'text',
+      validation:{min:30, max:150},
+      largeText: true
     },
-  };
+  ];
 
-  const formBasicInputs = [];
-  for (let fieldKey in formValidation) {
-    const field = formValidation[fieldKey];
-    const props = {
-      label: fieldKey,
-      id: "inputTour_" + fieldKey,
-      isValid:
-        field.validate?.() ??
-        validate(field.type, formData[fieldKey], field.validation),
-      invalidFeedback:
-        field.validationMessage?.() ??
-        defaultValidationMessage(field.type, field.validation),
-      control: [formData[fieldKey], (value) => updateFormData(fieldKey, value)],
-    };
+  function CreateBasicFormField({
+    type,
+    property,
+    prefix,
+    suffix,
+    name,
+    hint,
+    invalidFeedback,
+    isValid,
+    label,
+    largeText = false,
+    asDecimal = false,
+    required = true,
+    disabled = false,
+    validation,
+    ...other
+  }) {
+    this.asDecimal = asDecimal;
+    this.disabled = disabled;
+    this.hint = hint;
+    this.id = `${property}Input`;
+    this.largeText = largeText;
+    this.name = name;
+    this.prefix = prefix;
+    this.property = property;
+    this.required = required;
+    this.suffix = suffix;
+    this.type = type;
+    this.validation = validation;
+    this.value = () => formData[property];
+    // console.log(property, 'other', other)
+    
+    for(let otherProperties in other){
+      // console.log('>>', otherProperties)
+      this[otherProperties] = other[otherProperties]
+    }
 
-    if (field.type === "string")
-      formBasicInputs.push(<InputText {...props} key={props.id} />);
-    if (field.type === "number")
-      formBasicInputs.push(<InputNumeric {...props} key={props.id} />);
+    this.label = label;
+    if (this.label === undefined) this.label = property.split(/(?=[A-Z])/).join(" ");
+
+    this.invalidFeedback = invalidFeedback?.bind?.(this)();
+    if (this.invalidFeedback === undefined) this.invalidFeedback = defaultValidationMessage(type, validation);
+
+    this.isValid = isValid?.bind?.(this)();
+    if (this.isValid === undefined) this.isValid = validate(type, this.value(), validation);
+    
+    this.control = [
+      formData[property],
+      (value) => updateFormData(property, value),
+    ];
   }
 
+  // const formBasicInputs = [];
+  // for (let fieldKey in formValidation) {
+  //   const field = formValidation[fieldKey];
+  //   const props = {
+  //     label: fieldKey,
+  //     id: "inputTour_" + fieldKey,
+  //     isValid:
+  //       field.validate?.() ??
+  //       validate(field.type, formData[fieldKey], field.validation),
+  //     invalidFeedback:
+  //       field.validationMessage?.() ??
+  //       defaultValidationMessage(field.type, field.validation),
+  //     control: [formData[fieldKey], (value) => updateFormData(fieldKey, value)],
+  //   };
+
+  //   if (field.type === "string")
+  //     formBasicInputs.push(<InputText {...props} key={props.id} />);
+  //   if (field.type === "number")
+  //     formBasicInputs.push(<InputNumeric {...props} key={props.id} />);
+  // }
+
+
+  const basicFormFields = {};
+
+  basicFormFieldsData.map(
+    function(fieldData){
+      return basicFormFields[fieldData.property] = new CreateBasicFormField(fieldData)
+    }
+  )
+
+  console.log(basicFormFields)
+
+  const basicFormFieldsDOM = basicFormFieldsData.map(
+    function(fieldData){
+      const field = basicFormFields[fieldData.property]
+
+      if(field.type === 'text'){
+        return (
+          <InputText
+          key={field.id}
+          {...field}
+          />
+        )
+      }
+
+      if(field.type === 'numeric'){
+        return (
+          <InputNumeric
+          key={field.id}
+          {...field}
+          />
+        )
+      }
+    }
+  );
+
   return (
-    <form className="d-flex flex-column gap-3" onSubmit={handleSubmit}>
-      {formBasicInputs}
+    <form className="d-flex flex-column gap-7" onSubmit={handleSubmit}>
+      {basicFormFieldsDOM}
     </form>
   );
   ////
@@ -401,7 +550,7 @@ export default function CardEditorForm({ updateCardDate }) {
   function checkStringLength(string, validation) {
     const stringLength = string.length;
     if (stringLength === undefined) return false;
-    const { min = 1, max } = validation;
+    const { min = 1, max = 30 } = validation;
 
     if (min) if (stringLength < min) return false;
     if (max) if (stringLength > max) return false;
@@ -410,12 +559,12 @@ export default function CardEditorForm({ updateCardDate }) {
   }
 
   function defaultValidationMessage(type, validation) {
-    if (type === "string") return defStringValidationMsg(validation);
-    if (type === "number") return defNumberValidationMsg(validation);
+    if (type === "text") return defStringValidationMsg(validation);
+    if (type === "numeric") return defNumberValidationMsg(validation);
   }
 
   function defNumberValidationMsg(validation) {
-    const { min, max } = validation;
+    const { min=0, max } = validation;
     let validationMessage = `Please enter a number between ${addSeparator(
       min
     )} and ${addSeparator(max)}`;
@@ -449,8 +598,8 @@ export default function CardEditorForm({ updateCardDate }) {
   }
 
   function validate(type, value, validation) {
-    if (type === "string") return validateString(value, validation);
-    if (type === "number") return validateNumber(value, validation);
+    if (type === "text") return validateString(value, validation);
+    if (type === "numeric") return validateNumber(value, validation);
   }
 
   function validateString(value, validation) {

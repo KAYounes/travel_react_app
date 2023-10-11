@@ -11,7 +11,7 @@ export default function NoPageFound() {
           If you cannot navigate the internet then go read the newspaper
         </p>
         <Button to='./'>
-          <i className="bi bi-arrow-left-short fs-3 me-3"></i>
+          <i className="bi-thin bi-arrow-left-short fs-3 me-3"></i>
           Take Me Home Please
           </Button>
       </Content>

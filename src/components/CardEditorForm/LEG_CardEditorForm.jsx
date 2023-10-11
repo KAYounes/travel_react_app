@@ -188,7 +188,7 @@ export default function CardEditorForm({ updateCardDate }) {
               disabled={!!uploadProgress}
             />
             <label htmlFor="posTop" className="btn btn-light">
-              <i className="bi bi-align-top"></i>
+              <i className="bi-thin bi-align-top"></i>
             </label>
             <label htmlFor="posTop" className="form-check-label ms-3">
               Top
@@ -205,7 +205,7 @@ export default function CardEditorForm({ updateCardDate }) {
               disabled={!!uploadProgress}
             />
             <label htmlFor="posCenter" className="btn btn-light">
-              <i className="bi bi-align-center"></i>
+              <i className="bi-thin bi-align-center"></i>
             </label>
             <label htmlFor="posCenter" className="form-check-label ms-3">
               Center
@@ -222,7 +222,7 @@ export default function CardEditorForm({ updateCardDate }) {
               disabled={!!uploadProgress}
             />
             <label htmlFor="posBottom" className="btn btn-light">
-              <i className="bi bi-align-bottom"></i>
+              <i className="bi-thin bi-align-bottom"></i>
             </label>
             <label htmlFor="posBottom" className="form-check-label ms-3">
               Bottom
