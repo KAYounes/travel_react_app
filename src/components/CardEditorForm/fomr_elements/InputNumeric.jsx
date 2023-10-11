@@ -26,6 +26,7 @@ export default function InputNumeric({
   asCurrency = false,
   required = false,
   isValid = true,
+  disabled,
   // fraction = false,
   // minValue = Number.NEGATIVE_INFINITY,
   // maxValue = Number.POSITIVE_INFINITY,
@@ -46,11 +47,11 @@ export default function InputNumeric({
       <label
         htmlFor={id}
         className={clsx(
-          "form-label d-flex justify-content-between align-items-center",
+          "form-label d-flex justify-content-between align-items-center text-capitalize",
           label || "visually-hidden"
         )}
       >
-        {label}
+        {label.split(/(?=[A-Z])/).join(' ')}
         {required ? (
           <small
             className={clsx(styles.requiredIndicator, "badge rounded-pill")}
@@ -83,15 +84,14 @@ export default function InputNumeric({
   if (validFeedback) {
     validFeedbackDOM = <div className="valid-feedback">{validFeedback}</div>;
   }
-  ////
-  React.useEffect(function () {
-    inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
-  });
-
   let hintDOM;
   if (hint) {
     hintDOM = <div className="form-text">{hint}</div>;
   }
+  ////
+  React.useEffect(function () {
+    inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
+  });
 
   return (
     <div className={clsx()}>
@@ -108,7 +108,7 @@ export default function InputNumeric({
           onChange={handleChange}
           onBlur={handleBlur}
           onFocus={handleFocus}
-          disabled
+          disabled={disabled}
         />
         {suffixDOM}
         {invalidFeedbackDOM}

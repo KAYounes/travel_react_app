@@ -34,6 +34,7 @@ export default function CardEditorForm({ updateCardDate }) {
   const [isCardUploaded, setIsCardUploaded] = React.useState(false);
 
   const cardID = window.location.pathname.match(/(?<=edit\/)\d*/);
+  const strictValidation = false;
 
   const countriesOptions = [];
 
@@ -61,548 +62,294 @@ export default function CardEditorForm({ updateCardDate }) {
     // id: "",
   });
 
-  const [formErrors, setFormErrors] = React.useState({
-    thumbnailSrc: false,
-    countryKey: false,
-    duration: false,
-    popularity: false,
-    city: false,
-    rating: false,
-    country: false,
-    priceOriginal: false,
-    priceOffered: false,
-    details: false,
-    poi: false,
-    thumbnailID: false,
-    // id: false,
-  });
-
-  React.useEffect(function () {
-    if (!cardID) return;
-
-    async function get() {
-      let response = await fetch(MOCKAPI_ENDPOINT + "/" + cardID).then((r) =>
-        r.json()
-      );
-      setFormData(response);
-    }
-
-    get();
-  }, []);
-
-  React.useEffect(
-    function () {
-      for (let key in formErrors) {
-        if (!formErrors[key]) updateCardDate(key, formData[key]);
-        else updateCardDate(key, "");
-      }
+  const formValidation = {
+    city: {
+      type: "string",
+      property: "city",
+      //   validate: function (strict = false) {
+      //     const value = formData[this.property];
+      //     return (
+      //       checkStringLength(value, this.validation) || checkEmpty(value, strict)
+      //     );
+      //   },
+      //   validationMessage: "",
+      validation: { max: 20 },
     },
-    [formData]
-  );
-
-  React.useEffect(
-    function () {
-      if (!isImageUploaded) return;
-
-      // async function get() {
-      //     let response = await fetch(MOCKAPI_ENDPOINT, {
-      //         method: "post",
-      //         headers: {
-      //             'Accept': 'application/json',
-      //             'Content-Type': 'application/json'
-      //         },
-      //         body: JSON.stringify(formData),
-      //     }).then((r) => r.json());
-
-      // }
-      // get();
-
-      if (cardID) {
-        updateTour(cardID, formData);
-      } else {
-        uploadTour(formData);
-      }
+    duration: {
+      type: "number",
+      property: "duration",
+      //   validate: function (strict = false) {
+      //     const value = formData[this.property];
+      //     return (
+      //       checkNumberRange(value, this.validation) || checkEmpty(value, strict)
+      //     );
+      //   },
+      //   validationMessage: "",
+      validation: {
+        min: 1,
+        max: 120,
+        fraction: false,
+        allowHaves: false,
+      },
     },
-    [isImageUploaded]
-  );
+    popularity: {
+      type: "number",
+      property: "popularity",
+      //   validate: function (strict = false) {
+      //     const value = formData[this.property];
+      //     return (
+      //       checkNumberRange(value, this.validation) || checkEmpty(value, strict)
+      //     );
+      //   },
+      //   validationMessage: "",
+      validation: {
+        min: 0,
+        max: 1_000_000,
+        fraction: false,
+        allowHaves: false,
+      },
+    },
+    rating: {
+      type: "number",
+      property: "rating",
+      //   validate: function (strict = false) {
+      //     const value = formData[this.property];
+      //     return (
+      //       checkNumberRange(value, this.validation) || checkEmpty(value, strict)
+      //     );
+      //   },
+      //   validationMessage: "",
+      validation: {
+        min: 0.5,
+        max: 5,
+        fraction: false,
+        allowHaves: true,
+      },
+    },
+    priceOriginal: {
+      type: "number",
+      property: "priceOriginal",
+      //   validate: function (strict = false) {
+      //     const value = formData[this.property];
+      //     return (
+      //       checkNumberRange(value, this.validation) || checkEmpty(value, strict)
+      //     );
+      //   },
+      //   validationMessage: "",
+      value: function () {
+        return formData[this.property];
+      },
+      
+      isValid: function () {
+        if(this.validate) return this.validate(this.type, this.value(), this.validation)
+        return validate(this.type, this.value(), this.validation);
+      },
+      validation: {
+        min: 150,
+        max: 10_000,
+        fraction: false,
+        allowHaves: false,
+      },
+    },
+    priceOffered: {
+      type: "number",
+      property: "priceOffered",
+      validate: function (strict = false) {
+        const value = formData[this.property];
+        console.log(formValidation.priceOriginal.isValid());
+        if (
+          !formValidation.priceOriginal.isValid()
+      )
+          return false;
+        return (
+          checkNumberRange(value, this.validation) || checkEmpty(value, strict)
+        );
+      },
+      validationMessage: function () {
+        if (
+            !formValidation.priceOriginal.isValid()
+        )
+          return undefined;
 
-  function onSuccess(response) {
-    setIsImageUploaded(true);
-    updateFormData("thumbnailSrc", response.filePath);
-    updateFormData("thumbnailID", response.fileId);
-  }
+        return "Please enter a valid price in the previous filed first. (Price Offered)";
+      },
+      validation: {
+        min: 100,
+        max: formData.priceOriginal - 1,
+        fraction: false,
+        allowHaves: false,
+      },
+    },
+    details: {
+      type: "string",
+      property: "details",
+      //   validate: function (strict = false) {
+      //     const value = formData[this.property];
+      //     return (
+      //       checkStringLength(value, this.validation) || checkEmpty(value, strict)
+      //     );
+      //   },
+      //   validationMessage: "",
+      validation: { min: 30, max: 150 },
+    },
+  };
 
-  function onFail(args) {
-    console.log("fail", args);
+  const formBasicInputs = [];
+  for (let fieldKey in formValidation) {
+    const field = formValidation[fieldKey];
+    const props = {
+      label: fieldKey,
+      id: "inputTour_" + fieldKey,
+      isValid:
+        field.validate?.() ??
+        validate(field.type, formData[fieldKey], field.validation),
+      invalidFeedback:
+        field.validationMessage?.() ??
+        defaultValidationMessage(field.type, field.validation),
+      control: [formData[fieldKey], (value) => updateFormData(fieldKey, value)],
+    };
+
+    if (field.type === "string")
+      formBasicInputs.push(<InputText {...props} key={props.id} />);
+    if (field.type === "number")
+      formBasicInputs.push(<InputNumeric {...props} key={props.id} />);
   }
 
   return (
-    <form action="" onSubmit={handleSubmit}>
-      <div className="mb-3">
-        <div id="ikupload">
-          <IKUpload
-            onSuccess={onSuccess}
-            onError={onFail}
-            style={{ display: "none" }}
-            useUniqueFileName={false}
-            overwriteFile={true}
-            onUploadProgress={onUploadProgress}
-          />
-        </div>
-        <label htmlFor="imagePath" className="form-label">
-          Thumbnail Image
-        </label>
-        <input
-          type="file"
-          name="imagePath"
-          id="imagePath"
-          className={clsx(
-            styles.inputNumber__noArrows,
-            formErrors.thumbnailSrc && "is-invalid",
-            "form-control"
-          )}
-          accept="image/*"
-          ref={stubIKUpload}
-          onChange={handleImageChange}
-          disabled={!!uploadProgress}
-        />
-        <div className="invalid-feedback">
-          Please choose an image file, the image should not be larger than{" "}
-          {MAX_IMG_SIZE_MB}MB.
-        </div>
-      </div>
-
-      <div className="mb-3">
-        <label htmlFor="" className="form-label">
-          Thumbnail Alignment
-        </label>
-        <div className="row">
-          <div className="col-4">
-            <input
-              type="radio"
-              className="btn-check"
-              name="thumbnailPosition"
-              id="posTop"
-              checked={formData.poi === "top"}
-              onChange={() => updateFormData("poi", "top")}
-              disabled={!!uploadProgress}
-            />
-            <label htmlFor="posTop" className="btn btn-light">
-              <i className="bi bi-align-top"></i>
-            </label>
-            <label htmlFor="posTop" className="form-check-label ms-3">
-              Top
-            </label>
-          </div>
-          <div className="col-4">
-            <input
-              type="radio"
-              className="btn-check"
-              name="thumbnailPosition"
-              id="posCenter"
-              checked={formData.poi === "center"}
-              onChange={() => updateFormData("poi", "center")}
-              disabled={!!uploadProgress}
-            />
-            <label htmlFor="posCenter" className="btn btn-light">
-              <i className="bi bi-align-center"></i>
-            </label>
-            <label htmlFor="posCenter" className="form-check-label ms-3">
-              Center
-            </label>
-          </div>
-          <div className="col-4">
-            <input
-              type="radio"
-              className="btn-check"
-              name="thumbnailPosition"
-              id="posBottom"
-              checked={formData.poi === "bottom"}
-              onChange={() => updateFormData("poi", "bottom")}
-              disabled={!!uploadProgress}
-            />
-            <label htmlFor="posBottom" className="btn btn-light">
-              <i className="bi bi-align-bottom"></i>
-            </label>
-            <label htmlFor="posBottom" className="form-check-label ms-3">
-              Bottom
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <div className="mb-3">
-        <label htmlFor="countrySelect" className="form-label">
-          Choose Country
-        </label>
-        <select
-          className={clsx("form-select", formErrors.country && "is-invalid")}
-          id="countrySelect"
-          style={{ color: formData.country ? "black" : "#a6a6a6" }}
-          value={formData.countryKey}
-          onChange={handleChangeCountry}
-          disabled={!!uploadProgress}
-        >
-          <option value="" hidden>
-            Country
-          </option>
-          {countriesOptions}
-        </select>
-
-        <div className="invalid-feedback">
-          Please choose a country from the list
-        </div>
-      </div>
-
-      <div className="mb-3">
-        <label htmlFor="cityInput" className="form-label">
-          City
-        </label>
-        <input
-          id="cityInput"
-          type="text"
-          className={clsx(
-            styles.inputNumber__noArrows,
-            formErrors.city && "is-invalid",
-            "form-control"
-          )}
-          value={formData.city}
-          onChange={handleChangeCity}
-          disabled={!!uploadProgress}
-        />
-      </div>
-
-      <div className="mb-3">
-        <label htmlFor="durationInput" className="form-label">
-          Duration
-        </label>
-        <div className="input-group has-validation">
-          <input
-            id="durationInput"
-            type="text"
-            className={clsx(
-              styles.inputNumber__noArrows,
-              formErrors.duration && "is-invalid",
-              "form-control"
-            )}
-            value={formData.duration}
-            onChange={handleChangeDuration}
-            disabled={!!uploadProgress}
-          />
-          <span className="input-group-text">days</span>
-          <div className="invalid-feedback">
-            Please enter a number between {MIN_DURATION} and {MAX_DURATION}.
-          </div>
-        </div>
-      </div>
-
-      <div className="mb-3">
-        <label htmlFor="popularityInput" className="form-label">
-          Popularity
-        </label>
-        <div className="input-group has-validation">
-          <input
-            id="popularityInput"
-            type="text"
-            className={clsx(
-              styles.inputNumber__noArrows,
-              formErrors.popularity && "is-invalid",
-              "form-control"
-            )}
-            value={addSeparator(formData.popularity)}
-            onChange={handleChangePopularity}
-            disabled={!!uploadProgress}
-          />
-          <span className="input-group-text">people going</span>
-          <div className="invalid-feedback">
-            Please enter an integer between {MIN_POPULARITY} and{" "}
-            {addSeparator(MAX_POPULARITY)}.
-          </div>
-        </div>
-      </div>
-
-      <div className="mb-3">
-        <label htmlFor="" className="form-label">
-          Tour Rating
-        </label>
-        <div className="input-group has-validation">
-          <input
-            type="text"
-            className={clsx(
-              styles.inputNumber__noArrows,
-              formErrors.rating && "is-invalid",
-              "form-control"
-            )}
-            value={formData.rating}
-            onChange={handleChangeRating}
-            disabled={!!uploadProgress}
-          />
-          <span className="input-group-text">
-            <StarRating rating={formData.rating} />
-          </span>
-          <div className="invalid-feedback">
-            Please enter a number between {MIN_RATING} and {MAX_RATING}, with{" "}
-            half increments.
-          </div>
-        </div>
-      </div>
-
-      <div className="mb-3">
-        <label htmlFor="" className="form-label">
-          Price Original
-        </label>
-        <div className="input-group has-validation">
-          <span className="input-group-text">$</span>
-          <input
-            type="text"
-            className={clsx(
-              styles.inputNumber__noArrows,
-              formErrors.priceOriginal && "is-invalid",
-              "form-control"
-            )}
-            value={addSeparator(formData.priceOriginal)}
-            onChange={handleChangePriceOriginal}
-            disabled={!!uploadProgress}
-          />
-
-          <div className="invalid-feedback">
-            Please enter a number between {asCurrency(MIN_PRICE)} and{" "}
-            {asCurrency(MAX_PRICE)}.
-          </div>
-        </div>
-      </div>
-
-      <div className="mb-3">
-        <label htmlFor="" className="form-label">
-          Price Offered
-        </label>
-        <div className="input-group has-validation">
-          <span className="input-group-text">$</span>
-          <input
-            type="text"
-            className={clsx(
-              styles.inputNumber__noArrows,
-              formErrors.priceOffered && "is-invalid",
-              "form-control"
-            )}
-            value={formData.priceOffered}
-            // onChange={handleChangePriceOffered}
-            onBlur={(e) =>
-              (e.target.value = addSeparator(formData.priceOffered))
-            }
-            onFocus={(e) => (e.target.value = formData.priceOffered)}
-            disabled={!!uploadProgress}
-          />
-
-          {formErrors.priceOriginal ? (
-            <div className="invalid-feedback">
-              Please enter a valid original price first.
-            </div>
-          ) : (
-            <div className="invalid-feedback">
-              Please enter a number between {asCurrency(MIN_PRICE)} and less
-              than {asCurrency(formData.priceOriginal)}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="mb-3 position-relative">
-        <div className="position-relative">
-          <label htmlFor="" className="form-label">
-            Details
-          </label>
-          <textarea
-            className={clsx(
-              styles.inputNumber__noArrows,
-              formErrors.details && "is-invalid",
-              "form-control"
-            )}
-            id="detailsInput"
-            rows="5"
-            style={{ resize: "none" }}
-            value={formData.details}
-            onChange={handleChangeDetails}
-            disabled={!!uploadProgress}
-          ></textarea>
-          <small
-            className={clsx(
-              formErrors.details ? "text-danger" : "text-muted",
-              "position-absolute end-0 bottom-0 p-2"
-            )}
-          >
-            {formData.details.length} / {MAX_DETAILS_LENGTH}
-          </small>
-        </div>
-        {formErrors.details && (
-          <small className="text-danger">
-            Please have between {MIN_DETAILS_LENGTH} and {MAX_DETAILS_LENGTH}{" "}
-            characters.
-          </small>
-        )}
-      </div>
-
-      <button className="form-control position-relative" type="submit">
-        Upload
-        <div
-          className="progress position-absolute bottom-0 start-0 end-0"
-          style={{ height: 3 }}
-        >
-          <div
-            className="progress-bar progress-bar-animated "
-            style={{
-              width: `${
-                uploadProgress * 100 - (formData.ThumbnailSrc ? 0 : 10)
-              }%`,
-              backgroundColor: "#bce784",
-            }}
-          ></div>
-        </div>
-      </button>
+    <form className="d-flex flex-column gap-3" onSubmit={handleSubmit}>
+      {formBasicInputs}
     </form>
   );
   ////
 
-  function handleChangeCountry(event) {
-    const value = event.target.value;
-    updateFormData("countryKey", value);
-    updateFormData("country", COUNTRIES[value]);
-  }
+  /* Old Code 
+  //   function triggerErrorsForEmptyFields() {
+  //     let isValidForm = true;
+  //     for (let key in formData) {
+  //       if (key === "thumbnailID") continue;
+  //       if (!formData[key]) {
+  //         console.log(key, formData[key]);
+  //         updateFormErrors(key, true);
+  //         isValidForm = false;
+  //       }
+  //     }
+  //     return isValidForm;
+  //   }
 
-  function handleChangeCity(event) {
-    const value = event.target.value;
-    updateFormData("city", value);
-  }
+  //   async function uploadImage() {
+  //     const files = stubIKUpload.current.files;
+  //     if (!files) return;
 
-  function handleChangeDuration(event) {
-    const value = event.target.value;
-    const isValid = isWithinRange(value, MIN_DURATION, MAX_DURATION);
+  //     const ikupload = document.querySelector("#ikupload > input");
+  //     ikupload.files = files;
+  //     ikupload.dispatchEvent(new Event("change", { bubbles: true }));
+  //   }
 
-    updateFormData("duration", value);
-    updateFormErrors("duration", !isValid);
-  }
+  //   function onUploadProgress(progress) {
+  //     setUploadProgress(progress.loaded / progress.total);
+  //   }
 
-  function handleChangePopularity(event) {
-    let value = event.target.value;
-    value = unformatNumber(value);
+  //   function validateImageFile(file) {
+  //     if (!file) return false;
+  //     if (!REGEX_IMG_TYPE.test(file.type)) return false;
+  //     if (file.size > MAX_IMG_SIZE_MB * 1024 * 1024) return false;
 
-    let isValid = isWithinRange(value, MIN_POPULARITY, MAX_POPULARITY);
+  //     return true;
+  //   }
 
-    // value = addSeparator(value)
+  //   function handleImageChange(event) {
+  //     const file = event.target.files[0];
+  //     const isValid = validateImageFile(file);
+  //     updateFormErrors("thumbnailSrc", !isValid);
 
-    updateFormData("popularity", value);
-    updateFormErrors("popularity", !isValid);
-  }
+  //     if (!isValid) return;
 
-  function handleChangeRating(event) {
-    const value = event.target.value;
-    let isValid = isWithinRange(
-      value,
-      MIN_RATING,
-      MAX_RATING,
-      true,
-      false,
-      true
-    );
+  //     const fileReader = new FileReader();
 
-    updateFormData("rating", value);
-    setFormErrors((prev) => ({ ...prev, rating: !isValid }));
-  }
+  //     fileReader.onload = function (event) {
+  //       const img = event.target.result;
+  //       updateFormData("thumbnailSrc", img);
+  //       updateFormData("thumbnailID", "");
+  //     };
 
-  function handleChangePriceOriginal(event) {
-    let value = event.target.value;
-    value = unformatNumber(value);
-    const isValid = isWithinRange(value, MIN_PRICE, MAX_PRICE);
+  //     fileReader.readAsDataURL(file);
+  //   }
+  //
+  //   function updateFormErrors(key, value) {
+  //     setFormErrors(function (prev) {
+  //       return {
+  //         ...prev,
+  //         [key]: value,
+  //       };
+  //     });
+  //   }
 
-    updateFormData("priceOriginal", value);
-    updateFormErrors("priceOriginal", !isValid);
-  }
+  //   function checkFormErrors() {
+  //     for (let key in formErrors) {
+  //       if (formErrors[key]) return true;
+  //     }
 
-  function handleChangePriceOffered(event) {
-    let value = event.target.value;
-    // value = value.replaceAll(/,/g, "");
-    value = unformatNumber(value);
+  //     return false;
+  //   }
+  //
+  //   function isWithinRange(
+  //     value,
+  //     min,
+  //     max,
+  //     // acceptEmpty = true,
+  //     allowFraction = false,
+  //     allowHalves = false
+  //   ) {
+  //     const debug = false;
+  //     value = value.toString();
+  //     min = +min;
+  //     max = +max;
+  //     debug && console.log(value);
 
-    let maxOfferedPrice = Number(unformatNumber(formData.priceOriginal)) - 1;
-    const isValid = isWithinRange(value, MIN_PRICE, maxOfferedPrice);
-    updateFormData("priceOffered", value);
-    updateFormErrors("priceOffered", !isValid);
-  }
+  //     // terminate if min or max are not numbers
+  //     if (isNaN(min) || isNaN(max)) return false;
 
-  function handleChangeDetails(event) {
-    let value = event.target.value;
-    // the ORing is done to avoid triggering errors when everything is deleted. It replaces length 0 with empty string
-    let isValid = isWithinRange(
-      value.length || "",
-      MIN_DETAILS_LENGTH,
-      MAX_DETAILS_LENGTH
-    );
-    updateFormData("details", value);
-    updateFormErrors("details", !isValid);
-  }
+  //     // debug && console.log(1);
+  //     // // terminate if the value is empty
+  //     // if (!value) return acceptEmpty;
 
-  function handleImageChange(event) {
-    const file = event.target.files[0];
-    const isValid = validateImageFile(file);
-    updateFormErrors("thumbnailSrc", !isValid);
+  //     if (value === "") return true;
 
-    if (!isValid) return;
+  //     debug && console.log(2);
+  //     // terminate if the value is not a number
+  //     if (Number.isNaN(Number(value))) return false;
 
-    const fileReader = new FileReader();
+  //     debug && console.log(3);
+  //     // terminate if number is outside range
+  //     if (value < min) return false;
 
-    fileReader.onload = function (event) {
-      const img = event.target.result;
-      updateFormData("thumbnailSrc", img);
-      updateFormData("thumbnailID", "");
-    };
+  //     debug && console.log(4);
+  //     //terminate if number is outside range
+  //     if (value > max) return false;
 
-    fileReader.readAsDataURL(file);
-  }
+  //     let fractionPart = Number(value.split(".")[1]);
+
+  //     debug && console.log(5);
+  //     //terminate if fractions are not allow but halves are, and the fraction part is neither empty nor 0.5
+  //     if (allowHalves && !allowFraction)
+  //       return fractionPart ? fractionPart === 5 : true;
+
+  //     debug && console.log(6);
+  //     //terminate if fractions are not allowed and there is a fraction part
+  //     if (!allowFraction) return fractionPart ? fractionPart === 0 : true;
+
+  //     return true;
+  //   }
+*/
 
   async function handleSubmit(event) {
-    event.preventDefault();
-    let isValidForm = triggerErrorsForEmptyFields();
-    console.table({ isValidForm });
-    if (!isValidForm) return;
-
-    if (!formData.thumbnailID) uploadImage();
-    else setIsImageUploaded(true);
+    // event.preventDefault();
+    // let isValidForm = triggerErrorsForEmptyFields();
+    // console.table({ isValidForm });
+    // if (!isValidForm) return;
+    // if (!formData.thumbnailID) uploadImage();
+    // else setIsImageUploaded(true);
   }
-
-  function triggerErrorsForEmptyFields() {
-    let isValidForm = true;
-    for (let key in formData) {
-      if (key === "thumbnailID") continue;
-      if (!formData[key]) {
-        console.log(key, formData[key]);
-        updateFormErrors(key, true);
-        isValidForm = false;
-      }
-    }
-    return isValidForm;
-  }
-
-  async function uploadImage() {
-    const files = stubIKUpload.current.files;
-    if (!files) return;
-
-    const ikupload = document.querySelector("#ikupload > input");
-    ikupload.files = files;
-    ikupload.dispatchEvent(new Event("change", { bubbles: true }));
-  }
-
-  function onUploadProgress(progress) {
-    setUploadProgress(progress.loaded / progress.total);
-  }
-
-  function validateImageFile(file) {
-    if (!file) return false;
-    if (!REGEX_IMG_TYPE.test(file.type)) return false;
-    if (file.size > MAX_IMG_SIZE_MB * 1024 * 1024) return false;
-
-    return true;
-  }
-
   function updateFormData(key, value) {
     setFormData(function (prev) {
       return {
@@ -612,32 +359,9 @@ export default function CardEditorForm({ updateCardDate }) {
     });
   }
 
-  function updateFormErrors(key, value) {
-    setFormErrors(function (prev) {
-      return {
-        ...prev,
-        [key]: value,
-      };
-    });
-  }
-
-  function checkFormErrors() {
-    for (let key in formErrors) {
-      if (formErrors[key]) return true;
-    }
-
-    return false;
-  }
-
-  function isWithinRange(
-    value,
-    min,
-    max,
-    acceptEmpty = true,
-    allowFraction = false,
-    allowHalves = false
-  ) {
+  function checkNumberRange(value, validation) {
     const debug = false;
+    let { min, max, fraction, allowHalves } = validation;
     value = value.toString();
     min = +min;
     max = +max;
@@ -646,13 +370,11 @@ export default function CardEditorForm({ updateCardDate }) {
     // terminate if min or max are not numbers
     if (isNaN(min) || isNaN(max)) return false;
 
-    debug && console.log(1);
-    // terminate if the value is empty
-    if (!value) return acceptEmpty;
-
     debug && console.log(2);
     // terminate if the value is not a number
     if (Number.isNaN(Number(value))) return false;
+
+    if (value === "") return false;
 
     debug && console.log(3);
     // terminate if number is outside range
@@ -666,13 +388,81 @@ export default function CardEditorForm({ updateCardDate }) {
 
     debug && console.log(5);
     //terminate if fractions are not allow but halves are, and the fraction part is neither empty nor 0.5
-    if (allowHalves && !allowFraction)
+    if (allowHalves && !fraction)
       return fractionPart ? fractionPart === 5 : true;
 
     debug && console.log(6);
     //terminate if fractions are not allowed and there is a fraction part
-    if (!allowFraction) return fractionPart ? fractionPart === 0 : true;
+    if (!fraction) return fractionPart ? fractionPart === 0 : true;
 
     return true;
+  }
+
+  function checkStringLength(string, validation) {
+    const stringLength = string.length;
+    if (stringLength === undefined) return false;
+    const { min = 1, max } = validation;
+
+    if (min) if (stringLength < min) return false;
+    if (max) if (stringLength > max) return false;
+
+    return true;
+  }
+
+  function defaultValidationMessage(type, validation) {
+    if (type === "string") return defStringValidationMsg(validation);
+    if (type === "number") return defNumberValidationMsg(validation);
+  }
+
+  function defNumberValidationMsg(validation) {
+    const { min, max } = validation;
+    let validationMessage = `Please enter a number between ${addSeparator(
+      min
+    )} and ${addSeparator(max)}`;
+
+    if (!validation.fraction) validationMessage += ", no decimals are allowed";
+
+    if (validation.allowHalves) validationMessage += " only haves (i.e. 2.5)";
+
+    validationMessage += ".";
+    return validationMessage;
+  }
+
+  function defStringValidationMsg(validation) {
+    let validationMessage;
+    const { min, max } = validation;
+
+    if (!min) validationMessage = "This field cannot be empty";
+    else
+      validationMessage = `This field must contain at least ${min} characters`;
+
+    if (max)
+      validationMessage += `, and cannot be loner than ${max} characters long`;
+
+    validationMessage += ".";
+    return validationMessage;
+  }
+
+  function checkEmpty(value, strict) {
+    if (strict) return false;
+    return value === "";
+  }
+
+  function validate(type, value, validation) {
+    if (type === "string") return validateString(value, validation);
+    if (type === "number") return validateNumber(value, validation);
+  }
+
+  function validateString(value, validation) {
+    return (
+      checkStringLength(value, validation) ||
+      checkEmpty(value, strictValidation)
+    );
+  }
+
+  function validateNumber(value, validation) {
+    return (
+      checkNumberRange(value, validation) || checkEmpty(value, strictValidation)
+    );
   }
 }

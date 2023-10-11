@@ -46,7 +46,7 @@ export default function AdminCardEditor() {
         >
           <Row mods={clsx("gx-5")}>
             <Col mods={"col-4"}>
-              <div className="position-sticky top-10" style={{height: 'min-content'}}>
+              <div className="position-sticky top-5" style={{height: 'min-content'}}>
                 <TourCard cardData={cardData} />
               </div>
             </Col>

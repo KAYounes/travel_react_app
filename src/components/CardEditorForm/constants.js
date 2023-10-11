@@ -10,3 +10,13 @@ export const MAX_DETAILS_LENGTH = 150
 export const MIN_DETAILS_LENGTH = 30
 export const REGEX_IMG_TYPE = /image\/.*/
 export const MAX_IMG_SIZE_MB = 20
+
+// export const validators = {
+//     duration,
+//     popularity,
+//     city,
+//     rating,
+//     priceOriginal,
+//     priceOffered,
+//     details,
+// }

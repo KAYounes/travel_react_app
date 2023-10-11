@@ -28,8 +28,6 @@ export default function InputText({
   disabled  = false,
   control,
 }) {
-  const [cursorPosition, setCursorPosition] = React.useState(0);
-  const inputRef = React.useRef();
   ////
   const hasValidation = invalidFeedback || validFeedback;
   const [controlValue, setControlValue] = control;
@@ -42,11 +40,11 @@ export default function InputText({
       <label
         htmlFor={id}
         className={clsx(
-          "form-label d-flex justify-content-between align-items-center",
+          "form-label d-flex justify-content-between align-items-center  text-capitalize",
           label || "visually-hidden"
         )}
       >
-        {label}
+        {label.split(/(?=[A-Z])/).join(' ')}
         {required ? (
           <small
             className={clsx(styles.requiredIndicator, "badge rounded-pill")}
@@ -72,11 +70,10 @@ export default function InputText({
         type="text"
         className={clsx("form-control", isValid ? null : "is-invalid")}
         value={controlValue}
-        ref={inputRef}
         onChange={handleChange}
         rows={5}
         style={{resize: "none"}}
-        disabled
+        disabled={disabled}
       ></textarea>
     );
   } else {
@@ -87,9 +84,8 @@ export default function InputText({
         type="text"
         className={clsx("form-control", isValid ? null : "is-invalid")}
         value={controlValue}
-        ref={inputRef}
         onChange={handleChange}
-        disabled
+        disabled={disabled}
       />
     );
   }
@@ -110,10 +106,6 @@ export default function InputText({
   if (validFeedback) {
     validFeedbackDOM = <div className="valid-feedback">{validFeedback}</div>;
   }
-  ////
-  React.useEffect(function () {
-    inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
-  });
 
   let hintDOM;
   if (hint) {
@@ -134,8 +126,8 @@ export default function InputText({
     </div>
   );
 
-  function handleChange() {
-    setControlValue(inputRef.current.value);
+  function handleChange(event) {
+    setControlValue(event.target.value);
   }
 
   function handleBlur() {}
