@@ -27,7 +27,7 @@ import InputNumeric from "./fomr_elements/InputNumeric";
 import InputText from "./fomr_elements/InputText";
 //
 
-export default function CardEditorForm({ updateCardDate }) {
+export default function CardEditorForm({ updateCardData }) {
   const stubIKUpload = React.useRef();
   const [uploadProgress, setUploadProgress] = React.useState(0);
   const [isImageUploaded, setIsImageUploaded] = React.useState(false);
@@ -93,8 +93,8 @@ export default function CardEditorForm({ updateCardDate }) {
   React.useEffect(
     function () {
       for (let key in formErrors) {
-        if (!formErrors[key]) updateCardDate(key, formData[key]);
-        else updateCardDate(key, "");
+        if (!formErrors[key]) updateCardData(key, formData[key]);
+        else updateCardData(key, "");
       }
     },
     [formData]
@@ -165,6 +165,7 @@ export default function CardEditorForm({ updateCardDate }) {
           ref={stubIKUpload}
           onChange={handleImageChange}
           disabled={!!uploadProgress}
+          
         />
         <div className="invalid-feedback">
           Please choose an image file, the image should not be larger than{" "}

@@ -13,8 +13,8 @@ export default function CardOverlay({
   const [showSpinner, setShowSpinner] = React.useState(false)
 
   return (
-    <div className={clsx(styles.cardWrp, "")}>
-      <div style={{ pointerEvents: "none" }}>{children}</div>
+    <div className={clsx(styles.cardWrp, "h-100")}>
+      <div className='h-100' style={{ pointerEvents: "none" }}>{children}</div>
       <div className={clsx(styles.cardOverlay, "")}>
         <div className={clsx(styles.optionWrap, "")}>
           <div className={clsx(styles.option, "")} onClick={handleEdit}>

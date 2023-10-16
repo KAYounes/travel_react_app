@@ -1,6 +1,6 @@
-// const ImageKit = require('imagekit');
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-fallthrough */
 import ImageKit from "imagekit";
-import multer from 'multer'
 
 export async function handler(event, context) {
   const imagekit = new ImageKit({
@@ -9,44 +9,78 @@ export async function handler(event, context) {
     privateKey: "private_H3sFP6kHVAlIkVKwf92WZZAQhDM=",
   });
 
-  const { headers, httpMethod, queryStringParameters, body } = event;
-  let response;
-  console.log(event)
-  // console.log('--------------------------')
-  // console.log(headers)
-  // console.log('--------------------------')
-  // console.log(httpMethod)
-  // console.log('--------------------------')
-  // console.log(queryStringParameters)
-  // console.log('--------------------------')
-  // console.log(body)
+  try {
+    const { headers, httpMethod, queryStringParameters, body } = event;
+    let response;
+    // console.log(event)
+    // console.log('--------------------------')
+    // console.log(headers)
+    // console.log('--------------------------')
+    // console.log(httpMethod)
+    // console.log('--------------------------')
+    // console.log(queryStringParameters)
+    // console.log('--------------------------')
+    // console.log(body)
 
-  switch (queryStringParameters.action) {
-    case "getFileDetails":
-      if (!queryStringParameters.fileId) return { statusCode: 400 };
-      response = await imagekit.getFileDetails("651a931e88c257da336a0eb6");
-      break;
+    switch (queryStringParameters.action) {
+      case "getFileDetails":
+        break;
 
-    case "listAndSearchFiles":
-      response = await imagekit.listFiles(queryStringParameters);
-      break;
+      case "listAndSearchFiles":
+        response = await handleAPICall(
+          imagekit.listFiles,
+          queryStringParameters
+        );
+        break;
 
-    case 'auth':
-      console.log('auth')
-      response = imagekit.getAuthenticationParameters()
-      break;
-    
-    case 'upload':
-      break;
-      
-    default:
-      return { statusCode: 400 };
+      case "auth":
+        console.log("auth");
+        response = imagekit.getAuthenticationParameters();
+      return {
+        statusCode: 200,
+        body: JSON.stringify(response)
+      }
+
+      case "upload":
+        // response = imagekit.upload({...queryStringParameters})
+        // return{
+        //   statusCode: 200,
+        //   body: JSON.stringify(response)
+        // }
+        response = handleAPICall(imagekit.upload, {...queryStringParameters})
+        return response
+        break;
+
+      default:
+        return { statusCode: 400, body: JSON.stringify({response: 'Action unknown'})};
+    }
+  } catch (error) {
+    console.log("\n\n -------------------- \nerror> ", error);
+
+    return {
+      statusCode: 400,
+      body: JSON.stringify(error),
+    };
   }
 
-  // console.log(response)
-  
-  return {
-    statusCode: 200,
-    body: JSON.stringify(response),
-  };
+  ////
+  function handleAPICall(api, params) {
+    console.log("\n\n API:");
+
+    return api.call(imagekit, params)
+      .then(function (response) {
+        console.log("-- Response: ", response);
+        return {
+          statusCode: 200,
+          body: JSON.stringify(response),
+        };
+      })
+      .catch(function (error) {
+        console.log("-- Error: ", error);
+        return {
+          statusCode: 400,
+          body: JSON.stringify(error),
+        };
+      });
+  }
 }

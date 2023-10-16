@@ -21,23 +21,23 @@
   position: relative;
 }
 
-.addCardBtn > * {
+.addCardBtn * {
   transition: all 200ms ease;
 }
 
-.addCardBtn > i {
+.addCardBtn i {
   /* transform-origin: bottom center; */
   font-size: 6rem;
   color: hsla(0deg 0% 100% / 0.6);
   backdrop-filter: blur(10px);
 }
 
-.addCardBtn > span {
+.addCardBtn span {
   /* transform-origin: top center; */
   text-align: center;
   text-transform: uppercase;
 }
-.addCardBtn:hover > * {
+.addCardBtn:hover * {
   transform: scale(1.1);
 }
 

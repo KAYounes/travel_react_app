@@ -43,11 +43,11 @@ export default function InputNumeric({
       <label
         htmlFor={id}
         className={clsx(
-          "form-label d-flex justify-content-between align-items-center text-capitalize",
+          "form-label d-flex justify-content-between align-items-center text-capitalize fw-medium",
           label || "visually-hidden"
         )}
       >
-        {label.split(/(?=[A-Z])/).join(' ')}
+        {label}
         {required ? (
           <small
             className={clsx(styles.requiredIndicator, "badge rounded-pill")}

@@ -11,10 +11,10 @@ import {
   unformatNumber,
 } from "../../../utils";
 import { isWithinRange } from "../helpers";
-import { MAX_DETAILS_LENGTH } from "../constants";
+import { COUNTRIES } from "../constants";
 //
 
-export default function InputText({
+export default function InputSelect({
   label,
   prefix,
   suffix,
@@ -23,16 +23,28 @@ export default function InputText({
   hint,
   invalidFeedback,
   validFeedback,
+  asDecimal = false,
+  asCurrency = false,
   required = false,
   isValid = true,
-  largeText = false,
-  disabled = false,
+  disabled,
   control,
 }) {
+  const [cursorPosition, setCursorPosition] = React.useState(0);
+  const inputRef = React.useRef();
   ////
   const hasValidation = invalidFeedback || validFeedback;
   const [controlValue, setControlValue] = control;
   //   console.log({controlValue, isValid})
+  const countriesOptions = [];
+
+  for (let country in COUNTRIES) {
+    countriesOptions.push(
+      <option key={country} value={country}>
+        {COUNTRIES[country]}
+      </option>
+    );
+  }
   //
 
   let labelDOM;
@@ -41,7 +53,7 @@ export default function InputText({
       <label
         htmlFor={id}
         className={clsx(
-          "form-label d-flex justify-content-between align-items-center  text-capitalize fw-medium",
+          "form-label d-flex justify-content-between align-items-center text-capitalize fw-medium",
           label || "visually-hidden"
         )}
       >
@@ -78,63 +90,32 @@ export default function InputText({
   if (validFeedback) {
     validFeedbackDOM = <div className="valid-feedback">{validFeedback}</div>;
   }
-
   let hintDOM;
   if (hint) {
-    hintDOM = <div className="form-text">{invalidFeedback}</div>;
+    hintDOM = <div className="form-text">{hint}</div>;
   }
-
-  let textInputDOM;
-  if (largeText) {
-    textInputDOM = (
-      <>
-        <div className="w-100 position-relative">
-          <textarea
-            id={id}
-            name={name}
-            type="text"
-            className={clsx("form-control", isValid ? null : "is-invalid")}
-            value={controlValue}
-            onChange={handleChange}
-            rows={5}
-            style={{ resize: "none" }}
-            disabled={disabled}
-          ></textarea>
-          <small
-            className={clsx(
-              isValid ? "text-muted" : "text-danger",
-              "position-absolute end-0 bottom-0 p-2"
-            )}
-          >
-            {controlValue.length} / {MAX_DETAILS_LENGTH}
-          </small>
-        </div>
-        <div className={clsx("h-0 p-0", isValid ? null : "is-invalid")}> </div>
-        {invalidFeedbackDOM}
-      </>
-    );
-  } else {
-    textInputDOM = (
-      <input
-        id={id}
-        name={name}
-        type="text"
-        className={clsx("form-control", isValid ? null : "is-invalid")}
-        value={controlValue}
-        onChange={handleChange}
-        disabled={disabled}
-      />
-    );
-  }
-
+  ////
   return (
     <div className={clsx()}>
       {labelDOM}
       <div className={clsx("input-group", hasValidation && "has-validation")}>
         {prefixDOM}
-        {textInputDOM}
+        <select
+          id="countrySelect"
+          name={name}
+          className={clsx("form-select", isValid ? null : "is-invalid")}
+          style={{ color: controlValue ? "black" : "#a6a6a6" }}
+          value={controlValue}
+          onChange={handleChange}
+          disabled={disabled}
+        >
+          <option value="" hidden>
+            Country
+          </option>
+          {countriesOptions}
+        </select>
         {suffixDOM}
-        {!largeText && invalidFeedbackDOM}
+        {invalidFeedbackDOM}
         {validFeedbackDOM}
       </div>
       {hintDOM}
@@ -142,6 +123,7 @@ export default function InputText({
   );
 
   function handleChange(event) {
-    setControlValue(event.target.value);
+    setControlValue(event.target.value
+        )
   }
 }

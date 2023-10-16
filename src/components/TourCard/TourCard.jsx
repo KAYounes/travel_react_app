@@ -9,9 +9,12 @@ import clsx from "clsx";
 import { addPadding, addSeparator, asCurrency } from "../../utils";
 import StarRating from "../ui_components/StarRating/StarRating";
 //
+
 export default function TourCard({ cardData }) {
+  // console.log('RENDERING > TourCard')
   const {
-    thumbnailSrc,
+    // thumbnailSrc,
+    thumbnailURL,
     poi,
     countryKey,
     country,
@@ -29,24 +32,35 @@ export default function TourCard({ cardData }) {
   // console.log('1', cardData)
 
   let thumbnailDOM;
-  if (thumbnailID) {
-    thumbnailDOM = (
-      <IKImage
-        path={thumbnailSrc ? thumbnailSrc : country + ".jpg"}
-        lqip={{ active: true, quality: 1, blur: 5 }}
-        transformation={[{quality: 50}]}
-      />
-    );
-  } else if (thumbnailSrc) {
-    thumbnailDOM = <img src={thumbnailSrc} style={{ objectPosition: poi }} />;
-  } else {
+  // if (thumbnailID) {
+  //   thumbnailDOM = (
+  //     <IKImage
+  //       path={thumbnailSrc ? thumbnailSrc : country + ".jpg"}
+  //       lqip={{ active: true, quality: 1, blur: 5 }}
+  //       transformation={[{quality: 50}]}
+  //     />
+  //   );
+  // } else if (thumbnailSrc) {
+  //   thumbnailDOM = <img src={thumbnailSrc} style={{ objectPosition: poi }} />;
+  // } else {
+  //   thumbnailDOM = (
+  //     <div className="w-100 h-100 d-flex align-items-center justify-content-center">
+  //       <i className="bi-thin bi-card-image fs-1"></i>
+  //     </div>
+  //   );
+  // }
+  if(thumbnailURL){
+    // console.log({thumbnailURL})
+    if(/^data:image.*/.test(thumbnailURL)) thumbnailDOM = (<img src={thumbnailURL} style={{objectPosition: poi}}/>)
+    else thumbnailDOM = <IKImage path={thumbnailURL.replace('https://images.unsplash.com/', '')} transformation={[{focus: poi, quality: 100}]} />
+  }else{
     thumbnailDOM = (
       <div className="w-100 h-100 d-flex align-items-center justify-content-center">
         <i className="bi-thin bi-card-image fs-1"></i>
       </div>
     );
   }
-
+  
   let countryDOM;
   if (country) {
     countryDOM = (
@@ -98,7 +112,7 @@ export default function TourCard({ cardData }) {
   let cityDOM;
   if (city) {
     cityDOM = (
-      <h5 className={clsx(styles.card__title, 'text-truncate')}>
+      <h5 className={clsx(styles.card__title, 'text-truncate m-0')}>
         <Link
           to={id ? "./edit/" + id : ""}
           className="stretched/link text-black text-capitalize"
@@ -127,7 +141,7 @@ export default function TourCard({ cardData }) {
   }
 
   let pricingDOM;
-  if (priceOriginal) {
+  if (priceOriginal && priceOffered) {
     pricingDOM = (
       <>
         <span className="text-primary lead fw-medium">
@@ -192,7 +206,7 @@ export default function TourCard({ cardData }) {
           {durationDOM}
           {popularityDOM}
         </small>
-        <div className="d-flex flex-row justify-content-between">
+        <div className="d-flex flex-row justify-content-between align-items-center">
           {cityDOM}
           <div
             className={clsx(

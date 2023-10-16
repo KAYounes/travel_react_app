@@ -1,262 +1,487 @@
 /* eslint-disable react/prop-types */
-import React from "react";
+import React, { StrictMode } from "react";
 import clsx from "clsx";
-import { IKUpload } from "imagekitio-react";
+import { IKImage, IKUpload } from "imagekitio-react";
 import { LoremIpsum } from "lorem-ipsum";
+import { Toast } from "bootstrap";
+import { useNavigate } from "react-router-dom";
 //
-import styles from "./styles.module.css";
-import StarRating from "../ui_components/StarRating/StarRating";
-import { COUNTRIES, MOCKAPI_ENDPOINT } from "../../constants";
-import {
-  MAX_DURATION,
-  MIN_DURATION,
-  MAX_IMG_SIZE_MB,
-  MAX_RATING,
-  MIN_RATING,
-  REGEX_IMG_TYPE,
-  MIN_POPULARITY,
-  MAX_POPULARITY,
-  MIN_PRICE,
-  MAX_PRICE,
-  MAX_DETAILS_LENGTH,
-  MIN_DETAILS_LENGTH,
-} from "./constants";
-import { addSeparator, asCurrency, unformatNumber } from "../../utils";
-import { updateTour, uploadTour } from "./helpers";
+// import styles from "./styles.module.css";
+// import StarRating from "../ui_components/StarRating/StarRating";
 import InputNumeric from "./fomr_elements/InputNumeric";
 import InputText from "./fomr_elements/InputText";
+import InputImage from "./fomr_elements/InputImage";
+//
+import {
+  COUNTRIES,
+  INVALID_IMAGE_FEEDBACK,
+  INVALID_URL_FEEDBACK,
+  MAX_DETAILS_LENGTH,
+  MAX_DURATION,
+  MAX_IMG_SIZE_BYTES,
+  MAX_POPULARITY,
+  MAX_PRICE,
+  MIN_DETAILS_LENGTH,
+  MIN_DURATION,
+} from "./constants";
+import {
+  checkFileExist,
+  checkIsBlank,
+  convertImageToString,
+  defaultValidationMessage,
+  validate,
+  validateNumber,
+} from "./helpers";
+import InputSelect from "./fomr_elements/InputSelect";
+import {
+  SLFunctionRequest,
+  getFromDatabase,
+  postToDatabase,
+} from "../../fetch.helpers";
+import InputRadio from "./fomr_elements/InputRadio";
 //
 
-export default function CardEditorForm({ updateCardDate }) {
+export default function CardEditorForm({ updateCardData, cardData }) {
+  console.log("RENDERING > CardEditorForm");
   const stubIKUpload = React.useRef();
   const [uploadProgress, setUploadProgress] = React.useState(0);
   const [isImageUploaded, setIsImageUploaded] = React.useState(false);
   const [isCardUploaded, setIsCardUploaded] = React.useState(false);
+  const [strictCheck, setStrictCheck] = React.useState(false);
+  const [uploadStart, setUploadStart] = React.useState(false);
+  const toastRef = React.useRef();
+  const navigator = useNavigate();
+  const editMode = cardData?.id;
+  
+  //
+  // const cardID = window.location.pathname.match(/(?<=edit\/)\d*/);
+  // const strictValidation = false;
+  //
+  
+  
+  console.log('cardData', cardData)
+  console.log('editMode', editMode)
 
-  const cardID = window.location.pathname.match(/(?<=edit\/)\d*/);
-  const strictValidation = false;
+  const loadDefault = React.useCallback(function  () {
+    console.log('loadDefault')
+    const cardID = window.location.pathname.match(/(?<=edit\/)\d+/);
 
-  const countriesOptions = [];
+    let defaultVal = {
+      countryKey: "egypt",
+      duration: "32",
+      popularity: "231312",
+      city: new LoremIpsum().generateWords(2),
+      rating: "4",
+      priceOriginal: "1200",
+      priceOffered: "200",
+      details: new LoremIpsum().generateWords(18),
+      poi: "center",
+      thumbnail: "",
+      thumbnailURL: "",
+    }
 
-  for (let country in COUNTRIES) {
-    countriesOptions.push(
-      <option key={country} value={country}>
-        {COUNTRIES[country]}
-      </option>
-    );
-  }
+    getFromDatabase({id: cardID[0]}).then(function(r){
+      console.log('r', r[0])
+      return r
+    })
 
-  const [formData, setFormData] = React.useState({
-    thumbnailSrc: "",
-    countryKey: "",
-    duration: "",
-    popularity: "",
-    city: "",
-    rating: "",
-    country: "",
-    priceOriginal: "",
-    priceOffered: "",
-    details: new LoremIpsum().generateWords(18),
-    poi: "center",
-    thumbnailID: "",
-    // id: "",
-  });
+    if (editMode) {
+      for (let key in defaultVal) {
+        if (cardData[key]) defaultVal[key] = cardData[key];
+      }
 
-  // const formValidation = {
-  //   city: {
-  //     type: "string",
-  //     property: "city",
-  //     //   validate: function (strict = false) {
-  //     //     const value = formData[this.property];
-  //     //     return (
-  //     //       checkStringLength(value, this.validation) || checkEmpty(value, strict)
-  //     //     );
-  //     //   },
-  //     //   validationMessage: "",
-  //     validation: { max: 20 },
-  //   },
-  //   duration: {
-  //     type: "number",
-  //     property: "duration",
-  //     //   validate: function (strict = false) {
-  //     //     const value = formData[this.property];
-  //     //     return (
-  //     //       checkNumberRange(value, this.validation) || checkEmpty(value, strict)
-  //     //     );
-  //     //   },
-  //     //   validationMessage: "",
-  //     validation: {
-  //       min: 1,
-  //       max: 120,
-  //       fraction: false,
-  //       allowHaves: false,
-  //     },
-  //   },
-  //   popularity: {
-  //     type: "number",
-  //     property: "popularity",
-  //     //   validate: function (strict = false) {
-  //     //     const value = formData[this.property];
-  //     //     return (
-  //     //       checkNumberRange(value, this.validation) || checkEmpty(value, strict)
-  //     //     );
-  //     //   },
-  //     //   validationMessage: "",
-  //     validation: {
-  //       min: 0,
-  //       max: 1_000_000,
-  //       fraction: false,
-  //       allowHaves: false,
-  //     },
-  //   },
-  //   rating: {
-  //     type: "number",
-  //     property: "rating",
-  //     //   validate: function (strict = false) {
-  //     //     const value = formData[this.property];
-  //     //     return (
-  //     //       checkNumberRange(value, this.validation) || checkEmpty(value, strict)
-  //     //     );
-  //     //   },
-  //     //   validationMessage: "",
-  //     validation: {
-  //       min: 0.5,
-  //       max: 5,
-  //       fraction: false,
-  //       allowHaves: true,
-  //     },
-  //   },
-  //   priceOriginal: {
-  //     type: "number",
-  //     property: "priceOriginal",
-  //     //   validate: function (strict = false) {
-  //     //     const value = formData[this.property];
-  //     //     return (
-  //     //       checkNumberRange(value, this.validation) || checkEmpty(value, strict)
-  //     //     );
-  //     //   },
-  //     //   validationMessage: "",
-  //     value: function () {
-  //       return formData[this.property];
-  //     },
+      defaultVal["thumbnailURL"] = cardData["thumbnailURL"];
+    }
 
-  //     isValid: function () {
-  //       if(this.validate) return this.validate(this.type, this.value(), this.validation)
-  //       return validate(this.type, this.value(), this.validation);
-  //     },
-  //     validation: {
-  //       min: 150,
-  //       max: 10_000,
-  //       fraction: false,
-  //       allowHaves: false,
-  //     },
-  //   },
-  //   priceOffered: {
-  //     type: "number",
-  //     property: "priceOffered",
-  //     validate: function (strict = false) {
-  //       const value = formData[this.property];
-  //       console.log(formValidation.priceOriginal.isValid());
-  //       if (
-  //         !formValidation.priceOriginal.isValid()
-  //     )
-  //         return false;
-  //       return (
-  //         checkNumberRange(value, this.validation) || checkEmpty(value, strict)
-  //       );
-  //     },
-  //     validationMessage: function () {
-  //       if (
-  //           !formValidation.priceOriginal.isValid()
-  //       )
-  //         return undefined;
+    return defaultVal;
+  }, [editMode, cardData])
 
-  //       return "Please enter a valid price in the previous filed first. (Price Offered)";
-  //     },
-  //     validation: {
-  //       min: 100,
-  //       max: formData.priceOriginal - 1,
-  //       fraction: false,
-  //       allowHaves: false,
-  //     },
-  //   },
-  //   details: {
-  //     type: "string",
-  //     property: "details",
-  //     //   validate: function (strict = false) {
-  //     //     const value = formData[this.property];
-  //     //     return (
-  //     //       checkStringLength(value, this.validation) || checkEmpty(value, strict)
-  //     //     );
-  //     //   },
-  //     //   validationMessage: "",
-  //     validation: { min: 30, max: 150 },
-  //   },
-  // };
 
-  // const basicFormFields = [];
-  const basicFormFieldsData = [
+  const [formData, setFormData] = React.useState(loadDefault);
+  // ({
+  //   countryKey: "",
+  //   duration: "",
+  //   popularity: "",
+  //   city: "",
+  //   rating: "",
+  //   priceOriginal: "",
+  //   priceOffered: "",
+  //   details: new LoremIpsum().generateWords(18),
+  //   poi: "",
+  //   thumbnail: "",
+  // });
+
+
+  // console.log("formData", formData);
+  // console.log("cardData", cardData);
+
+  // React.useEffect(function () {
+  //   setFormData(loadDefault);
+  // }, []);
+
+  // function loadDefault() {
+  //   console.log('loadDefault')
+  //   let defaultVal = {
+  //     countryKey: "egypt",
+  //     duration: "32",
+  //     popularity: "231312",
+  //     city: "my am me",
+  //     rating: "4",
+  //     priceOriginal: "1200",
+  //     priceOffered: "200",
+  //     details: new LoremIpsum().generateWords(18),
+  //     poi: "center",
+  //     thumbnail: "",
+  //   };
+
+  //   if (editMode) {
+  //     for (let key in defaultVal) {
+  //       if (cardData[key]) defaultVal[key] = cardData[key];
+  //     }
+
+  //     defaultVal["thumbnail"] = cardData["thumbnailURL"];
+  //   }
+
+  //   return defaultVal;
+  // }
+
+  // React.useEffect(function () {
+  //   if (editMode) {
+  //     for (let key in formData) {
+  //       if (cardData[key]) updateFormData(key, cardData[key]);
+  //     }
+  //   }
+  // }, []);
+
+  // const cardData = {}
+  // const [cardData, setCardData] = React.useState({})
+
+  const formFieldsData = [
+    {
+      property: "thumbnail",
+      disabled: uploadStart,
+      type: "imageUpload",
+      isValid: function () {
+        const value = this.value();
+        // console.log(value)
+        if (!value?.length ?? true) return true;
+
+        if (value instanceof FileList) {
+          return this.validateFileAsImage(value[0]);
+        }
+
+        return this.validateURL(value);
+      },
+      validateFileAsImage: function (file) {
+        if (!file) return false;
+        if (!/image\/*/.test(file.type)) return false;
+        if (file.size > MAX_IMG_SIZE_BYTES) return false;
+
+        return true;
+      },
+      validateURL: function (str) {
+        try {
+          const url = new URL(str);
+          return /^https:\/\/images.unsplash.com\/photo.+/.test(url.toString());
+        } catch {
+          return false;
+        }
+      },
+      invalidFeedback: function () {
+        if (this.value() instanceof FileList) {
+          return INVALID_IMAGE_FEEDBACK;
+        }
+
+        return INVALID_URL_FEEDBACK;
+      },
+      isBlank: function () {
+        if (editMode) return false;
+
+        const value = this.value()
+
+        return checkIsBlank(value)
+      },
+    },
+    {
+      property: "poi",
+      // disabled: uploadStart,
+      type: "radio",
+      label: "Thumbnail Alignment",
+      required: false,
+    },
+    {
+      property: "countryKey",
+      // disabled: uploadStart,
+      type: "select",
+      label: "Country",
+      required: true,
+    },
     {
       property: "city",
+      // disabled: uploadStart,
       type: "text",
       validation: { max: 20 },
     },
     {
       property: "duration",
+      // disabled: uploadStart,
       type: "numeric",
-      validation: { min: 1, max: 120 },
+      validation: { min: MIN_DURATION, max: MAX_DURATION },
       suffix: "days",
     },
     {
       property: "popularity",
+      // disabled: uploadStart,
       type: "numeric",
-      validation: { max: 1_000_000 },
+      validation: { max: MAX_POPULARITY },
       suffix: "people",
+      asDecimal: true,
     },
     {
       property: "rating",
+      // disabled: uploadStart,
       type: "numeric",
       validation: { min: 0.5, max: 5, allowHalves: true },
-      suffix: (<i className="bi bi-star-fill text-warning"></i>),
+      suffix: <i className="bi bi-star-fill text-warning"></i>,
     },
     {
-      property: 'priceOriginal',
-      type:'numeric',
-      // isValid: function(){
-        
-      // },
-      validation:{min:150, max:10_000},
-      suffix: '$'
+      property: "priceOriginal",
+      // disabled: uploadStart,
+      type: "numeric",
+      validation: { min: 150, max: MAX_PRICE },
+      suffix: "$",
     },
     {
-      property:'priceOffered',
-      type:'numeric',
-      isOriginalPriceValid: function(){
-        return basicFormFields['priceOriginal'].value() && basicFormFields['priceOriginal'].isValid
+      property: "priceOffered",
+      // disabled: uploadStart,
+      type: "numeric",
+      isOriginalPriceValid: function () {
+        return (
+          formFields["priceOriginal"].value() &&
+          formFields["priceOriginal"].isValid
+        );
       },
-      isValid: function(){
-        // console.log({_this: this})
-        if(!this.isOriginalPriceValid()) return false
+      isValid: function () {
+        if (!this.isOriginalPriceValid()) return false;
 
-        return validateNumber(this.value(), this.validation)
+        return validateNumber(this.value(), this.validation, strictCheck);
       },
-      invalidFeedback: function(){
-        if(this.isOriginalPriceValid()) return undefined
+      invalidFeedback: function () {
+        if (this.isOriginalPriceValid()) return undefined;
 
-        return "Please enter a valid original price. (I.e. the previous field)"
+        return "Please enter a valid original price. (I.e. the previous field)";
       },
-      validation:{min:100, max: formData.priceOriginal},
-      suffix: '$'
+      validation: { min: 100, max: Math.floor(formData.priceOriginal * 0.95) },
+      suffix: "$",
     },
     {
-      property:'details',
-      type:'text',
-      validation:{min:30, max:150},
-      largeText: true
+      property: "details",
+      disabled: uploadStart,
+      type: "text",
+      validation: { min: MIN_DETAILS_LENGTH, max: MAX_DETAILS_LENGTH },
+      largeText: true,
     },
   ];
 
-  function CreateBasicFormField({
+  const formFields = {};
+  formFieldsData.map(function (fieldData) {
+    return (formFields[fieldData.property] = new BasicFormField(fieldData));
+  });
+
+  const formFieldsDOM = formFieldsData.map(function (fieldData) {
+    const field = { ...formFields[fieldData.property], disabled: uploadStart };
+
+    if (field.type === "text") {
+      return <InputText key={field.id} {...field} />;
+    }
+
+    if (field.type === "numeric") {
+      return <InputNumeric key={field.id} {...field} />;
+    }
+
+    if (field.type === "imageUpload") {
+      return <InputImage key={field.id} {...field} />;
+    }
+
+    if (field.type === "radio") {
+      return <InputRadio key={field.id} {...field} />;
+    }
+
+    if (field.type === "select") {
+      return <InputSelect key={field.id} {...field} />;
+    }
+  });
+
+  React.useEffect(
+    function () {
+      resolveUpdates();
+    },
+    [formData]
+  );
+
+  React.useEffect(
+    function () {
+      if (!isImageUploaded) return;
+
+      postToDatabase(cardData).then(function (r) {
+        // console.log({r})
+        setIsCardUploaded(true);
+        navigator("./" + r.id, { replace: true });
+      });
+    },
+    [isImageUploaded]
+  );
+
+  return (
+    <>
+      <form className="d-flex flex-column gap-7" onSubmit={handleSubmit}>
+        {formFieldsDOM}
+        <div id="ikupload" className="d-none h-0">
+          <IKUpload
+            style={{ display: "none", pointerEvents: "none" }}
+            onUploadProgress={onUploadProgress}
+            onSuccess={onSuccess}
+            onError={onError}
+            overwriteFile={true}
+            useUniqueFileName={false}
+            folder="tours"
+            // webhookUrl="/.netlify/functions/slf"
+          />
+        </div>
+        <button
+          className="form-control position-relative"
+          disabled={!isFormValidCheck() || uploadStart}
+          onClick={() => Toast.getOrCreateInstance(toastRef.current).show()}
+        >
+          <div
+            className="progress position-absolute top-0 end-0 bottom-0 start-0 h-100 w-100 z-0"
+            style={{ backgroundColor: "transparent" }}
+          >
+            <div
+              className="progress-bar "
+              style={{
+                width: `${Math.max(
+                  isCardUploaded * 100,
+                  isImageUploaded * 90,
+                  uploadStart * 10 + uploadProgress * 80
+                )}%`,
+                zIndex: -1,
+                backgroundColor: "#bce784",
+              }}
+            ></div>
+          </div>
+          <div className="position-relative z-1">
+            {uploadStart ? "uploading" : "upload"}
+          </div>
+        </button>
+      </form>
+
+      <div className="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="liveToast" className="toast" ref={toastRef}>
+          <div className="toast-header" style={{ backgroundColor: "#F8EDFF" }}>
+            <strong className="me-auto" style={{ color: "#400057" }}>
+              <i className="bi bi-bell-fill me-2"></i>
+              Updates
+            </strong>
+            <span className="text-muted">
+              {new Date().toLocaleTimeString("en-us", {
+                hour12: false,
+                seconds: false,
+                timeStyle: "short",
+              })}
+            </span>
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="toast"
+            ></button>
+          </div>
+          <div className="toast-body">
+            <i
+              className="bi bi-check-square-fill fs-6 me-2"
+              style={{ color: "#8AFF84" }}
+            ></i>
+            Upload has started
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
+  function isFormValidCheck() {
+    for (let fieldProperty in formFields) {
+      if (
+        !formFields[fieldProperty].isValid ||
+        formFields[fieldProperty].isBlank
+      )
+        return false;
+    }
+
+    return true;
+  }
+
+  async function handleSubmit(event) {
+    event?.preventDefault();
+    setUploadStart(true);
+    uploadImage();
+  }
+
+  async function uploadImage() {
+    const value = formData.thumbnail;
+    if(!value){
+      setIsImageUploaded(true)
+    }
+    else if (value instanceof FileList) {
+      const ikupload = document.querySelector("#ikupload > input");
+      ikupload.files = value;
+      ikupload.dispatchEvent(new Event("change", { bubbles: true }));
+    } else {
+      let r1 = uploadImageURL(value);
+    }
+  }
+
+  function uploadImageURL(url) {
+    SLFunctionRequest({
+      params: {
+        action: "upload",
+        file: url,
+        fileName: "unsplash_" + url.match(/photo-[a-z0-9-]*/)[0],
+        folder: "tours",
+        useUniqueFileName: false,
+        overwriteFile: true,
+      },
+    })
+      .then((r2) => r2.json())
+      .then((r3) => onSuccess(r3));
+    // console.log({r1})
+  }
+
+  function updateFormData(key, value) {
+    setFormData(function (prev) {
+      return {
+        ...prev,
+        [key]: value,
+      };
+    });
+  }
+
+  function onUploadProgress(event) {
+    console.log("onUploadProgress >>>", event);
+    setUploadProgress(event.loaded / event.total);
+  }
+
+  function onError(event) {
+    console.log("onError >>>", event);
+  }
+
+  function onSuccess(response) {
+    console.log("onSuccess >>>", response);
+    updateCardData("thumbnailID", response.fileId);
+    updateCardData("thumbnailURL", response.filePath);
+    setIsImageUploaded(true);
+  }
+
+  function BasicFormField({
     type,
     property,
     prefix,
@@ -266,6 +491,7 @@ export default function CardEditorForm({ updateCardDate }) {
     invalidFeedback,
     isValid,
     label,
+    isBlank,
     largeText = false,
     asDecimal = false,
     required = true,
@@ -273,6 +499,7 @@ export default function CardEditorForm({ updateCardDate }) {
     validation,
     ...other
   }) {
+    const value = formData[property];
     this.asDecimal = asDecimal;
     this.disabled = disabled;
     this.hint = hint;
@@ -285,333 +512,65 @@ export default function CardEditorForm({ updateCardDate }) {
     this.suffix = suffix;
     this.type = type;
     this.validation = validation;
-    this.value = () => formData[property];
-    // console.log(property, 'other', other)
-    
-    for(let otherProperties in other){
-      // console.log('>>', otherProperties)
-      this[otherProperties] = other[otherProperties]
+    this.value = () => value;
+
+    for (let otherProperties in other) {
+      this[otherProperties] = other[otherProperties];
     }
 
     this.label = label;
-    if (this.label === undefined) this.label = property.split(/(?=[A-Z])/).join(" ");
+    if (this.label === undefined)
+      this.label = property.split(/(?=[A-Z])/).join(" ");
+
+    // this.isBlank = value?.length ?? true;
+
+    this.isBlank = isBlank?.bind?.(this)();
+    if (this.isBlank === undefined) this.isBlank = checkIsBlank(value)
 
     this.invalidFeedback = invalidFeedback?.bind?.(this)();
-    if (this.invalidFeedback === undefined) this.invalidFeedback = defaultValidationMessage(type, validation);
+    if (this.invalidFeedback === undefined)
+      this.invalidFeedback = defaultValidationMessage(type, validation);
 
     this.isValid = isValid?.bind?.(this)();
-    if (this.isValid === undefined) this.isValid = validate(type, this.value(), validation);
-    
+    if (this.isValid === undefined)
+      this.isValid = validate(type, this.value(), validation, strictCheck);
+
     this.control = [
       formData[property],
       (value) => updateFormData(property, value),
     ];
   }
 
-  // const formBasicInputs = [];
-  // for (let fieldKey in formValidation) {
-  //   const field = formValidation[fieldKey];
-  //   const props = {
-  //     label: fieldKey,
-  //     id: "inputTour_" + fieldKey,
-  //     isValid:
-  //       field.validate?.() ??
-  //       validate(field.type, formData[fieldKey], field.validation),
-  //     invalidFeedback:
-  //       field.validationMessage?.() ??
-  //       defaultValidationMessage(field.type, field.validation),
-  //     control: [formData[fieldKey], (value) => updateFormData(fieldKey, value)],
-  //   };
+  async function resolveUpdates() {
+    for (let fieldProperty in formFields) {
+      const value = formData[fieldProperty];
 
-  //   if (field.type === "string")
-  //     formBasicInputs.push(<InputText {...props} key={props.id} />);
-  //   if (field.type === "number")
-  //     formBasicInputs.push(<InputNumeric {...props} key={props.id} />);
-  // }
+      if (!formFields[fieldProperty].isValid)
+        updateCardData(fieldProperty, null);
+      else {
+        // console.log(fieldProperty, value ? { value } : "-");
+        switch (fieldProperty) {
+          case "thumbnail":
+            // console.log(value, editMode)
+            if (!value && editMode) {
+              updateCardData("thumbnailURL", formData.thumbnailURL);
+            } else if (checkFileExist(value))
+              await convertImageToString(value[0]).then((img) =>
+                updateCardData("thumbnailURL", img)
+              );
+            else updateCardData("thumbnailURL", value);
+            break;
 
+          case "countryKey":
+            updateCardData("countryKey", value);
+            updateCardData("country", COUNTRIES[value]);
+            break;
 
-  const basicFormFields = {};
-
-  basicFormFieldsData.map(
-    function(fieldData){
-      return basicFormFields[fieldData.property] = new CreateBasicFormField(fieldData)
-    }
-  )
-
-  console.log(basicFormFields)
-
-  const basicFormFieldsDOM = basicFormFieldsData.map(
-    function(fieldData){
-      const field = basicFormFields[fieldData.property]
-
-      if(field.type === 'text'){
-        return (
-          <InputText
-          key={field.id}
-          {...field}
-          />
-        )
-      }
-
-      if(field.type === 'numeric'){
-        return (
-          <InputNumeric
-          key={field.id}
-          {...field}
-          />
-        )
+          default:
+            updateCardData(fieldProperty, value);
+            break;
+        }
       }
     }
-  );
-
-  return (
-    <form className="d-flex flex-column gap-7" onSubmit={handleSubmit}>
-      {basicFormFieldsDOM}
-    </form>
-  );
-  ////
-
-  /* Old Code 
-  //   function triggerErrorsForEmptyFields() {
-  //     let isValidForm = true;
-  //     for (let key in formData) {
-  //       if (key === "thumbnailID") continue;
-  //       if (!formData[key]) {
-  //         console.log(key, formData[key]);
-  //         updateFormErrors(key, true);
-  //         isValidForm = false;
-  //       }
-  //     }
-  //     return isValidForm;
-  //   }
-
-  //   async function uploadImage() {
-  //     const files = stubIKUpload.current.files;
-  //     if (!files) return;
-
-  //     const ikupload = document.querySelector("#ikupload > input");
-  //     ikupload.files = files;
-  //     ikupload.dispatchEvent(new Event("change", { bubbles: true }));
-  //   }
-
-  //   function onUploadProgress(progress) {
-  //     setUploadProgress(progress.loaded / progress.total);
-  //   }
-
-  //   function validateImageFile(file) {
-  //     if (!file) return false;
-  //     if (!REGEX_IMG_TYPE.test(file.type)) return false;
-  //     if (file.size > MAX_IMG_SIZE_MB * 1024 * 1024) return false;
-
-  //     return true;
-  //   }
-
-  //   function handleImageChange(event) {
-  //     const file = event.target.files[0];
-  //     const isValid = validateImageFile(file);
-  //     updateFormErrors("thumbnailSrc", !isValid);
-
-  //     if (!isValid) return;
-
-  //     const fileReader = new FileReader();
-
-  //     fileReader.onload = function (event) {
-  //       const img = event.target.result;
-  //       updateFormData("thumbnailSrc", img);
-  //       updateFormData("thumbnailID", "");
-  //     };
-
-  //     fileReader.readAsDataURL(file);
-  //   }
-  //
-  //   function updateFormErrors(key, value) {
-  //     setFormErrors(function (prev) {
-  //       return {
-  //         ...prev,
-  //         [key]: value,
-  //       };
-  //     });
-  //   }
-
-  //   function checkFormErrors() {
-  //     for (let key in formErrors) {
-  //       if (formErrors[key]) return true;
-  //     }
-
-  //     return false;
-  //   }
-  //
-  //   function isWithinRange(
-  //     value,
-  //     min,
-  //     max,
-  //     // acceptEmpty = true,
-  //     allowFraction = false,
-  //     allowHalves = false
-  //   ) {
-  //     const debug = false;
-  //     value = value.toString();
-  //     min = +min;
-  //     max = +max;
-  //     debug && console.log(value);
-
-  //     // terminate if min or max are not numbers
-  //     if (isNaN(min) || isNaN(max)) return false;
-
-  //     // debug && console.log(1);
-  //     // // terminate if the value is empty
-  //     // if (!value) return acceptEmpty;
-
-  //     if (value === "") return true;
-
-  //     debug && console.log(2);
-  //     // terminate if the value is not a number
-  //     if (Number.isNaN(Number(value))) return false;
-
-  //     debug && console.log(3);
-  //     // terminate if number is outside range
-  //     if (value < min) return false;
-
-  //     debug && console.log(4);
-  //     //terminate if number is outside range
-  //     if (value > max) return false;
-
-  //     let fractionPart = Number(value.split(".")[1]);
-
-  //     debug && console.log(5);
-  //     //terminate if fractions are not allow but halves are, and the fraction part is neither empty nor 0.5
-  //     if (allowHalves && !allowFraction)
-  //       return fractionPart ? fractionPart === 5 : true;
-
-  //     debug && console.log(6);
-  //     //terminate if fractions are not allowed and there is a fraction part
-  //     if (!allowFraction) return fractionPart ? fractionPart === 0 : true;
-
-  //     return true;
-  //   }
-*/
-
-  async function handleSubmit(event) {
-    // event.preventDefault();
-    // let isValidForm = triggerErrorsForEmptyFields();
-    // console.table({ isValidForm });
-    // if (!isValidForm) return;
-    // if (!formData.thumbnailID) uploadImage();
-    // else setIsImageUploaded(true);
-  }
-  function updateFormData(key, value) {
-    setFormData(function (prev) {
-      return {
-        ...prev,
-        [key]: value,
-      };
-    });
-  }
-
-  function checkNumberRange(value, validation) {
-    const debug = false;
-    let { min, max, fraction, allowHalves } = validation;
-    value = value.toString();
-    min = +min;
-    max = +max;
-    debug && console.log(value);
-
-    // terminate if min or max are not numbers
-    if (isNaN(min) || isNaN(max)) return false;
-
-    debug && console.log(2);
-    // terminate if the value is not a number
-    if (Number.isNaN(Number(value))) return false;
-
-    if (value === "") return false;
-
-    debug && console.log(3);
-    // terminate if number is outside range
-    if (value < min) return false;
-
-    debug && console.log(4);
-    //terminate if number is outside range
-    if (value > max) return false;
-
-    let fractionPart = Number(value.split(".")[1]);
-
-    debug && console.log(5);
-    //terminate if fractions are not allow but halves are, and the fraction part is neither empty nor 0.5
-    if (allowHalves && !fraction)
-      return fractionPart ? fractionPart === 5 : true;
-
-    debug && console.log(6);
-    //terminate if fractions are not allowed and there is a fraction part
-    if (!fraction) return fractionPart ? fractionPart === 0 : true;
-
-    return true;
-  }
-
-  function checkStringLength(string, validation) {
-    const stringLength = string.length;
-    if (stringLength === undefined) return false;
-    const { min = 1, max = 30 } = validation;
-
-    if (min) if (stringLength < min) return false;
-    if (max) if (stringLength > max) return false;
-
-    return true;
-  }
-
-  function defaultValidationMessage(type, validation) {
-    if (type === "text") return defStringValidationMsg(validation);
-    if (type === "numeric") return defNumberValidationMsg(validation);
-  }
-
-  function defNumberValidationMsg(validation) {
-    const { min=0, max } = validation;
-    let validationMessage = `Please enter a number between ${addSeparator(
-      min
-    )} and ${addSeparator(max)}`;
-
-    if (!validation.fraction) validationMessage += ", no decimals are allowed";
-
-    if (validation.allowHalves) validationMessage += " only haves (i.e. 2.5)";
-
-    validationMessage += ".";
-    return validationMessage;
-  }
-
-  function defStringValidationMsg(validation) {
-    let validationMessage;
-    const { min, max } = validation;
-
-    if (!min) validationMessage = "This field cannot be empty";
-    else
-      validationMessage = `This field must contain at least ${min} characters`;
-
-    if (max)
-      validationMessage += `, and cannot be loner than ${max} characters long`;
-
-    validationMessage += ".";
-    return validationMessage;
-  }
-
-  function checkEmpty(value, strict) {
-    if (strict) return false;
-    return value === "";
-  }
-
-  function validate(type, value, validation) {
-    if (type === "text") return validateString(value, validation);
-    if (type === "numeric") return validateNumber(value, validation);
-  }
-
-  function validateString(value, validation) {
-    return (
-      checkStringLength(value, validation) ||
-      checkEmpty(value, strictValidation)
-    );
-  }
-
-  function validateNumber(value, validation) {
-    return (
-      checkNumberRange(value, validation) || checkEmpty(value, strictValidation)
-    );
   }
 }
