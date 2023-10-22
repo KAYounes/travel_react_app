@@ -126,11 +126,6 @@ export default function InputNumeric({
 
     setControlValue(numericValue);
     setCursorPosition(actualCursor - offset);
-    ////
-    // let valueBefore = addSeparator(controlValue)
-    // let valueAfter = addSeparator(valuePure)
-    // let offset = Math.max(valueAfter.length - valueBefore.length - 1, 0)
-    // setCursorPosition(actualCursor + offset)
   }
 
   function handleBlur() {

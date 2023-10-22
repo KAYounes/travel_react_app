@@ -52,3 +52,30 @@ export async function IKUploadAuthenticator() {
     throw new Error(`Authentication request failed: ${error.message}`);
   }
 }
+
+
+// function 
+
+export function checkInputIsFile(query) {
+  if (! (query instanceof FileList)) return false;
+  // if (query.length === 0) return false;
+  return true;
+}
+
+export function convertImageToString(file) {
+  if (! (file instanceof File)) return null
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+
+    reader.onerror = (error) => {
+      reject(error);
+    };
+
+    reader.readAsDataURL(file);
+  });
+}

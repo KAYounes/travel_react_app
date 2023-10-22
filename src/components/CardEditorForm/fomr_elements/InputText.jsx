@@ -142,6 +142,7 @@ export default function InputText({
   );
 
   function handleChange(event) {
+    // console.log(event.target.value, setControlValue)
     setControlValue(event.target.value);
   }
 }

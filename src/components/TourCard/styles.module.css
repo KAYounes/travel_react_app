@@ -5,6 +5,10 @@
     aspect-ratio: 1 / 0.6;
     transition: transform 350ms ease;
     background-color: var(--bs-gray-200);
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    display: flex;
 }
 
 .card__imgWrap > img{

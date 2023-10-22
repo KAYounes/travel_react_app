@@ -12,195 +12,118 @@ import InputNumeric from "./fomr_elements/InputNumeric";
 import InputText from "./fomr_elements/InputText";
 import InputImage from "./fomr_elements/InputImage";
 //
-import {
-  COUNTRIES,
-  INVALID_IMAGE_FEEDBACK,
-  INVALID_URL_FEEDBACK,
-  MAX_DETAILS_LENGTH,
-  MAX_DURATION,
-  MAX_IMG_SIZE_BYTES,
-  MAX_POPULARITY,
-  MAX_PRICE,
-  MIN_DETAILS_LENGTH,
-  MIN_DURATION,
-} from "./constants";
-import {
-  checkFileExist,
-  checkIsBlank,
-  convertImageToString,
-  defaultValidationMessage,
-  validate,
-  validateNumber,
-} from "./helpers";
+import
+  {
+    COUNTRIES,
+    INVALID_IMAGE_FEEDBACK,
+    INVALID_URL_FEEDBACK,
+    MAX_DETAILS_LENGTH,
+    MAX_DURATION,
+    MAX_IMG_SIZE_BYTES,
+    MAX_POPULARITY,
+    MAX_PRICE,
+    MIN_DETAILS_LENGTH,
+    MIN_DURATION,
+  } from "./constants";
+import
+  {
+    checkFileExist,
+    checkIsBlank,
+    convertImageToString,
+    defaultValidationMessage,
+    validate,
+    validateNumber,
+  } from "./helpers";
 import InputSelect from "./fomr_elements/InputSelect";
-import {
-  SLFunctionRequest,
-  getFromDatabase,
-  postToDatabase,
-} from "../../fetch.helpers";
+import { SLFunctionRequest, getFromDatabase, postToDatabase } from "../../fetch.helpers";
 import InputRadio from "./fomr_elements/InputRadio";
 //
 
-export default function CardEditorForm({ updateCardData, cardData }) {
-  console.log("RENDERING > CardEditorForm");
+let CardEditorFormRenders = 0;
+
+export default function CardEditorForm({
+  formData,
+  updateFormData,
+  formState,
+  editingMode,
+  cardUploadSuccessful,
+  _readyToPost,
+  _secondaryUpload
+})
+{
+  // console.log("RENDERING > CardEditorForm: ", ++CardEditorFormRenders);
+  
   const stubIKUpload = React.useRef();
+  
   const [uploadProgress, setUploadProgress] = React.useState(0);
-  const [isImageUploaded, setIsImageUploaded] = React.useState(false);
-  const [isCardUploaded, setIsCardUploaded] = React.useState(false);
-  const [strictCheck, setStrictCheck] = React.useState(false);
   const [uploadStart, setUploadStart] = React.useState(false);
-  const toastRef = React.useRef();
-  const navigator = useNavigate();
-  const editMode = cardData?.id;
-  
-  //
-  // const cardID = window.location.pathname.match(/(?<=edit\/)\d*/);
-  // const strictValidation = false;
-  //
-  
-  
-  console.log('cardData', cardData)
-  console.log('editMode', editMode)
+  const [readyToPost, setReadyToPost] = _readyToPost
+  const [secondaryUpload, setSecondaryUpload] = _secondaryUpload
 
-  const loadDefault = React.useCallback(function  () {
-    console.log('loadDefault')
-    const cardID = window.location.pathname.match(/(?<=edit\/)\d+/);
+  // const [isImageUploaded, setIsImageUploaded] = React.useState(false);
+  // const [isCardUploaded, setIsCardUploaded] = React.useState(false);
 
-    let defaultVal = {
-      countryKey: "egypt",
-      duration: "32",
-      popularity: "231312",
-      city: new LoremIpsum().generateWords(2),
-      rating: "4",
-      priceOriginal: "1200",
-      priceOffered: "200",
-      details: new LoremIpsum().generateWords(18),
-      poi: "center",
-      thumbnail: "",
-      thumbnailURL: "",
-    }
-
-    getFromDatabase({id: cardID[0]}).then(function(r){
-      console.log('r', r[0])
-      return r
-    })
-
-    if (editMode) {
-      for (let key in defaultVal) {
-        if (cardData[key]) defaultVal[key] = cardData[key];
-      }
-
-      defaultVal["thumbnailURL"] = cardData["thumbnailURL"];
-    }
-
-    return defaultVal;
-  }, [editMode, cardData])
-
-
-  const [formData, setFormData] = React.useState(loadDefault);
-  // ({
-  //   countryKey: "",
-  //   duration: "",
-  //   popularity: "",
-  //   city: "",
-  //   rating: "",
-  //   priceOriginal: "",
-  //   priceOffered: "",
-  //   details: new LoremIpsum().generateWords(18),
-  //   poi: "",
-  //   thumbnail: "",
-  // });
-
-
-  // console.log("formData", formData);
-  // console.log("cardData", cardData);
-
-  // React.useEffect(function () {
-  //   setFormData(loadDefault);
-  // }, []);
-
-  // function loadDefault() {
-  //   console.log('loadDefault')
-  //   let defaultVal = {
-  //     countryKey: "egypt",
-  //     duration: "32",
-  //     popularity: "231312",
-  //     city: "my am me",
-  //     rating: "4",
-  //     priceOriginal: "1200",
-  //     priceOffered: "200",
-  //     details: new LoremIpsum().generateWords(18),
-  //     poi: "center",
-  //     thumbnail: "",
-  //   };
-
-  //   if (editMode) {
-  //     for (let key in defaultVal) {
-  //       if (cardData[key]) defaultVal[key] = cardData[key];
-  //     }
-
-  //     defaultVal["thumbnail"] = cardData["thumbnailURL"];
-  //   }
-
-  //   return defaultVal;
+  // if (isImageUploaded)
+  // {
+  //   console.log('uploading to database')
+  //   postToDatabase().then(function (r) {
+  //     // console.log({r})
+  //     setIsCardUploaded(true);
+  //     navigator("./" + r.id, { replace: true });
+  //   });
   // }
 
-  // React.useEffect(function () {
-  //   if (editMode) {
-  //     for (let key in formData) {
-  //       if (cardData[key]) updateFormData(key, cardData[key]);
-  //     }
-  //   }
-  // }, []);
-
-  // const cardData = {}
-  // const [cardData, setCardData] = React.useState({})
-
-  const formFieldsData = [
+  const formFieldsSchema = [
     {
       property: "thumbnail",
       disabled: uploadStart,
       type: "imageUpload",
-      isValid: function () {
+      isValid: function ()
+      {
         const value = this.value();
-        // console.log(value)
         if (!value?.length ?? true) return true;
 
-        if (value instanceof FileList) {
+        if (value instanceof FileList)
+        {
           return this.validateFileAsImage(value[0]);
         }
 
         return this.validateURL(value);
       },
-      validateFileAsImage: function (file) {
+      validateFileAsImage: function (file)
+      {
         if (!file) return false;
         if (!/image\/*/.test(file.type)) return false;
         if (file.size > MAX_IMG_SIZE_BYTES) return false;
 
         return true;
       },
-      validateURL: function (str) {
-        try {
+      validateURL: function (str)
+      {
+        try
+        {
           const url = new URL(str);
           return /^https:\/\/images.unsplash.com\/photo.+/.test(url.toString());
         } catch {
           return false;
         }
       },
-      invalidFeedback: function () {
-        if (this.value() instanceof FileList) {
+      invalidFeedback: function ()
+      {
+        if (this.value() instanceof FileList)
+        {
           return INVALID_IMAGE_FEEDBACK;
         }
 
         return INVALID_URL_FEEDBACK;
       },
-      isBlank: function () {
-        if (editMode) return false;
+      // isBlank: function () {
+      //   if (editMode) return false;
 
-        const value = this.value()
+      //   const value = this.value()
 
-        return checkIsBlank(value)
-      },
+      //   return checkIsBlank(value)
+      // },
     },
     {
       property: "poi",
@@ -242,7 +165,7 @@ export default function CardEditorForm({ updateCardData, cardData }) {
       // disabled: uploadStart,
       type: "numeric",
       validation: { min: 0.5, max: 5, allowHalves: true },
-      suffix: <i className="bi bi-star-fill text-warning"></i>,
+      suffix: <i className='bi bi-star-fill text-warning'></i>,
     },
     {
       property: "priceOriginal",
@@ -255,23 +178,23 @@ export default function CardEditorForm({ updateCardData, cardData }) {
       property: "priceOffered",
       // disabled: uploadStart,
       type: "numeric",
-      isOriginalPriceValid: function () {
-        return (
-          formFields["priceOriginal"].value() &&
-          formFields["priceOriginal"].isValid
-        );
+      isOriginalPriceValid: function ()
+      {
+        return formState["priceOriginal"].value() && formState["priceOriginal"].isValid;
       },
-      isValid: function () {
+      isValid: function ()
+      {
         if (!this.isOriginalPriceValid()) return false;
 
-        return validateNumber(this.value(), this.validation, strictCheck);
+        return validateNumber(this.value(), this.validation);
       },
-      invalidFeedback: function () {
+      invalidFeedback: function ()
+      {
         if (this.isOriginalPriceValid()) return undefined;
 
         return "Please enter a valid original price. (I.e. the previous field)";
       },
-      validation: { min: 100, max: Math.floor(formData.priceOriginal * 0.95) },
+      validation: { min: 100, max: Math.floor(formData?.priceOriginal * 0.95) },
       suffix: "$",
     },
     {
@@ -283,60 +206,87 @@ export default function CardEditorForm({ updateCardData, cardData }) {
     },
   ];
 
-  const formFields = {};
-  formFieldsData.map(function (fieldData) {
-    return (formFields[fieldData.property] = new BasicFormField(fieldData));
+  formFieldsSchema.map(function (fieldData)
+  {
+    return (formState[fieldData.property] = new FormField(fieldData));
   });
 
-  const formFieldsDOM = formFieldsData.map(function (fieldData) {
-    const field = { ...formFields[fieldData.property], disabled: uploadStart };
+  const formFieldsDOM = formFieldsSchema.map(function (fieldData)
+  {
+    const field = { ...formState[fieldData.property], disabled: uploadStart };
 
-    if (field.type === "text") {
+    if (field.type === "text")
+    {
       return <InputText key={field.id} {...field} />;
     }
 
-    if (field.type === "numeric") {
+    if (field.type === "numeric")
+    {
       return <InputNumeric key={field.id} {...field} />;
     }
 
-    if (field.type === "imageUpload") {
+    if (field.type === "imageUpload")
+    {
       return <InputImage key={field.id} {...field} />;
     }
 
-    if (field.type === "radio") {
+    if (field.type === "radio")
+    {
       return <InputRadio key={field.id} {...field} />;
     }
 
-    if (field.type === "select") {
+    if (field.type === "select")
+    {
       return <InputSelect key={field.id} {...field} />;
     }
   });
 
-  React.useEffect(
-    function () {
-      resolveUpdates();
-    },
-    [formData]
-  );
+  // React.useEffect(function ()
+  // {
+  //   if(!editingMode) return
+  //   setUploadProgress(0)
+  //   setUploadStart(false)
+  // }, [editingMode]);
 
-  React.useEffect(
-    function () {
-      if (!isImageUploaded) return;
+  // React.useEffect(
+  //   function () {
+  //     // if (!isImageUploaded) return;
 
-      postToDatabase(cardData).then(function (r) {
-        // console.log({r})
-        setIsCardUploaded(true);
-        navigator("./" + r.id, { replace: true });
-      });
-    },
-    [isImageUploaded]
-  );
+  //     // postToDatabase(cardData).then(function (r) {
+  //     //   // console.log({r})
+  //     //   setIsCardUploaded(true);
+  //     //   navigator("./" + r.id, { replace: true });
+  //     // });
+  //   },
+  //   [isImageUploaded]
+  // );
+
+  // console.log({
+  //   'cardUploadSuccessful * 100': cardUploadSuccessful * 100,
+  //   'readyToPost * 90': readyToPost * 90,
+  //   'uploadStart * 10 + uploadProgress * 80': uploadStart * 10 + uploadProgress * 80,
+  //   'Math.max(cardUploadSuccessful * 100,readyToPost * 90,uploadStart * 10 + uploadProgress * 80,': Math.max(
+  //     cardUploadSuccessful === true * 100,
+  //     readyToPost * 90,
+  //     uploadStart * 10 + uploadProgress * 80,
+  //   ),
+  //   cardUploadSuccessful,
+  //   readyToPost,
+  //   uploadStart,
+  //   uploadProgress,
+  // })
+
+  React.useEffect(function(){
+    setUploadProgress(0)
+    setUploadStart(false)
+    // setSecondaryUpload()
+  },[cardUploadSuccessful])
 
   return (
     <>
-      <form className="d-flex flex-column gap-7" onSubmit={handleSubmit}>
+      <form className='d-flex flex-column gap-7' onSubmit={handleSubmit}>
         {formFieldsDOM}
-        <div id="ikupload" className="d-none h-0">
+        <div id='ikupload' className='d-none h-0'>
           <IKUpload
             style={{ display: "none", pointerEvents: "none" }}
             onUploadProgress={onUploadProgress}
@@ -344,103 +294,92 @@ export default function CardEditorForm({ updateCardData, cardData }) {
             onError={onError}
             overwriteFile={true}
             useUniqueFileName={false}
-            folder="tours"
-            // webhookUrl="/.netlify/functions/slf"
+            folder='tours'
+          // webhookUrl="/.netlify/functions/slf"
           />
         </div>
         <button
-          className="form-control position-relative"
+          className='form-control position-relative'
           disabled={!isFormValidCheck() || uploadStart}
-          onClick={() => Toast.getOrCreateInstance(toastRef.current).show()}
+        // onClick={() => Toast.getOrCreateInstance(toastRef.current).show()}
         >
           <div
-            className="progress position-absolute top-0 end-0 bottom-0 start-0 h-100 w-100 z-0"
+            className='progress position-absolute top-0 end-0 bottom-0 start-0 h-100 w-100 z-0'
             style={{ backgroundColor: "transparent" }}
           >
             <div
-              className="progress-bar "
+              className='progress-bar '
               style={{
                 width: `${Math.max(
-                  isCardUploaded * 100,
-                  isImageUploaded * 90,
-                  uploadStart * 10 + uploadProgress * 80
+                  (cardUploadSuccessful  === true) * 100,
+                  readyToPost * 90,
+                  uploadStart * 10 + uploadProgress * 80,
                 )}%`,
                 zIndex: -1,
-                backgroundColor: "#bce784",
+                backgroundColor:
+                  cardUploadSuccessful === false ? "#E88484" : "#bce784",
               }}
             ></div>
           </div>
-          <div className="position-relative z-1">
-            {uploadStart ? "uploading" : "upload"}
+          <div className='position-relative z-1'>
+            {cardUploadSuccessful ? 'Modify' : uploadStart ? "uploading" : "upload"}
           </div>
         </button>
       </form>
-
-      <div className="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="liveToast" className="toast" ref={toastRef}>
-          <div className="toast-header" style={{ backgroundColor: "#F8EDFF" }}>
-            <strong className="me-auto" style={{ color: "#400057" }}>
-              <i className="bi bi-bell-fill me-2"></i>
-              Updates
-            </strong>
-            <span className="text-muted">
-              {new Date().toLocaleTimeString("en-us", {
-                hour12: false,
-                seconds: false,
-                timeStyle: "short",
-              })}
-            </span>
-            <button
-              type="button"
-              className="btn-close"
-              data-bs-dismiss="toast"
-            ></button>
-          </div>
-          <div className="toast-body">
-            <i
-              className="bi bi-check-square-fill fs-6 me-2"
-              style={{ color: "#8AFF84" }}
-            ></i>
-            Upload has started
-          </div>
-        </div>
-      </div>
     </>
   );
 
-  function isFormValidCheck() {
-    for (let fieldProperty in formFields) {
-      if (
-        !formFields[fieldProperty].isValid ||
-        formFields[fieldProperty].isBlank
-      )
-        return false;
+  function isFormValidCheck()
+  {
+    if (editingMode) return true;
+
+    for (let fieldProperty in formState)
+    {
+      // console.log({
+      //   invalid: !formState[fieldProperty].isValid || formState[fieldProperty].isBlank,
+      //   fieldProperty,
+      //   "formState[fieldProperty].isValid": formState[fieldProperty].isValid,
+      //   "formState[fieldProperty].isBlank": formState[fieldProperty].isBlank,
+      // });
+      if (!formState[fieldProperty].isValid || formState[fieldProperty].isBlank) return false;
     }
 
     return true;
   }
 
-  async function handleSubmit(event) {
+  async function handleSubmit(event)
+  {
     event?.preventDefault();
     setUploadStart(true);
     uploadImage();
   }
 
-  async function uploadImage() {
+  async function uploadImage()
+  {
     const value = formData.thumbnail;
-    if(!value){
-      setIsImageUploaded(true)
-    }
-    else if (value instanceof FileList) {
+    console.log({
+      if_1: editingMode && !value,
+      if_2: value instanceof FileList,
+      editingMode,
+      value,
+    });
+
+    if (editingMode && !value)
+    {
+      setSecondaryUpload(true);
+    } else if (value instanceof FileList)
+    {
       const ikupload = document.querySelector("#ikupload > input");
       ikupload.files = value;
       ikupload.dispatchEvent(new Event("change", { bubbles: true }));
-    } else {
-      let r1 = uploadImageURL(value);
+    } else
+    {
+      uploadImageURL(value);
     }
   }
 
-  function uploadImageURL(url) {
+  function uploadImageURL(url)
+  {
     SLFunctionRequest({
       params: {
         action: "upload",
@@ -453,35 +392,40 @@ export default function CardEditorForm({ updateCardData, cardData }) {
     })
       .then((r2) => r2.json())
       .then((r3) => onSuccess(r3));
-    // console.log({r1})
   }
 
-  function updateFormData(key, value) {
-    setFormData(function (prev) {
-      return {
-        ...prev,
-        [key]: value,
-      };
-    });
-  }
+  // function updateFormData(key, value) {
+  //   // setFormData(function (prev) {
+  //   //   return {
+  //   //     ...prev,
+  //   //     [key]: value,
+  //   //   };
+  //   // });
+  // }
 
-  function onUploadProgress(event) {
+  function onUploadProgress(event)
+  {
     console.log("onUploadProgress >>>", event);
     setUploadProgress(event.loaded / event.total);
   }
 
-  function onError(event) {
+  function onError(event)
+  {
     console.log("onError >>>", event);
   }
 
-  function onSuccess(response) {
+  function onSuccess(response)
+  {
     console.log("onSuccess >>>", response);
-    updateCardData("thumbnailID", response.fileId);
-    updateCardData("thumbnailURL", response.filePath);
-    setIsImageUploaded(true);
+    updateFormData("thumbnailID", response.fileId);
+    updateFormData("thumbnailURL", response.filePath);
+    // setReadyToPost(true);
+    if(editingMode){
+      setSecondaryUpload(true)
+    }
   }
 
-  function BasicFormField({
+  function FormField({
     type,
     property,
     prefix,
@@ -493,12 +437,13 @@ export default function CardEditorForm({ updateCardData, cardData }) {
     label,
     isBlank,
     largeText = false,
-    asDecimal = false,
+    asDecimal = true,
     required = true,
     disabled = false,
     validation,
     ...other
-  }) {
+  })
+  {
     const value = formData[property];
     this.asDecimal = asDecimal;
     this.disabled = disabled;
@@ -514,63 +459,57 @@ export default function CardEditorForm({ updateCardData, cardData }) {
     this.validation = validation;
     this.value = () => value;
 
-    for (let otherProperties in other) {
+    for (let otherProperties in other)
+    {
       this[otherProperties] = other[otherProperties];
     }
 
     this.label = label;
-    if (this.label === undefined)
-      this.label = property.split(/(?=[A-Z])/).join(" ");
+    if (this.label === undefined) this.label = property.split(/(?=[A-Z])/).join(" ");
 
     // this.isBlank = value?.length ?? true;
 
     this.isBlank = isBlank?.bind?.(this)();
-    if (this.isBlank === undefined) this.isBlank = checkIsBlank(value)
+    if (this.isBlank === undefined) this.isBlank = checkIsBlank(value);
 
     this.invalidFeedback = invalidFeedback?.bind?.(this)();
     if (this.invalidFeedback === undefined)
       this.invalidFeedback = defaultValidationMessage(type, validation);
 
     this.isValid = isValid?.bind?.(this)();
-    if (this.isValid === undefined)
-      this.isValid = validate(type, this.value(), validation, strictCheck);
+    if (this.isValid === undefined) this.isValid = validate(type, this.value(), validation);
 
-    this.control = [
-      formData[property],
-      (value) => updateFormData(property, value),
-    ];
+    this.control = [formData[property], (value) => updateFormData(property, value)];
   }
 
-  async function resolveUpdates() {
-    for (let fieldProperty in formFields) {
-      const value = formData[fieldProperty];
-
-      if (!formFields[fieldProperty].isValid)
-        updateCardData(fieldProperty, null);
-      else {
-        // console.log(fieldProperty, value ? { value } : "-");
-        switch (fieldProperty) {
-          case "thumbnail":
-            // console.log(value, editMode)
-            if (!value && editMode) {
-              updateCardData("thumbnailURL", formData.thumbnailURL);
-            } else if (checkFileExist(value))
-              await convertImageToString(value[0]).then((img) =>
-                updateCardData("thumbnailURL", img)
-              );
-            else updateCardData("thumbnailURL", value);
-            break;
-
-          case "countryKey":
-            updateCardData("countryKey", value);
-            updateCardData("country", COUNTRIES[value]);
-            break;
-
-          default:
-            updateCardData(fieldProperty, value);
-            break;
-        }
-      }
-    }
+  async function resolveUpdates()
+  {
+    // for (let fieldProperty in formState) {
+    //   const value = cardData[fieldProperty];
+    //   if (!formState[fieldProperty].isValid)
+    //     updateCardData(fieldProperty, null);
+    //   else {
+    //     // console.log(fieldProperty, value ? { value } : "-");
+    //     switch (fieldProperty) {
+    //       case "thumbnail":
+    //         // console.log(value, editMode)
+    //         if (!value) {
+    //           updateCardData("thumbnailURL", cardData.thumbnailURL);
+    //         } else if (checkFileExist(value))
+    //           await convertImageToString(value[0]).then((img) =>
+    //             updateCardData("thumbnailURL", img)
+    //           );
+    //         else updateCardData("thumbnailURL", value);
+    //         break;
+    //       case "countryKey":
+    //         updateCardData("countryKey", value);
+    //         updateCardData("country", COUNTRIES[value]);
+    //         break;
+    //       default:
+    //         updateCardData(fieldProperty, value);
+    //         break;
+    //     }
+    //   }
+    // }
   }
 }
