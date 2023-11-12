@@ -37,6 +37,7 @@ import
 import InputSelect from "./fomr_elements/InputSelect";
 import { SLFunctionRequest, getFromDatabase, postToDatabase } from "../../fetch.helpers";
 import InputRadio from "./fomr_elements/InputRadio";
+import { consoleLog } from "../../logging";
 //
 
 let CardEditorFormRenders = 0;
@@ -180,9 +181,9 @@ export default function CardEditorForm({
     },
   ];
 
-  formFieldsSchema.map(function (fieldData)
+  formFieldsSchema.map(function (fieldSchema)
   {
-    return (formState[fieldData.property] = new FormField(fieldData));
+    return (formState[fieldSchema.property] = new FormField(fieldSchema));
   });
 
   const formFieldsDOM = formFieldsSchema.map(function (fieldData)
@@ -292,6 +293,7 @@ export default function CardEditorForm({
   async function handleSubmit(event)
   {
     event.preventDefault();
+    consoleLog('Handle Submit', {fontSize: 30})
     setSubmitForm(true);
 
     // case 1 - this is a new card => no card url or card id

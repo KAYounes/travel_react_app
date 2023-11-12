@@ -33,7 +33,7 @@ export default function AdminCardEditor()
     // const [cardUploadSuccessful, setCardUploadSuccessful] = React.useState();
     const [submitForm, setSubmitForm] = React.useState(false);
     const [uploadProgress, setUploadProgress] = React.useState(0);
-    const [uploadCard, setUploadCard] = React.useState(false)
+    const [uploadCard, setUploadCard] = React.useState(false);
 
     const [cardData, setCardData] = React.useState({
         thumbnailURL: "",
@@ -51,21 +51,40 @@ export default function AdminCardEditor()
         id: "",
     });
 
-    const [cardDataFetched, setCardDataFetched] = React.useState({
-        thumbnailURL: "",
-        poi: "",
-        countryKey: "",
-        country: "",
-        city: "",
-        duration: "",
-        popularity: "",
-        rating: "",
-        priceOriginal: "",
-        priceOffered: "",
-        details: "",
-        thumbnailID: "",
-        id: "",
-    });
+    // const cardData = {
+    //     thumbnailURL: "",
+    //     poi: "",
+    //     countryKey: "",
+    //     country: "",
+    //     city: "",
+    //     duration: "",
+    //     popularity: "",
+    //     rating: "",
+    //     priceOriginal: "",
+    //     priceOffered: "",
+    //     details: "",
+    //     thumbnailID: "",
+    //     id: "",
+    // }
+
+    const [cardDataFetched, setCardDataFetched] = React
+        .useState
+        //     {
+        //     thumbnailURL: "",
+        //     poi: "",
+        //     countryKey: "",
+        //     country: "",
+        //     city: "",
+        //     duration: "",
+        //     popularity: "",
+        //     rating: "",
+        //     priceOriginal: "",
+        //     priceOffered: "",
+        //     details: "",
+        //     thumbnailID: "",
+        //     id: "",
+        // }
+        ();
 
     const [formData, setFormData] = React.useState({
         poi: "center",
@@ -101,6 +120,11 @@ export default function AdminCardEditor()
         });
     }, []);
 
+    // const updateCardData = useCallback(function(key, value)
+    // {
+    //     cardData[key] = value
+    // }, [])
+
     const updateFormData = useCallback(function (key, value)
     {
         setFormData(function (prev)
@@ -112,6 +136,37 @@ export default function AdminCardEditor()
         });
     }, []);
     //
+
+    // consoleLog(JSON.stringify(cardDataFetched), {color: 'white'})
+
+    // if (cardDataFetched)
+    // {
+    //     for (let key in formData)
+    //     {
+    //         if (key in cardDataFetched)
+    //         {
+    //             updateFormData(key, cardDataFetched[key]);
+    //         }
+    //     }
+    // }
+
+    // resolveUpdates()
+
+    // if (submitForm)
+    // {
+    //     consoleLog(`=> Submit Form:= ${submitForm}`, { color: "#6EBDF5", fontSize: "18" });
+    //     // consoleLog(`=> Upload progress:= ${uploadProgress}`, { color: "#6EBDF5", fontSize: "18" });
+    //     if (formData.thumbnail)
+    //     {
+    //         uploadImage();
+    //     } else if (editingMode)
+    //     {
+    //         setUploadProgress(1)
+    //         postCardToDatabase(cardData)
+    //     }
+
+    //     setSubmitForm(false)
+    // }
 
     //
     React.useEffect(function ()
@@ -126,26 +181,33 @@ export default function AdminCardEditor()
         {
             console.log("get", r[0]);
             setCardDataFetched(r[0]);
+            for (let key in formData)
+            {
+                if (key in r)
+                {
+                    updateFormData(key, r[key]);
+                }
+            }
             // setEditingMode(true);
         });
     }, []);
 
-    React.useEffect(
-        // When editing a card, update the form to match the fetched data.
-        function ()
-        {
-            if (!editingMode) return;
+    // React.useEffect(
+    //     // When editing a card, update the form to match the fetched data.
+    //     function ()
+    //     {
+    //         if (!editingMode) return;
 
-            for (let key in formData)
-            {
-                if (key in cardDataFetched)
-                {
-                    updateFormData(key, cardDataFetched[key]);
-                }
-            }
-        },
-        [cardDataFetched],
-    );
+    //         for (let key in formData)
+    //         {
+    //             if (key in cardDataFetched)
+    //             {
+    //                 updateFormData(key, cardDataFetched[key]);
+    //             }
+    //         }
+    //     },
+    //     [cardDataFetched],
+    // );
 
     React.useEffect(
         // When form is updated, map updates to card
@@ -172,38 +234,41 @@ export default function AdminCardEditor()
         function ()
         {
             if (!submitForm) return;
-            consoleLog("=> Submit Form", { color: "#6EBDF5", fontSize: "18" });
-
-            // if()
-            setSubmitForm(false);
-
+            consoleLog(`=> Submit Form:= ${submitForm}`, { color: "#6EBDF5", fontSize: "18" });
+            // consoleLog(`=> Upload progress:= ${uploadProgress}`, { color: "#6EBDF5", fontSize: "18" });
             if (formData.thumbnail)
             {
                 uploadImage();
+            } else if (editingMode)
+            {
+                setUploadProgress(1);
+                postCardToDatabase(cardData);
             }
-            else if(editingMode) setUploadProgress(1)
+
+            setSubmitForm(false);
         },
         [submitForm],
     );
 
-    React.useEffect(function(){
-        if(!uploadCard) return
+    // React.useEffect(function(){
+    //     if(!uploadCard) return
 
-        postCardToDatabase()
-        setUploadCard(false)
-    }, [uploadCard])
+    //     postCardToDatabase()
+    //     setUploadCard(false)
+    // }, [uploadCard])
 
-    React.useEffect(function(){
-        // if(! submitForm) return
-        if(! cardData.thumbnailURL) return
-        if(! /^data:image.*/.test(cardData.thumbnailURL)) setUploadCard(true)
-    }, [cardData])
+    // React.useEffect(function(){
+    //     // if(! submitForm) return
+    //     if(! cardData.thumbnailURL) return
+    //     if(! /^data:image.*/.test(cardData.thumbnailURL)) setUploadCard(true)
+    // }, [cardData])
 
-    function postCardToDatabase()
+    function postCardToDatabase(body)
     {
-        consoleLog("uploading to database", {color: '#A9F56E', fontSize: 18});
-        consoleLog(JSON.stringify(cardData), {color: '#F5F06E'})
-        postToDatabase(cardData)
+        consoleLog("uploading to database", { color: "#A9F56E", fontSize: 18 });
+        // return;
+        consoleLog(JSON.stringify(body), { color: "#F5F06E" });
+        postToDatabase(body)
             .then(function (r)
             {
                 console.log({ post: r });
@@ -270,9 +335,9 @@ export default function AdminCardEditor()
                             </div>
                         </Col>
                     </Row>
-                    
+
                     <div>
-                        <p className="mt-5 display-5">formData</p>
+                        <p className='mt-5 display-5'>formData</p>
                         <table className='table'>
                             <tbody>
                                 {Object.entries(formData).map(function (entry)
@@ -288,7 +353,7 @@ export default function AdminCardEditor()
                         </table>
                     </div>
                     <div>
-                        <p className="mt-5 display-5">cardData</p>
+                        <p className='mt-5 display-5'>cardData</p>
                         <table className='table'>
                             <tbody>
                                 {Object.entries(cardData).map(function (entry)
@@ -303,7 +368,6 @@ export default function AdminCardEditor()
                             </tbody>
                         </table>
                     </div>
-
                 </IKContext>
             </Section>
         </>
@@ -313,13 +377,17 @@ export default function AdminCardEditor()
     //
     async function resolveUpdates()
     {
-        for (let formField in formState)
+        consoleLog("resolve", { color: "#F5F06E" });
+
+        for (let formField in formData)
         {
-            const fieldData = formState[formField];
+            // const fieldData = formState[formField];
             const fieldValue = formData[formField];
             // console.log(formField, fieldData, { fieldValue });
 
-            if (!formState[formField].isValid) return;
+            // console.log(formState[formField])
+
+            // if (!formState[formField].isValid) return;
 
             switch (formField)
             {
@@ -346,6 +414,7 @@ export default function AdminCardEditor()
                     break;
 
                 default:
+                    consoleLog("fieldValue ", fieldValue);
                     if (fieldValue === "")
                     {
                         if (editingMode) updateCardData(formField, cardDataFetched[formField]);
@@ -353,11 +422,11 @@ export default function AdminCardEditor()
             }
         }
 
-        if (formData.thumbnailID)
-        {
-            updateCardData("thumbnailURL", formData.thumbnailURL);
-            updateCardData("thumbnailID", formData.thumbnailID);
-        }
+        // if (formData.thumbnailID)
+        // {
+        //     updateCardData("thumbnailURL", formData.thumbnailURL);
+        //     updateCardData("thumbnailID", formData.thumbnailID);
+        // }
 
         // for (let fieldProperty in formFields) {
         // const value = cardData[fieldProperty];
@@ -391,34 +460,54 @@ export default function AdminCardEditor()
         //   }
         // }
     }
-    
-  function onUploadProgress(event)
-  {
-    console.log("onUploadProgress >>>", event);
-    setUploadProgress(event.loaded / event.total);
-  }
 
-  function onError(event)
-  {
-    console.log("onError >>>", event);
-  }
+    function onUploadProgress(event)
+    {
+        console.log("onUploadProgress >>>", event);
+        setUploadProgress(event.loaded / event.total);
+    }
 
-  function onSuccess(response)
-  {
-    console.log("onSuccess >>>", response);
-    // updateFormData("thumbnailID", response.fileId);
-    // updateFormData("thumbnailURL", response.filePath);
-    updateCardData("thumbnailID", response.fileId);
-    updateCardData("thumbnailURL", response.filePath);
-    // setUploadCard(true)
+    function onError(event)
+    {
+        console.log("onError >>>", event);
+    }
+
+    function onSuccess(response)
+    {
+        console.log("onSuccess >>>", response);
+        // updateFormData("thumbnailID", response.fileId);
+        // updateFormData("thumbnailURL", response.filePath);
+        updateCardData("thumbnailID", response.fileId);
+        updateCardData("thumbnailURL", response.filePath);
+        postCardToDatabase({
+            ...cardData,
+            thumbnailID: response.fileId,
+            thumbnailURL: response.filePath,
+        });
+        // setUploadCard(true)
     }
 
     async function uploadImage()
     {
+        // return new Promise(function (resolve, reject){
+        // const value = formData.thumbnail;
+
+        // if (value instanceof FileList)
+        // {
+        //     const ikupload = document.querySelector("#ikupload > input");
+        //     ikupload.files = value;
+        //     ikupload.dispatchEvent(new Event("change", { bubbles: true }));
+        // } else
+        // {
+        //     uploadImageURL(value);
+        // }
+        // })
+
         const value = formData.thumbnail;
 
         if (value instanceof FileList)
         {
+            consoleLog("upload image from file", { color: "red" });
             const ikupload = document.querySelector("#ikupload > input");
             ikupload.files = value;
             ikupload.dispatchEvent(new Event("change", { bubbles: true }));
@@ -428,8 +517,9 @@ export default function AdminCardEditor()
         }
     }
 
-    function uploadImageURL(url)
+    async function uploadImageURL(url)
     {
+        consoleLog("uploadImageURL", { color: "red" });
         SLFunctionRequest({
             params: {
                 action: "upload",
