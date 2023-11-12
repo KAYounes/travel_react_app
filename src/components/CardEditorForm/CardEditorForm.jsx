@@ -45,38 +45,27 @@ export default function CardEditorForm({
   formData,
   updateFormData,
   formState,
-  editingMode,
-  cardUploadSuccessful,
-  _readyToPost,
-  _secondaryUpload
+  // editingMode,
+  // cardUploadSuccessful,
+  // _readyToPost,
+  _submitForm,
+  _uploadProgress,
+  // _secondaryUpload,
+  // _needToUploadImage
 })
 {
   // console.log("RENDERING > CardEditorForm: ", ++CardEditorFormRenders);
   
   const stubIKUpload = React.useRef();
-  
-  const [uploadProgress, setUploadProgress] = React.useState(0);
-  const [uploadStart, setUploadStart] = React.useState(false);
-  const [readyToPost, setReadyToPost] = _readyToPost
-  const [secondaryUpload, setSecondaryUpload] = _secondaryUpload
-
-  // const [isImageUploaded, setIsImageUploaded] = React.useState(false);
-  // const [isCardUploaded, setIsCardUploaded] = React.useState(false);
-
-  // if (isImageUploaded)
-  // {
-  //   console.log('uploading to database')
-  //   postToDatabase().then(function (r) {
-  //     // console.log({r})
-  //     setIsCardUploaded(true);
-  //     navigator("./" + r.id, { replace: true });
-  //   });
-  // }
+  const uploadProgress = _uploadProgress
+  const [submitForm, setSubmitForm] = _submitForm //React.useState(false);
+  // const [readyToPost, setReadyToPost] = _readyToPost
+  // const [needToUploadImage, setNeedToUploadImage] = _needToUploadImage //React.useState(true)
 
   const formFieldsSchema = [
     {
       property: "thumbnail",
-      disabled: uploadStart,
+      disabled: submitForm,
       type: "imageUpload",
       isValid: function ()
       {
@@ -117,44 +106,32 @@ export default function CardEditorForm({
 
         return INVALID_URL_FEEDBACK;
       },
-      // isBlank: function () {
-      //   if (editMode) return false;
-
-      //   const value = this.value()
-
-      //   return checkIsBlank(value)
-      // },
     },
     {
       property: "poi",
-      // disabled: uploadStart,
       type: "radio",
       label: "Thumbnail Alignment",
       required: false,
     },
     {
       property: "countryKey",
-      // disabled: uploadStart,
       type: "select",
       label: "Country",
       required: true,
     },
     {
       property: "city",
-      // disabled: uploadStart,
       type: "text",
       validation: { max: 20 },
     },
     {
       property: "duration",
-      // disabled: uploadStart,
       type: "numeric",
       validation: { min: MIN_DURATION, max: MAX_DURATION },
       suffix: "days",
     },
     {
       property: "popularity",
-      // disabled: uploadStart,
       type: "numeric",
       validation: { max: MAX_POPULARITY },
       suffix: "people",
@@ -162,21 +139,18 @@ export default function CardEditorForm({
     },
     {
       property: "rating",
-      // disabled: uploadStart,
       type: "numeric",
       validation: { min: 0.5, max: 5, allowHalves: true },
       suffix: <i className='bi bi-star-fill text-warning'></i>,
     },
     {
       property: "priceOriginal",
-      // disabled: uploadStart,
       type: "numeric",
       validation: { min: 150, max: MAX_PRICE },
       suffix: "$",
     },
     {
       property: "priceOffered",
-      // disabled: uploadStart,
       type: "numeric",
       isOriginalPriceValid: function ()
       {
@@ -199,7 +173,7 @@ export default function CardEditorForm({
     },
     {
       property: "details",
-      disabled: uploadStart,
+      disabled: submitForm,
       type: "text",
       validation: { min: MIN_DETAILS_LENGTH, max: MAX_DETAILS_LENGTH },
       largeText: true,
@@ -213,7 +187,7 @@ export default function CardEditorForm({
 
   const formFieldsDOM = formFieldsSchema.map(function (fieldData)
   {
-    const field = { ...formState[fieldData.property], disabled: uploadStart };
+    const field = { ...formState[fieldData.property], disabled: submitForm };
 
     if (field.type === "text")
     {
@@ -241,52 +215,20 @@ export default function CardEditorForm({
     }
   });
 
-  // React.useEffect(function ()
-  // {
-  //   if(!editingMode) return
+  // React.useEffect(function(){
   //   setUploadProgress(0)
-  //   setUploadStart(false)
-  // }, [editingMode]);
-
-  // React.useEffect(
-  //   function () {
-  //     // if (!isImageUploaded) return;
-
-  //     // postToDatabase(cardData).then(function (r) {
-  //     //   // console.log({r})
-  //     //   setIsCardUploaded(true);
-  //     //   navigator("./" + r.id, { replace: true });
-  //     // });
-  //   },
-  //   [isImageUploaded]
-  // );
-
-  // console.log({
-  //   'cardUploadSuccessful * 100': cardUploadSuccessful * 100,
-  //   'readyToPost * 90': readyToPost * 90,
-  //   'uploadStart * 10 + uploadProgress * 80': uploadStart * 10 + uploadProgress * 80,
-  //   'Math.max(cardUploadSuccessful * 100,readyToPost * 90,uploadStart * 10 + uploadProgress * 80,': Math.max(
-  //     cardUploadSuccessful === true * 100,
-  //     readyToPost * 90,
-  //     uploadStart * 10 + uploadProgress * 80,
-  //   ),
-  //   cardUploadSuccessful,
-  //   readyToPost,
-  //   uploadStart,
-  //   uploadProgress,
-  // })
-
-  React.useEffect(function(){
-    setUploadProgress(0)
-    setUploadStart(false)
-    // setSecondaryUpload()
-  },[cardUploadSuccessful])
+  //   setSubmitForm(false)
+  //   // setSecondaryUpload()
+  // },[cardUploadSuccessful])
 
   return (
     <>
       <form className='d-flex flex-column gap-7' onSubmit={handleSubmit}>
-        {formFieldsDOM}
-        <div id='ikupload' className='d-none h-0'>
+        {
+          formFieldsDOM
+        }
+
+        {/* <div id='ikupload' className='d-none h-0'>
           <IKUpload
             style={{ display: "none", pointerEvents: "none" }}
             onUploadProgress={onUploadProgress}
@@ -295,13 +237,11 @@ export default function CardEditorForm({
             overwriteFile={true}
             useUniqueFileName={false}
             folder='tours'
-          // webhookUrl="/.netlify/functions/slf"
           />
-        </div>
+        </div> */}
         <button
           className='form-control position-relative'
-          disabled={!isFormValidCheck() || uploadStart}
-        // onClick={() => Toast.getOrCreateInstance(toastRef.current).show()}
+          disabled={!isFormValidCheck() || submitForm}
         >
           <div
             className='progress position-absolute top-0 end-0 bottom-0 start-0 h-100 w-100 z-0'
@@ -311,18 +251,19 @@ export default function CardEditorForm({
               className='progress-bar '
               style={{
                 width: `${Math.max(
-                  (cardUploadSuccessful  === true) * 100,
-                  readyToPost * 90,
-                  uploadStart * 10 + uploadProgress * 80,
+                  // (cardUploadSuccessful  === true) * 100,
+                  // readyToPost * 90,
+                  submitForm * 10 + uploadProgress * 80,
                 )}%`,
                 zIndex: -1,
-                backgroundColor:
-                  cardUploadSuccessful === false ? "#E88484" : "#bce784",
+                backgroundColor: '#bce784'
+                  // cardUploadSuccessful === false ? "#E88484" : "#bce784",
               }}
             ></div>
           </div>
           <div className='position-relative z-1'>
-            {cardUploadSuccessful ? 'Modify' : uploadStart ? "uploading" : "upload"}
+            Upload
+            {/* {cardUploadSuccessful ? 'Modify' : submitForm ? "uploading" : "upload"} */}
           </div>
         </button>
       </form>
@@ -331,7 +272,8 @@ export default function CardEditorForm({
 
   function isFormValidCheck()
   {
-    if (editingMode) return true;
+    return true
+    // if (editingMode) return true;
 
     for (let fieldProperty in formState)
     {
@@ -349,25 +291,32 @@ export default function CardEditorForm({
 
   async function handleSubmit(event)
   {
-    event?.preventDefault();
-    setUploadStart(true);
-    uploadImage();
+    event.preventDefault();
+    setSubmitForm(true);
+
+    // case 1 - this is a new card => no card url or card id
+    // case 2 - this is an old card => user dose not upload a new image
+    // case 3 - this is an old ard => user uploads a new image
+
+    // if(needToUploadImage) 
+    // {
+    //   uploadImage();
+    //   setNeedToUploadImage(false)
+    // }
   }
 
   async function uploadImage()
   {
     const value = formData.thumbnail;
-    console.log({
-      if_1: editingMode && !value,
-      if_2: value instanceof FileList,
-      editingMode,
-      value,
-    });
 
-    if (editingMode && !value)
-    {
-      setSecondaryUpload(true);
-    } else if (value instanceof FileList)
+    // console.log({
+    //   if_1: editingMode && !value,
+    //   if_2: value instanceof FileList,
+    //   editingMode,
+    //   value,
+    // });
+
+    if (value instanceof FileList)
     {
       const ikupload = document.querySelector("#ikupload > input");
       ikupload.files = value;
@@ -394,36 +343,23 @@ export default function CardEditorForm({
       .then((r3) => onSuccess(r3));
   }
 
-  // function updateFormData(key, value) {
-  //   // setFormData(function (prev) {
-  //   //   return {
-  //   //     ...prev,
-  //   //     [key]: value,
-  //   //   };
-  //   // });
+  // function onUploadProgress(event)
+  // {
+  //   console.log("onUploadProgress >>>", event);
+  //   setUploadProgress(event.loaded / event.total);
   // }
 
-  function onUploadProgress(event)
-  {
-    console.log("onUploadProgress >>>", event);
-    setUploadProgress(event.loaded / event.total);
-  }
+  // function onError(event)
+  // {
+  //   console.log("onError >>>", event);
+  // }
 
-  function onError(event)
-  {
-    console.log("onError >>>", event);
-  }
-
-  function onSuccess(response)
-  {
-    console.log("onSuccess >>>", response);
-    updateFormData("thumbnailID", response.fileId);
-    updateFormData("thumbnailURL", response.filePath);
-    // setReadyToPost(true);
-    if(editingMode){
-      setSecondaryUpload(true)
-    }
-  }
+  // function onSuccess(response)
+  // {
+  //   console.log("onSuccess >>>", response);
+  //   updateFormData("thumbnailID", response.fileId);
+  //   updateFormData("thumbnailURL", response.filePath);
+  // }
 
   function FormField({
     type,
@@ -467,8 +403,6 @@ export default function CardEditorForm({
     this.label = label;
     if (this.label === undefined) this.label = property.split(/(?=[A-Z])/).join(" ");
 
-    // this.isBlank = value?.length ?? true;
-
     this.isBlank = isBlank?.bind?.(this)();
     if (this.isBlank === undefined) this.isBlank = checkIsBlank(value);
 
@@ -480,36 +414,5 @@ export default function CardEditorForm({
     if (this.isValid === undefined) this.isValid = validate(type, this.value(), validation);
 
     this.control = [formData[property], (value) => updateFormData(property, value)];
-  }
-
-  async function resolveUpdates()
-  {
-    // for (let fieldProperty in formState) {
-    //   const value = cardData[fieldProperty];
-    //   if (!formState[fieldProperty].isValid)
-    //     updateCardData(fieldProperty, null);
-    //   else {
-    //     // console.log(fieldProperty, value ? { value } : "-");
-    //     switch (fieldProperty) {
-    //       case "thumbnail":
-    //         // console.log(value, editMode)
-    //         if (!value) {
-    //           updateCardData("thumbnailURL", cardData.thumbnailURL);
-    //         } else if (checkFileExist(value))
-    //           await convertImageToString(value[0]).then((img) =>
-    //             updateCardData("thumbnailURL", img)
-    //           );
-    //         else updateCardData("thumbnailURL", value);
-    //         break;
-    //       case "countryKey":
-    //         updateCardData("countryKey", value);
-    //         updateCardData("country", COUNTRIES[value]);
-    //         break;
-    //       default:
-    //         updateCardData(fieldProperty, value);
-    //         break;
-    //     }
-    //   }
-    // }
   }
 }

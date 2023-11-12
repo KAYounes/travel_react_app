@@ -110,3 +110,11 @@ export function asCurrency(value, symbol='$'){
 
 //   return response;
 // }
+
+export function iterateObject(object, callback)
+{
+  for(let key in object)
+  {
+    callback(key, object[key])
+  }
+}
