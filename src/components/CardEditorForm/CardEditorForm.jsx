@@ -46,20 +46,23 @@ export default function CardEditorForm({
   formData,
   updateFormData,
   formState,
-  // editingMode,
+  editingMode,
   // cardUploadSuccessful,
   // _readyToPost,
   _submitForm,
   _uploadProgress,
   // _secondaryUpload,
   // _needToUploadImage
+  // handleUpload,
+  // handleModify,
+  // submitType,
 })
 {
   // console.log("RENDERING > CardEditorForm: ", ++CardEditorFormRenders);
-  
   const stubIKUpload = React.useRef();
-  const uploadProgress = _uploadProgress
-  const [submitForm, setSubmitForm] = _submitForm //React.useState(false);
+  const uploadProgress = _uploadProgress;
+  // const [submitForm, setSubmitForm] = _submitForm; //React.useState(false);
+  const submitForm = uploadProgress > 0
   // const [readyToPost, setReadyToPost] = _readyToPost
   // const [needToUploadImage, setNeedToUploadImage] = _needToUploadImage //React.useState(true)
 
@@ -192,27 +195,52 @@ export default function CardEditorForm({
 
     if (field.type === "text")
     {
-      return <InputText key={field.id} {...field} />;
+      return (
+        <InputText
+          key={field.id}
+          {...field}
+        />
+      );
     }
 
     if (field.type === "numeric")
     {
-      return <InputNumeric key={field.id} {...field} />;
+      return (
+        <InputNumeric
+          key={field.id}
+          {...field}
+        />
+      );
     }
 
     if (field.type === "imageUpload")
     {
-      return <InputImage key={field.id} {...field} />;
+      return (
+        <InputImage
+          key={field.id}
+          {...field}
+        />
+      );
     }
 
     if (field.type === "radio")
     {
-      return <InputRadio key={field.id} {...field} />;
+      return (
+        <InputRadio
+          key={field.id}
+          {...field}
+        />
+      );
     }
 
     if (field.type === "select")
     {
-      return <InputSelect key={field.id} {...field} />;
+      return (
+        <InputSelect
+          key={field.id}
+          {...field}
+        />
+      );
     }
   });
 
@@ -224,10 +252,10 @@ export default function CardEditorForm({
 
   return (
     <>
-      <form className='d-flex flex-column gap-7' onSubmit={handleSubmit}>
-        {
-          formFieldsDOM
-        }
+      <form
+        className='d-flex flex-column gap-7'
+        onSubmit={handleSubmit}>
+        {formFieldsDOM}
 
         {/* <div id='ikupload' className='d-none h-0'>
           <IKUpload
@@ -238,53 +266,21 @@ export default function CardEditorForm({
             overwriteFile={true}
             useUniqueFileName={false}
             folder='tours'
-          />
-        </div> */}
-        <button
-          className='form-control position-relative'
-          disabled={!isFormValidCheck() || submitForm}
-        >
-          <div
-            className='progress position-absolute top-0 end-0 bottom-0 start-0 h-100 w-100 z-0'
-            style={{ backgroundColor: "transparent" }}
-          >
-            <div
-              className='progress-bar '
-              style={{
-                width: `${Math.max(
-                  // (cardUploadSuccessful  === true) * 100,
-                  // readyToPost * 90,
-                  submitForm * 10 + uploadProgress * 80,
-                )}%`,
-                zIndex: -1,
-                backgroundColor: '#bce784'
-                  // cardUploadSuccessful === false ? "#E88484" : "#bce784",
-              }}
-            ></div>
-          </div>
-          <div className='position-relative z-1'>
-            Upload
-            {/* {cardUploadSuccessful ? 'Modify' : submitForm ? "uploading" : "upload"} */}
-          </div>
-        </button>
+            />
+          </div> */}
       </form>
     </>
   );
 
   function isFormValidCheck()
   {
-    return true
+    // return true
     // if (editingMode) return true;
 
     for (let fieldProperty in formState)
     {
-      // console.log({
-      //   invalid: !formState[fieldProperty].isValid || formState[fieldProperty].isBlank,
-      //   fieldProperty,
-      //   "formState[fieldProperty].isValid": formState[fieldProperty].isValid,
-      //   "formState[fieldProperty].isBlank": formState[fieldProperty].isBlank,
-      // });
-      if (!formState[fieldProperty].isValid || formState[fieldProperty].isBlank) return false;
+      if (! formState[fieldProperty].isValid) return false
+      if (! editingMode) if(formState[fieldProperty].isBlank) return false
     }
 
     return true;
@@ -293,14 +289,14 @@ export default function CardEditorForm({
   async function handleSubmit(event)
   {
     event.preventDefault();
-    consoleLog('Handle Submit', {fontSize: 30})
-    setSubmitForm(true);
+    consoleLog("Handle Submit", { fontSize: 30 });
+    // setSubmitForm(true);
 
     // case 1 - this is a new card => no card url or card id
     // case 2 - this is an old card => user dose not upload a new image
     // case 3 - this is an old ard => user uploads a new image
 
-    // if(needToUploadImage) 
+    // if(needToUploadImage)
     // {
     //   uploadImage();
     //   setNeedToUploadImage(false)

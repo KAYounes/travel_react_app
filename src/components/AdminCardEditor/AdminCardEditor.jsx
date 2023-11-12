@@ -11,7 +11,14 @@ import CardEditorForm from "../CardEditorForm";
 import AdminNavbar from "../AdminNavbar";
 //
 import { IKIO_PUBKEY, IKIO_ENDPOINT } from "../../constants";
-import { IKUploadAuthenticator, getFromDatabase, postToDatabase } from "../../fetch.helpers";
+import
+    {
+        IKUploadAuthenticator,
+        SLFunctionRequest,
+        getFromDatabase,
+        postToDatabase,
+        updateDatabase,
+    } from "../../fetch.helpers";
 import { LoremIpsum, loremIpsum } from "lorem-ipsum";
 import { checkInputIsFile, convertImageToString } from "./helpers";
 import { COUNTRIES } from "../CardEditorForm/constants";
@@ -26,6 +33,7 @@ export default function AdminCardEditor()
     //
     // console.log("RENDERING > AdminCardEditor");
     const navigator = useNavigate();
+    const refRanOnce = React.useRef(false);
 
     // const [editingMode, setEditingMode] = React.useState(false);
     // const [secondaryUpload, setSecondaryUpload] = React.useState(false);
@@ -34,6 +42,7 @@ export default function AdminCardEditor()
     const [submitForm, setSubmitForm] = React.useState(false);
     const [uploadProgress, setUploadProgress] = React.useState(0);
     const [uploadCard, setUploadCard] = React.useState(false);
+    const [submitType, setSubmitType] = React.useState("");
 
     const [cardData, setCardData] = React.useState({
         thumbnailURL: "",
@@ -107,6 +116,7 @@ export default function AdminCardEditor()
 
     //
     const editingMode = window.location.pathname.match(/(?<=edit\/)\d+/);
+    // consoleLog(editingMode, {color: '#f66', fontSize: 20})
     const formState = {};
 
     const updateCardData = useCallback(function (key, value)
@@ -173,23 +183,31 @@ export default function AdminCardEditor()
     {
         // fetch card from db if id found in url
         // const cardID = window.location.pathname.match(/(?<=edit\/)\d+/);
+
         const cardID = editingMode?.[0];
-        console.log("cardID", editingMode, !cardID);
+        // console.log("cardID", editingMode, !cardID);
         if (!cardID) return;
+        if (refRanOnce.current) return;
 
         getFromDatabase({ id: cardID[0] }).then(function (r)
         {
-            console.log("get", r[0]);
-            setCardDataFetched(r[0]);
+            // console.log("get", r, r[0]);
+
+            const card = r[0];
+            setCardDataFetched(card);
+
             for (let key in formData)
             {
-                if (key in r)
+                if (key in card)
                 {
-                    updateFormData(key, r[key]);
+                    updateFormData(key, card[key]);
                 }
             }
+
+            // setUploadProgress(0)
             // setEditingMode(true);
         });
+        refRanOnce.current = true;
     }, []);
 
     // React.useEffect(
@@ -233,19 +251,24 @@ export default function AdminCardEditor()
     React.useEffect(
         function ()
         {
-            if (!submitForm) return;
-            consoleLog(`=> Submit Form:= ${submitForm}`, { color: "#6EBDF5", fontSize: "18" });
-            // consoleLog(`=> Upload progress:= ${uploadProgress}`, { color: "#6EBDF5", fontSize: "18" });
-            if (formData.thumbnail)
-            {
-                uploadImage();
-            } else if (editingMode)
-            {
-                setUploadProgress(1);
-                postCardToDatabase(cardData);
-            }
-
-            setSubmitForm(false);
+            // if (!submitForm) return;
+            // setUploadProgress(0);
+            // // consoleLog(`=> Submit Form:= ${submitForm}`, { color: "#6EBDF5", fontSize: "18" });
+            // // consoleLog(`=> Upload progress:= ${uploadProgress}`, { color: "#6EBDF5", fontSize: "18" });
+            // if (formData.thumbnail)
+            // {
+            //     uploadImage();
+            // } else if (editingMode)
+            // {
+            //     setUploadProgress(1);
+            //     updateDatabase(
+            //         editingMode,
+            //         cardData,
+            //         () => setUploadProgress(2),
+            //         () => setUploadProgress(-1),
+            //     );
+            // }
+            // setSubmitForm(false);
         },
         [submitForm],
     );
@@ -263,21 +286,23 @@ export default function AdminCardEditor()
     //     if(! /^data:image.*/.test(cardData.thumbnailURL)) setUploadCard(true)
     // }, [cardData])
 
-    function postCardToDatabase(body)
+    function postCardToDatabase(body, onSuccess, onFail)
     {
-        consoleLog("uploading to database", { color: "#A9F56E", fontSize: 18 });
+        // consoleLog("uploading to database", { color: "#A9F56E", fontSize: 18 });
         // return;
-        consoleLog(JSON.stringify(body), { color: "#F5F06E" });
+        // consoleLog(JSON.stringify(body), { color: "#F5F06E" });
         postToDatabase(body)
             .then(function (r)
             {
-                console.log({ post: r });
+                onSuccess(r);
+                // console.log({ post: r });
                 // setCardUploadSuccessful(true);
                 // navigator("./" + r.id, { replace: true });
             })
             .catch(function (err)
             {
-                console.log("> Card upload failed");
+                onFail(err);
+                // console.log("> Card upload failed");
                 // setCardUploadSuccessful(false);
             });
     }
@@ -313,13 +338,60 @@ export default function AdminCardEditor()
                                 formData={formData}
                                 updateFormData={updateFormData}
                                 formState={formState}
-                                // editingMode={editingMode}
+                                editingMode={editingMode}
                                 // cardUploadSuccessful={cardUploadSuccessful}
                                 // _readyToPost={[readyToPost, setReadyToPost]}
                                 // _secondaryUpload={[secondaryUpload, setSecondaryUpload]}
-                                _submitForm={[submitForm, setSubmitForm]}
+                                // _submitForm={[submitForm, setSubmitForm]}
+                                handleUpload={handleUpload}
+                                handleModify={handleModify}
+                                submitType={submitType}
                                 _uploadProgress={uploadProgress}
                             />
+                            <div className="d-flex flex-column gap-5 pt-8">
+                            <button
+                                onClick={handleUpload}
+                                className='form-control position-relative'
+                                disabled={!isFormValidCheck() || submitForm}>
+                                <div
+                                    className='progress position-absolute top-0 end-0 bottom-0 start-0 h-100 w-100 z-0'
+                                    style={{ backgroundColor: "transparent" }}>
+                                    <div
+                                        className='progress-bar '
+                                        style={{
+                                            width: `${submitType === 'upload' ? uploadProgress * 80 + (uploadProgress && 10) : 0}%a`,
+                                            zIndex: -1,
+                                            backgroundColor:
+                                                uploadProgress < 0 ? "#E88484" : "#bce784",
+                                        }}></div>
+                                </div>
+                                <div className='position-relative z-1 text-capitalize'>
+                                    {"upload"}
+                                </div>
+                            </button>
+                            {editingMode && (
+                                <button
+                                    onClick={handleModify}
+                                    className='form-control position-relative'
+                                    disabled={!isFormValidCheck() || submitForm}>
+                                    <div
+                                        className='progress position-absolute top-0 end-0 bottom-0 start-0 h-100 w-100 z-0'
+                                        style={{ backgroundColor: "transparent" }}>
+                                        <div
+                                            className='progress-bar '
+                                            style={{
+                                                width: `${submitType === 'modify' ? uploadProgress * 80 + (uploadProgress && 10) : 0}%a`,
+                                                zIndex: -1,
+                                                backgroundColor:
+                                                    uploadProgress < 0 ? "#E88484" : "#bce784",
+                                            }}></div>
+                                    </div>
+                                    <div className='position-relative z-1 text-capitalize'>
+                                        Modify
+                                    </div>
+                                </button>
+                            )}
+                            </div>
                             <div
                                 id='ikupload'
                                 className='d-none h-0'>
@@ -374,10 +446,58 @@ export default function AdminCardEditor()
     );
     //
 
+    function handleUpload()
+    {
+        // if (!submitForm) return;
+        setUploadProgress(0);
+        // consoleLog(`=> Submit Form:= ${submitForm}`, { color: "#6EBDF5", fontSize: "18" });
+        // consoleLog(`=> Upload progress:= ${uploadProgress}`, { color: "#6EBDF5", fontSize: "18" });
+        if (formData.thumbnail)
+        {
+            uploadImage();
+            setSubmitType("upload");
+        } else if (editingMode)
+        {
+            setUploadProgress(1);
+            updateDatabase(
+                editingMode,
+                cardData,
+                () => setUploadProgress(2),
+                () => setUploadProgress(-1),
+            );
+        }
+
+        // setSubmitForm(false);
+    }
+    function handleModify()
+    {
+        // if (!submitForm) return;
+        setUploadProgress(0);
+        // consoleLog(`=> Submit Form:= ${submitForm}`, { color: "#6EBDF5", fontSize: "18" });
+        // consoleLog(`=> Upload progress:= ${uploadProgress}`, { color: "#6EBDF5", fontSize: "18" });
+        if (formData.thumbnail)
+        {
+            uploadImage();
+            setSubmitType("modify");
+        } else if (editingMode)
+        {
+            setUploadProgress(1);
+            updateDatabase(
+                editingMode,
+                cardData,
+                () => setUploadProgress(2),
+                () => setUploadProgress(-1),
+            );
+        }
+
+        // setSubmitForm(false);
+    }
+
     //
     async function resolveUpdates()
     {
-        consoleLog("resolve", { color: "#F5F06E" });
+        // consoleLog("resolve", { color: "#F5F06E" });
+        // $1Log(JSON.stringify(formData), { color: "#F5F06E" });
 
         for (let formField in formData)
         {
@@ -414,7 +534,7 @@ export default function AdminCardEditor()
                     break;
 
                 default:
-                    consoleLog("fieldValue ", fieldValue);
+                    // consoleLog("fieldValue ", fieldValue);
                     if (fieldValue === "")
                     {
                         if (editingMode) updateCardData(formField, cardDataFetched[formField]);
@@ -479,13 +599,36 @@ export default function AdminCardEditor()
         // updateFormData("thumbnailURL", response.filePath);
         updateCardData("thumbnailID", response.fileId);
         updateCardData("thumbnailURL", response.filePath);
-        postCardToDatabase({
+        const newCard = {
             ...cardData,
             thumbnailID: response.fileId,
             thumbnailURL: response.filePath,
-        });
+        };
+
+        if (editingMode)
+            updateDatabase(
+                editingMode,
+                newCard,
+                () => setUploadProgress(2),
+                () => setUploadProgress(-1),
+            );
+        else
+            postToDatabase(
+                newCard,
+                function (r)
+                {
+                    setUploadProgress(2);
+                    setTimeout(function ()
+                    {
+                        navigator("./" + r.id);
+                        setUploadProgress(0);
+                    }, 1000);
+                },
+                () => setUploadProgress(-1),
+            );
         // setUploadCard(true)
     }
+    // setUploadCard(true)
 
     async function uploadImage()
     {
@@ -507,19 +650,20 @@ export default function AdminCardEditor()
 
         if (value instanceof FileList)
         {
-            consoleLog("upload image from file", { color: "red" });
+            // consoleLog("upload image from file", { color: "red" });
             const ikupload = document.querySelector("#ikupload > input");
             ikupload.files = value;
             ikupload.dispatchEvent(new Event("change", { bubbles: true }));
         } else
         {
             uploadImageURL(value);
+            setUploadProgress(0.5);
         }
     }
 
     async function uploadImageURL(url)
     {
-        consoleLog("uploadImageURL", { color: "red" });
+        // consoleLog("uploadImageURL", { color: "red" });
         SLFunctionRequest({
             params: {
                 action: "upload",
@@ -531,6 +675,24 @@ export default function AdminCardEditor()
             },
         })
             .then((r2) => r2.json())
-            .then((r3) => onSuccess(r3));
+            .then((r3) =>
+            {
+                onSuccess(r3);
+                setUploadProgress(1);
+            });
+    }
+
+    function isFormValidCheck()
+    {
+        return true
+        // if (editingMode) return true;
+
+        for (let fieldProperty in formState)
+        {
+            if (!formState[fieldProperty].isValid) return false;
+            if (!editingMode) if (formState[fieldProperty].isBlank) return false;
+        }
+
+        return true;
     }
 }

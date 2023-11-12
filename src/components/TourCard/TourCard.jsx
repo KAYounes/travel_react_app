@@ -61,8 +61,8 @@ export default function TourCard({ cardData }) {
                     </div>
                     <IKImage
                         path={thumbnailURL.replace("https://images.unsplash.com/", "")}
-                        transformation={[{ focus: poi, quality: 100 }]}
-                        style={{position: 'relative'}}
+                        transformation={[{quality: 100 }]}
+                        style={{position: 'relative', objectPosition: poi}}
                     />
                 </>
             );

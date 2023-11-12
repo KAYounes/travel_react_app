@@ -50,7 +50,7 @@ export default function InputText({
           <small
             className={clsx(styles.requiredIndicator, "badge rounded-pill")}
           >
-            required filed
+            required field
           </small>
         ) : null}
       </label>
