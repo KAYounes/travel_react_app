@@ -53,16 +53,12 @@ export default function CardEditorForm({
   _uploadProgress,
   // _secondaryUpload,
   // _needToUploadImage
-  // handleUpload,
-  // handleModify,
-  // submitType,
 })
 {
   // console.log("RENDERING > CardEditorForm: ", ++CardEditorFormRenders);
   const stubIKUpload = React.useRef();
   const uploadProgress = _uploadProgress;
-  // const [submitForm, setSubmitForm] = _submitForm; //React.useState(false);
-  const submitForm = uploadProgress > 0
+  const [submitForm, setSubmitForm] = _submitForm; //React.useState(false);
   // const [readyToPost, setReadyToPost] = _readyToPost
   // const [needToUploadImage, setNeedToUploadImage] = _needToUploadImage //React.useState(true)
 
@@ -266,8 +262,31 @@ export default function CardEditorForm({
             overwriteFile={true}
             useUniqueFileName={false}
             folder='tours'
-            />
-          </div> */}
+          />
+        </div> */}
+        <button
+          className='form-control position-relative'
+          disabled={!isFormValidCheck() || submitForm}>
+          <div
+            className='progress position-absolute top-0 end-0 bottom-0 start-0 h-100 w-100 z-0'
+            style={{ backgroundColor: "transparent" }}>
+            <div
+              className='progress-bar '
+              style={{
+                width: `${Math.max(
+                  // (cardUploadSuccessful  === true) * 100,
+                  // readyToPost * 90,
+                  uploadProgress * 80 + (uploadProgress && 10),
+                )}%`,
+                zIndex: -1,
+                backgroundColor:
+                uploadProgress< 0 ? "#E88484" : "#bce784",
+              }}></div>
+          </div>
+          <div className='position-relative z-1 text-capitalize'>
+            {editingMode ? "modify" : "upload"}
+          </div>
+        </button>
       </form>
     </>
   );
@@ -290,7 +309,7 @@ export default function CardEditorForm({
   {
     event.preventDefault();
     consoleLog("Handle Submit", { fontSize: 30 });
-    // setSubmitForm(true);
+    setSubmitForm(true);
 
     // case 1 - this is a new card => no card url or card id
     // case 2 - this is an old card => user dose not upload a new image

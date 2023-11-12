@@ -42,7 +42,6 @@ export default function AdminCardEditor()
     const [submitForm, setSubmitForm] = React.useState(false);
     const [uploadProgress, setUploadProgress] = React.useState(0);
     const [uploadCard, setUploadCard] = React.useState(false);
-    const [submitType, setSubmitType] = React.useState("");
 
     const [cardData, setCardData] = React.useState({
         thumbnailURL: "",
@@ -251,24 +250,25 @@ export default function AdminCardEditor()
     React.useEffect(
         function ()
         {
-            // if (!submitForm) return;
-            // setUploadProgress(0);
-            // // consoleLog(`=> Submit Form:= ${submitForm}`, { color: "#6EBDF5", fontSize: "18" });
-            // // consoleLog(`=> Upload progress:= ${uploadProgress}`, { color: "#6EBDF5", fontSize: "18" });
-            // if (formData.thumbnail)
-            // {
-            //     uploadImage();
-            // } else if (editingMode)
-            // {
-            //     setUploadProgress(1);
-            //     updateDatabase(
-            //         editingMode,
-            //         cardData,
-            //         () => setUploadProgress(2),
-            //         () => setUploadProgress(-1),
-            //     );
-            // }
-            // setSubmitForm(false);
+            if (!submitForm) return;
+            setUploadProgress(0);
+            // consoleLog(`=> Submit Form:= ${submitForm}`, { color: "#6EBDF5", fontSize: "18" });
+            // consoleLog(`=> Upload progress:= ${uploadProgress}`, { color: "#6EBDF5", fontSize: "18" });
+            if (formData.thumbnail)
+            {
+                uploadImage();
+            } else if (editingMode)
+            {
+                setUploadProgress(1);
+                updateDatabase(
+                    editingMode,
+                    cardData,
+                    () => setUploadProgress(2),
+                    () => setUploadProgress(-1),
+                );
+            }
+
+            setSubmitForm(false);
         },
         [submitForm],
     );
@@ -342,56 +342,9 @@ export default function AdminCardEditor()
                                 // cardUploadSuccessful={cardUploadSuccessful}
                                 // _readyToPost={[readyToPost, setReadyToPost]}
                                 // _secondaryUpload={[secondaryUpload, setSecondaryUpload]}
-                                // _submitForm={[submitForm, setSubmitForm]}
-                                handleUpload={handleUpload}
-                                handleModify={handleModify}
-                                submitType={submitType}
+                                _submitForm={[submitForm, setSubmitForm]}
                                 _uploadProgress={uploadProgress}
                             />
-                            <div className="d-flex flex-column gap-5 pt-8">
-                            <button
-                                onClick={handleUpload}
-                                className='form-control position-relative'
-                                disabled={!isFormValidCheck() || submitForm}>
-                                <div
-                                    className='progress position-absolute top-0 end-0 bottom-0 start-0 h-100 w-100 z-0'
-                                    style={{ backgroundColor: "transparent" }}>
-                                    <div
-                                        className='progress-bar '
-                                        style={{
-                                            width: `${submitType === 'upload' ? uploadProgress * 80 + (uploadProgress && 10) : 0}%a`,
-                                            zIndex: -1,
-                                            backgroundColor:
-                                                uploadProgress < 0 ? "#E88484" : "#bce784",
-                                        }}></div>
-                                </div>
-                                <div className='position-relative z-1 text-capitalize'>
-                                    {"upload"}
-                                </div>
-                            </button>
-                            {editingMode && (
-                                <button
-                                    onClick={handleModify}
-                                    className='form-control position-relative'
-                                    disabled={!isFormValidCheck() || submitForm}>
-                                    <div
-                                        className='progress position-absolute top-0 end-0 bottom-0 start-0 h-100 w-100 z-0'
-                                        style={{ backgroundColor: "transparent" }}>
-                                        <div
-                                            className='progress-bar '
-                                            style={{
-                                                width: `${submitType === 'modify' ? uploadProgress * 80 + (uploadProgress && 10) : 0}%a`,
-                                                zIndex: -1,
-                                                backgroundColor:
-                                                    uploadProgress < 0 ? "#E88484" : "#bce784",
-                                            }}></div>
-                                    </div>
-                                    <div className='position-relative z-1 text-capitalize'>
-                                        Modify
-                                    </div>
-                                </button>
-                            )}
-                            </div>
                             <div
                                 id='ikupload'
                                 className='d-none h-0'>
@@ -445,53 +398,6 @@ export default function AdminCardEditor()
         </>
     );
     //
-
-    function handleUpload()
-    {
-        // if (!submitForm) return;
-        setUploadProgress(0);
-        // consoleLog(`=> Submit Form:= ${submitForm}`, { color: "#6EBDF5", fontSize: "18" });
-        // consoleLog(`=> Upload progress:= ${uploadProgress}`, { color: "#6EBDF5", fontSize: "18" });
-        if (formData.thumbnail)
-        {
-            uploadImage();
-            setSubmitType("upload");
-        } else if (editingMode)
-        {
-            setUploadProgress(1);
-            updateDatabase(
-                editingMode,
-                cardData,
-                () => setUploadProgress(2),
-                () => setUploadProgress(-1),
-            );
-        }
-
-        // setSubmitForm(false);
-    }
-    function handleModify()
-    {
-        // if (!submitForm) return;
-        setUploadProgress(0);
-        // consoleLog(`=> Submit Form:= ${submitForm}`, { color: "#6EBDF5", fontSize: "18" });
-        // consoleLog(`=> Upload progress:= ${uploadProgress}`, { color: "#6EBDF5", fontSize: "18" });
-        if (formData.thumbnail)
-        {
-            uploadImage();
-            setSubmitType("modify");
-        } else if (editingMode)
-        {
-            setUploadProgress(1);
-            updateDatabase(
-                editingMode,
-                cardData,
-                () => setUploadProgress(2),
-                () => setUploadProgress(-1),
-            );
-        }
-
-        // setSubmitForm(false);
-    }
 
     //
     async function resolveUpdates()
@@ -617,7 +523,7 @@ export default function AdminCardEditor()
                 newCard,
                 function (r)
                 {
-                    setUploadProgress(2);
+                    setUploadProgress(2)
                     setTimeout(function ()
                     {
                         navigator("./" + r.id);
@@ -680,19 +586,5 @@ export default function AdminCardEditor()
                 onSuccess(r3);
                 setUploadProgress(1);
             });
-    }
-
-    function isFormValidCheck()
-    {
-        return true
-        // if (editingMode) return true;
-
-        for (let fieldProperty in formState)
-        {
-            if (!formState[fieldProperty].isValid) return false;
-            if (!editingMode) if (formState[fieldProperty].isBlank) return false;
-        }
-
-        return true;
     }
 }
