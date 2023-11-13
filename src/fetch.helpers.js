@@ -37,15 +37,27 @@ export async function IKUploadAuthenticator()
   }
 }
 
-export async function getFromDatabase(params)
+export async function getFromDatabase(params, onSuccess, onFail)
 {
   // console.log({params})
   let endpoint = _generateDatabaseURL([], params);
-  let response = await fetch(endpoint, {
+  
+  fetch(endpoint, {
     method: "get",
-  }).then((r) => r.json());
+  })
+    .then((r) => r.json())
+    .then(function (data)
+    {
+      consoleLog("get database success", { color: colors.success });
+      if (onSuccess) onSuccess(data);
+    })
+    .catch(function (err)
+    {
+      consoleLog("get database fail", { color: colors.fail });
+      if (onFail) onFail(err);
+    });
 
-  return response;
+  // return response;
 }
 
 function _generateDatabaseURL(pathAry, params)
@@ -90,15 +102,15 @@ export function postToDatabase(data, onSuccess, onFail)
     .then((r) => r.json())
     .then(function (r)
     {
-      consoleLog('post database success', {color: colors.success});
-      onSuccess(r);
+      consoleLog("post database success", { color: colors.success });
+      if (onSuccess) onSuccess(r);
       // return r;
     })
     .catch(function (err)
     {
-      consoleLog('post database fail', {color: colors.fail});
-      consoleLog(err, {color: colors.fail});
-      onFail(err);
+      consoleLog("post database fail", { color: colors.fail });
+      consoleLog(err, { color: colors.fail });
+      if (onFail) onFail(err);
     });
 }
 
@@ -116,13 +128,14 @@ export function updateDatabase(id, data, onSuccess, onFail)
     .then((r) => r.json())
     .then(function (r)
     {
-      consoleLog('update database success', {color: colors.success});
-      onscroll(r);
+      consoleLog("update database success", { color: colors.success });
+      if (onSuccess) onSuccess(r);
       // return r;
     })
     .catch(function (err)
     {
-      consoleLog('update database fail', {color: colors.fail});
-      onFail(err);
+      consoleLog("update database fail", { color: colors.fail });
+      consoleLog(err, { color: colors.fail });
+      if (onFail) onFail(err);
     });
 }

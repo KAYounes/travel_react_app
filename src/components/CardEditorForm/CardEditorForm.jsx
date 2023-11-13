@@ -1,20 +1,7 @@
 /* eslint-disable react/prop-types */
-import React, { StrictMode } from "react";
-import clsx from "clsx";
-import { IKImage, IKUpload } from "imagekitio-react";
-import { LoremIpsum } from "lorem-ipsum";
-import { Toast } from "bootstrap";
-import { useNavigate } from "react-router-dom";
-//
-// import styles from "./styles.module.css";
-// import StarRating from "../ui_components/StarRating/StarRating";
-import InputNumeric from "./fomr_elements/InputNumeric";
-import InputText from "./fomr_elements/InputText";
-import InputImage from "./fomr_elements/InputImage";
-//
+import React from "react";
 import
   {
-    COUNTRIES,
     INVALID_IMAGE_FEEDBACK,
     INVALID_URL_FEEDBACK,
     MAX_DETAILS_LENGTH,
@@ -25,47 +12,31 @@ import
     MIN_DETAILS_LENGTH,
     MIN_DURATION,
   } from "./constants";
-import
-  {
-    checkFileExist,
-    checkIsBlank,
-    convertImageToString,
-    defaultValidationMessage,
-    validate,
-    validateNumber,
-  } from "./helpers";
-import InputSelect from "./fomr_elements/InputSelect";
-import { SLFunctionRequest, getFromDatabase, postToDatabase } from "../../fetch.helpers";
+import InputImage from "./fomr_elements/InputImage";
+import InputNumeric from "./fomr_elements/InputNumeric";
 import InputRadio from "./fomr_elements/InputRadio";
-import { consoleLog } from "../../logging";
+import InputSelect from "./fomr_elements/InputSelect";
+import InputText from "./fomr_elements/InputText";
+import { checkIsBlank, defaultValidationMessage, validate, validateNumber } from "./helpers";
 //
-
-let CardEditorFormRenders = 0;
-
+//
+///
 export default function CardEditorForm({
+  // PROPS
   formData,
   updateFormData,
-  formState,
-  editingMode,
-  // cardUploadSuccessful,
-  // _readyToPost,
-  _submitForm,
   _uploadProgress,
-  // _secondaryUpload,
-  // _needToUploadImage
+  formState,
 })
 {
-  // console.log("RENDERING > CardEditorForm: ", ++CardEditorFormRenders);
-  const stubIKUpload = React.useRef();
   const uploadProgress = _uploadProgress;
-  const [submitForm, setSubmitForm] = _submitForm; //React.useState(false);
-  // const [readyToPost, setReadyToPost] = _readyToPost
-  // const [needToUploadImage, setNeedToUploadImage] = _needToUploadImage //React.useState(true)
+  const uploading = uploadProgress > 0 && uploadProgress < 1;
+  // const formState = {};
 
   const formFieldsSchema = [
     {
       property: "thumbnail",
-      disabled: submitForm,
+      disabled: uploading,
       type: "imageUpload",
       isValid: function ()
       {
@@ -173,7 +144,7 @@ export default function CardEditorForm({
     },
     {
       property: "details",
-      disabled: submitForm,
+      disabled: uploading,
       type: "text",
       validation: { min: MIN_DETAILS_LENGTH, max: MAX_DETAILS_LENGTH },
       largeText: true,
@@ -187,7 +158,7 @@ export default function CardEditorForm({
 
   const formFieldsDOM = formFieldsSchema.map(function (fieldData)
   {
-    const field = { ...formState[fieldData.property], disabled: submitForm };
+    const field = { ...formState[fieldData.property], disabled: uploading };
 
     if (field.type === "text")
     {
@@ -240,143 +211,20 @@ export default function CardEditorForm({
     }
   });
 
-  // React.useEffect(function(){
-  //   setUploadProgress(0)
-  //   setSubmitForm(false)
-  //   // setSecondaryUpload()
-  // },[cardUploadSuccessful])
-
   return (
     <>
       <form
         className='d-flex flex-column gap-7'
         onSubmit={handleSubmit}>
         {formFieldsDOM}
-
-        {/* <div id='ikupload' className='d-none h-0'>
-          <IKUpload
-            style={{ display: "none", pointerEvents: "none" }}
-            onUploadProgress={onUploadProgress}
-            onSuccess={onSuccess}
-            onError={onError}
-            overwriteFile={true}
-            useUniqueFileName={false}
-            folder='tours'
-          />
-        </div> */}
-        <button
-          className='form-control position-relative'
-          disabled={!isFormValidCheck() || submitForm}>
-          <div
-            className='progress position-absolute top-0 end-0 bottom-0 start-0 h-100 w-100 z-0'
-            style={{ backgroundColor: "transparent" }}>
-            <div
-              className='progress-bar '
-              style={{
-                width: `${Math.max(
-                  // (cardUploadSuccessful  === true) * 100,
-                  // readyToPost * 90,
-                  uploadProgress * 80 + (uploadProgress && 10),
-                )}%`,
-                zIndex: -1,
-                backgroundColor:
-                uploadProgress< 0 ? "#E88484" : "#bce784",
-              }}></div>
-          </div>
-          <div className='position-relative z-1 text-capitalize'>
-            {editingMode ? "modify" : "upload"}
-          </div>
-        </button>
       </form>
     </>
   );
 
-  function isFormValidCheck()
-  {
-    // return true
-    // if (editingMode) return true;
-
-    for (let fieldProperty in formState)
-    {
-      if (! formState[fieldProperty].isValid) return false
-      if (! editingMode) if(formState[fieldProperty].isBlank) return false
-    }
-
-    return true;
-  }
-
   async function handleSubmit(event)
   {
     event.preventDefault();
-    consoleLog("Handle Submit", { fontSize: 30 });
-    setSubmitForm(true);
-
-    // case 1 - this is a new card => no card url or card id
-    // case 2 - this is an old card => user dose not upload a new image
-    // case 3 - this is an old ard => user uploads a new image
-
-    // if(needToUploadImage)
-    // {
-    //   uploadImage();
-    //   setNeedToUploadImage(false)
-    // }
   }
-
-  async function uploadImage()
-  {
-    const value = formData.thumbnail;
-
-    // console.log({
-    //   if_1: editingMode && !value,
-    //   if_2: value instanceof FileList,
-    //   editingMode,
-    //   value,
-    // });
-
-    if (value instanceof FileList)
-    {
-      const ikupload = document.querySelector("#ikupload > input");
-      ikupload.files = value;
-      ikupload.dispatchEvent(new Event("change", { bubbles: true }));
-    } else
-    {
-      uploadImageURL(value);
-    }
-  }
-
-  function uploadImageURL(url)
-  {
-    SLFunctionRequest({
-      params: {
-        action: "upload",
-        file: url,
-        fileName: "unsplash_" + url.match(/photo-[a-z0-9-]*/)[0],
-        folder: "tours",
-        useUniqueFileName: false,
-        overwriteFile: true,
-      },
-    })
-      .then((r2) => r2.json())
-      .then((r3) => onSuccess(r3));
-  }
-
-  // function onUploadProgress(event)
-  // {
-  //   console.log("onUploadProgress >>>", event);
-  //   setUploadProgress(event.loaded / event.total);
-  // }
-
-  // function onError(event)
-  // {
-  //   console.log("onError >>>", event);
-  // }
-
-  // function onSuccess(response)
-  // {
-  //   console.log("onSuccess >>>", response);
-  //   updateFormData("thumbnailID", response.fileId);
-  //   updateFormData("thumbnailURL", response.filePath);
-  // }
 
   function FormField({
     type,

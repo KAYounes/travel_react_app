@@ -118,3 +118,20 @@ export function iterateObject(object, callback)
     callback(key, object[key])
   }
 }
+
+export function randomChoice(arry)
+{
+  if(! (arry instanceof Array)) return null
+
+  const len = arry.length
+  
+  if(!len) return null
+  if(len === 1) return arry[0]
+
+  return arry[Math.floor(Math.random() * len)]
+}
+
+export function randomInt(min, max)
+{
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
