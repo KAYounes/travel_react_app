@@ -22,7 +22,6 @@ import
 import { consoleLog } from "../../logging";
 import { COUNTRIES } from "../CardEditorForm/constants";
 import { checkInputIsFile, convertImageToString } from "./helpers";
-import { randomChoice, randomInt } from "../../utils";
 //
 //
 //
@@ -59,7 +58,20 @@ export default function AdminCardEditor()
         id: "",
     });
     const [cardDataFetched, setCardDataFetched] = React.useState();
-    const [formData, setFormData] = React.useState(React.useCallback(generateRandomData, []));
+    const [formData, setFormData] = React.useState({
+        poi: "center",
+        countryKey: "",
+        country: "",
+        city: "New City",
+        duration: "18",
+        popularity: "92132",
+        rating: "0.5",
+        priceOriginal: "2400",
+        priceOffered: "1800",
+        details: new LoremIpsum().generateWords(18),
+
+        thumbnail: "",
+    });
 
     //
 
@@ -67,6 +79,7 @@ export default function AdminCardEditor()
     const progressBarLength = uploadProgress * 90 + (uploadProgress && 10) + "%";
     const progressBarColor =
         (uploadProgress < 0 && "#E88484") ||
+        // (uploadProgress < 0 && '#E88484') ||
         (uploadProgress < 1 && "#bce784") ||
         (uploadProgress === 1 && "#E8F7D4");
     // consoleLog(JSON.stringify({uploadProgress, progressBarColor, progressBarLength}), {fontSize: 30})
@@ -144,7 +157,6 @@ export default function AdminCardEditor()
                 subTitle='Add Tour Package'
             />
             <Section>
-                <button className='btn-secondary position-absolute top-0 end-0' onClick={() => setFormData(generateRandomData())}>Generate Random Data</button>
                 <IKContext
                     urlEndpoint={IKIO_ENDPOINT}
                     publicKey={IKIO_PUBKEY}
@@ -536,28 +548,5 @@ export default function AdminCardEditor()
 
         clearInterval(loadingIntervalId.current);
         loadingIntervalId.current = null;
-    }
-
-    function generateRandomData(){
-        const temp = {
-            poi: randomChoice(['top', 'center', 'bottom']),
-            countryKey: randomChoice(Object.keys(COUNTRIES)),
-            // country: '',
-            city: new LoremIpsum().generateWords(2),
-            duration: randomInt(10, 100),
-            popularity: randomInt(1000, 1_000_000),
-            rating: randomInt(0, 5),
-            priceOriginal: randomInt(500, 10_000),
-            priceOffered: "",
-            details: new LoremIpsum().generateWords(18),
-    
-            thumbnail: "",
-        }
-
-        if (temp.rating !== 5) temp.rating += randomChoice([0, 0.5])
-        if (temp.rating === 0) temp.rating += 0.5
-        temp.priceOffered = randomInt(200, temp.priceOriginal*0.95)
-
-        return temp
     }
 }
