@@ -13,9 +13,10 @@ import CardOverlay from "../CardOverlay/CardOverlay";
 //
 import { MOCKAPI_ENDPOINT } from "../../constants";
 import { range } from "../../utils";
-import { IKUploadAuthenticator } from "../../fetch.helpers";
+import { IKUploadAuthenticator, SLFunctionRequest } from "../../fetch.helpers";
 
 export default function AdminDashboard() {
+  // SLFunctionRequest()
   const placeholders = 12;
 
   const navigator = useNavigate();

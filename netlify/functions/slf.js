@@ -5,7 +5,7 @@ import ImageKit from "imagekit";
 export async function handler(event, context) {
   const imagekit = new ImageKit({
     urlEndpoint: "https://ik.imagekit.io/lgd9ykfw6",
-    publicKey: "public_jYTemusiZpt+yCs8inkps77IdKo=",
+    publicKey: process.env.IK_PRIVATE_KEY,
     privateKey: "private_H3sFP6kHVAlIkVKwf92WZZAQhDM=",
   });
 
@@ -21,6 +21,9 @@ export async function handler(event, context) {
     // console.log(queryStringParameters)
     // console.log('--------------------------')
     // console.log(body)
+    // console.log('-----------------------------------------------------------------------------------------')
+    // console.log(process.env.IK_PRIVATE_KEY)
+    // console.log('-----------------------------------------------------------------------------------------')
 
     switch (queryStringParameters.action) {
       case "getFileDetails":

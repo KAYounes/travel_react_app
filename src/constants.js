@@ -1,5 +1,4 @@
 export const IKIO_PUBKEY      = 'public_jYTemusiZpt+yCs8inkps77IdKo=';
-export const IKIO_PRVKEY      = 'private_H3sFP6kHVAlIkVKwf92WZZAQhDM=';
 export const IKIO_ENDPOINT    = 'https://ik.imagekit.io/lgd9ykfw6/';
 export const IKIO_ID          = 'lgd9ykfw6';
 export const IKIO_API_BASE    = 'https://ik.imagekit.io/v1';
