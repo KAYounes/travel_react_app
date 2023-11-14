@@ -158,8 +158,6 @@ export default function CardEditorForm({
 
   const formFieldsDOM = formFieldsSchema.map(function (fieldData)
   {
-    // console.log(fieldData.property)
-    // console.log(formState[fieldData.property])
     const field = { ...formState[fieldData.property], disabled: uploading };
 
     if (field.type === "text")
@@ -257,15 +255,14 @@ export default function CardEditorForm({
     this.prefix = prefix;
     this.property = property;
     this.required = required;
-    this.suffix = React.useCallback(() => suffix, []);
+    this.suffix = suffix;
     this.type = type;
-    this.validation = React.useCallback(() => validation, []);
-    this.value = React.useCallback(() => value, []);
+    this.validation = validation;
+    this.value = () => value;
 
     for (let otherProperties in other)
     {
-      if(typeof other[otherProperties] !== 'function') this[otherProperties] = other[otherProperties];
-      else this[otherProperties] = React.useCallback(() => other[otherProperties], [])
+      this[otherProperties] = other[otherProperties];
     }
 
     this.label = label;

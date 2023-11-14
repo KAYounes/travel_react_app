@@ -4,179 +4,139 @@ import clsx from "clsx";
 //
 import styles from "./styles.module.css";
 //
-import { addSeparator, extractNumber, removeSeparator, unformatNumber } from "../../../utils";
+import {
+  addSeparator,
+  extractNumber,
+  removeSeparator,
+  unformatNumber,
+} from "../../../utils";
 import { isWithinRange } from "../helpers";
 //
 
-const InputNumeric = React.memo(
-  function InputNumeric({
-    label,
-    prefix,
-    suffix,
-    id,
-    name,
-    hint,
-    invalidFeedback,
-    validFeedback,
-    asDecimal = false,
-    asCurrency = false,
-    required = false,
-    isValid = true,
-    disabled,
-    control,
-  })
-  {
-    console.log("Render > ", label);
-    const [cursorPosition, setCursorPosition] = React.useState(0);
-    const inputRef = React.useRef();
-    ////
-    const hasValidation = invalidFeedback || validFeedback;
-    const [controlValue, setControlValue] = control;
-    //   console.log({controlValue, isValid})
-    //
+export default function InputNumeric({
+  label,
+  prefix,
+  suffix,
+  id,
+  name,
+  hint,
+  invalidFeedback,
+  validFeedback,
+  asDecimal = false,
+  asCurrency = false,
+  required = false,
+  isValid = true,
+  disabled,
+  control,
+}) {
+  const [cursorPosition, setCursorPosition] = React.useState(0);
+  const inputRef = React.useRef();
+  ////
+  const hasValidation = invalidFeedback || validFeedback;
+  const [controlValue, setControlValue] = control;
+  //   console.log({controlValue, isValid})
+  //
 
-    let labelDOM;
-    if (label)
-    {
-      labelDOM = (
-        <label
-          htmlFor={id}
-          className={clsx(
-            "form-label d-flex justify-content-between align-items-center text-capitalize fw-medium",
-            label || "visually-hidden",
-          )}>
-          {label}
-          {required ? (
-            <small className={clsx(styles.requiredIndicator, "badge rounded-pill")}>
-              required field
-            </small>
-          ) : null}
-        </label>
-      );
-    }
-
-    let prefixDOM;
-    if (prefix)
-    {
-      prefixDOM = <span className='input-group-text'>{prefix}</span>;
-    }
-
-    let suffixDOM;
-    if (suffix)
-    {
-      suffixDOM = <span className='input-group-text'>{suffix()}</span>;
-    }
-
-    let invalidFeedbackDOM;
-    if (invalidFeedback)
-    {
-      invalidFeedbackDOM = <div className='invalid-feedback'>{invalidFeedback}</div>;
-    }
-
-    let validFeedbackDOM;
-    if (validFeedback)
-    {
-      validFeedbackDOM = <div className='valid-feedback'>{validFeedback}</div>;
-    }
-    let hintDOM;
-    if (hint)
-    {
-      hintDOM = <div className='form-text'>{hint}</div>;
-    }
-    ////
-    React.useEffect(function ()
-    {
-      inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
-    });
-
-    return (
-      <div className={clsx()}>
-        {labelDOM}
-        <div className={clsx("input-group", hasValidation && "has-validation")}>
-          {prefixDOM}
-          <input
-            id={id}
-            name={name}
-            type='text'
-            className={clsx("form-control", isValid ? null : "is-invalid")}
-            value={controlValue}
-            ref={inputRef}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            onFocus={handleFocus}
-            disabled={disabled}
-          />
-          {suffixDOM}
-          {invalidFeedbackDOM}
-          {validFeedbackDOM}
-        </div>
-        {hintDOM}
-      </div>
+  let labelDOM;
+  if (label) {
+    labelDOM = (
+      <label
+        htmlFor={id}
+        className={clsx(
+          "form-label d-flex justify-content-between align-items-center text-capitalize fw-medium",
+          label || "visually-hidden"
+        )}
+      >
+        {label}
+        {required ? (
+          <small
+            className={clsx(styles.requiredIndicator, "badge rounded-pill")}
+          >
+            required field
+          </small>
+        ) : null}
+      </label>
     );
+  }
 
-    function handleChange()
-    {
-      acceptOnlyNumericValues();
-    }
+  let prefixDOM;
+  if (prefix) {
+    prefixDOM = <span className="input-group-text">{prefix}</span>;
+  }
 
-    function acceptOnlyNumericValues()
-    {
-      let value = inputRef.current.value;
-      let numericValue = extractNumber(value);
-      let offset = Math.max(value.length - numericValue.length, 0);
-      let actualCursor = inputRef.current.selectionStart;
+  let suffixDOM;
+  if (suffix) {
+    suffixDOM = <span className="input-group-text">{suffix}</span>;
+  }
 
-      setControlValue(numericValue);
-      setCursorPosition(actualCursor - offset);
-    }
+  let invalidFeedbackDOM;
+  if (invalidFeedback) {
+    invalidFeedbackDOM = (
+      <div className="invalid-feedback">{invalidFeedback}</div>
+    );
+  }
 
-    function handleBlur()
-    {
-      if (asDecimal)
-      {
-        inputRef.current.value = addSeparator(controlValue);
-      }
-    }
+  let validFeedbackDOM;
+  if (validFeedback) {
+    validFeedbackDOM = <div className="valid-feedback">{validFeedback}</div>;
+  }
+  let hintDOM;
+  if (hint) {
+    hintDOM = <div className="form-text">{hint}</div>;
+  }
+  ////
+  React.useEffect(function () {
+    inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
+  });
 
-    function handleFocus()
-    {
-      if (asDecimal)
-      {
-        inputRef.current.value = controlValue;
-      }
+  return (
+    <div className={clsx()}>
+      {labelDOM}
+      <div className={clsx("input-group", hasValidation && "has-validation")}>
+        {prefixDOM}
+        <input
+          id={id}
+          name={name}
+          type="text"
+          className={clsx("form-control", isValid ? null : "is-invalid")}
+          value={controlValue}
+          ref={inputRef}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          onFocus={handleFocus}
+          disabled={disabled}
+        />
+        {suffixDOM}
+        {invalidFeedbackDOM}
+        {validFeedbackDOM}
+      </div>
+      {hintDOM}
+    </div>
+  );
+
+  function handleChange() {
+    acceptOnlyNumericValues();
+  }
+
+  function acceptOnlyNumericValues() {
+    let value = inputRef.current.value;
+    let numericValue = extractNumber(value);
+    let offset = Math.max(value.length - numericValue.length, 0);
+    let actualCursor = inputRef.current.selectionStart;
+
+    setControlValue(numericValue);
+    setCursorPosition(actualCursor - offset);
+  }
+
+  function handleBlur() {
+    if (asDecimal) {
+      inputRef.current.value = addSeparator(controlValue);
     }
   }
-  ,
-  function (prev, now)
-  {
-    // console.log('--------------------------')
-    // console.log(prev)
-    // console.log(now)
 
-    for (let prop in prev)
-    {
-      switch (prop)
-      {
-        case "control":
-          if (prev["control"][0] !== now["control"][0])
-            return (
-              // console.log("control not same",prop,": ",prev[prop]," !== ",now[prop],) ||
-               false
-            );
-          break;
-        default:
-          if (prev[prop] !== now[prop])
-            return (
-              // console.log("not same", prop, ": ", prev[prop], " !== ", now[prop]) ||
-              false
-            );
-      }
+  function handleFocus() {
+    if (asDecimal) {
+      inputRef.current.value = controlValue;
     }
-
-    // console.log('same')
-    // console.log('--------------------------')
-    return true;
-  },
-);
-
-export default InputNumeric;
+  }
+}
