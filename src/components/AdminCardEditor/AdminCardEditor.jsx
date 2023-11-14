@@ -32,15 +32,16 @@ export default function AdminCardEditor()
     const formState = React.useRef({});
     const submitType = React.useRef("modify");
     const imageForm = React.useRef();
-    const editingMode = React.useRef(false);
+    // const editingMode = React.useRef(false);
     const loadingIntervalId = React.useRef();
-    const cardID = React.useRef();
-    cardID.current = window.location.pathname.match(/(?<=edit\/)\d+/)?.[0]
+    const cardID = React.useRef(window.location.pathname.match(/(?<=edit\/)\d+/)?.[0]);
+    // cardID.current = window.location.pathname.match(/(?<=edit\/)\d+/)?.[0]
 
     // const [submitType, setSubmitType] = React.useState("");
     // const [cardID, setCardID] = React.useState(window.location.pathname.match(/(?<=edit\/)\d+/)?.[0]);
     // setCardID(window.location.pathname.match(/(?<=edit\/)\d+/)?.[0])
 
+    const [editingMode, setEditingMode] = React.useState(false);
     const [uploadProgress, setUploadProgress] = React.useState(0);
     const [cardData, setCardData] = React.useState({
         thumbnailURL: "",
@@ -76,10 +77,11 @@ export default function AdminCardEditor()
     //
 
     // const editingMode = window.location.pathname.match(/(?<=edit\/)\d+/);
+    const inProgress = uploadProgress > 0 && uploadProgress < 1
     const progressBarLength = uploadProgress * 90 + (uploadProgress && 10) + "%";
     const progressBarColor =
         (uploadProgress < 0 && "#E88484") ||
-        // (uploadProgress < 0 && '#E88484') ||
+        (uploadProgress === 0 && '#E8F7D4') ||
         (uploadProgress < 1 && "#bce784") ||
         (uploadProgress === 1 && "#E8F7D4");
     // consoleLog(JSON.stringify({uploadProgress, progressBarColor, progressBarLength}), {fontSize: 30})
@@ -105,41 +107,77 @@ export default function AdminCardEditor()
             };
         });
     }, []);
+    //
 
+    // consoleLog(cardID.current)
+    // consoleLog(cardDataFetched)
+    if(cardID.current)
+    {
+        if(! refRanOnce.current)
+        {
+            getFromDatabase(
+                { id: cardID.current },
+                function (data)
+                {
+                    consoleLog("Card Fetched", { color: colors.success, fontSize: 18 });
+                    consoleLog(data, { color: colors.success, fontSize: 18 });
+                    // editingMode.current = Boolean(cardID.current);
+                    setEditingMode(Boolean(cardID.current))
+                    const card = data[0];
+            
+                    if (!card) return navigator("../admin");
+            
+                    setCardDataFetched(card);
+            
+                    for (let key in formData)
+                    {
+                        if (key in card)
+                        {
+                            updateFormData(key, card[key]);
+                        }
+                    }
+                },
+                (err) => consoleLog(`Failed Fetch card ${err}`, { color: colors.fail }),
+            );
+            refRanOnce.current = true
+        }
+    }
     ////////////////////////////////////////////////////////////////////////////////////
 
-    React.useEffect(function ()
-    {
-        consoleLog("Fetch Card", { color: colors.attention, fontSize: 18 });
-        consoleLog(cardID.current, { color: colors.attention, fontSize: 18 });
-        if (!cardID.current) return;
-        if (refRanOnce.current) return;
+    // React.useEffect(function ()
+    // {
+    //     consoleLog("Fetch Card", { color: colors.attention, fontSize: 18 });
+    //     consoleLog(cardID.current, { color: colors.attention, fontSize: 18 });
 
-        getFromDatabase(
-            { id: cardID.current },
-            function (data)
-            {
-                consoleLog("Card Fetched", { color: colors.success, fontSize: 18 });
-                consoleLog(data, { color: colors.success, fontSize: 18 });
-                editingMode.current = Boolean(cardID.current);
-                const card = data[0];
+    //     if (!cardID.current) return;
+    //     if (refRanOnce.current) return;
 
-                if (!card) return navigator("../admin");
+    //     getFromDatabase(
+    //         { id: cardID.current },
+    //         function (data)
+    //         {
+    //             consoleLog("Card Fetched", { color: colors.success, fontSize: 18 });
+    //             consoleLog(data, { color: colors.success, fontSize: 18 });
+    //             editingMode.current = Boolean(cardID.current);
+    //             const card = data[0];
 
-                setCardDataFetched(card);
+    //             if (!card) return navigator("../admin");
 
-                for (let key in formData)
-                {
-                    if (key in card)
-                    {
-                        updateFormData(key, card[key]);
-                    }
-                }
-            },
-            (err) => consoleLog(`Failed Fetch card ${err}`, { color: colors.fail }),
-        );
-        refRanOnce.current = true;
-    }, []);
+    //             setCardDataFetched(card);
+
+    //             for (let key in formData)
+    //             {
+    //                 if (key in card)
+    //                 {
+    //                     updateFormData(key, card[key]);
+    //                 }
+    //             }
+    //         },
+    //         (err) => consoleLog(`Failed Fetch card ${err}`, { color: colors.fail }),
+    //     );
+
+    //     refRanOnce.current = true;
+    // }, []);
 
     React.useEffect(
         function ()
@@ -174,7 +212,8 @@ export default function AdminCardEditor()
                             <CardEditorForm
                                 formData={formData}
                                 updateFormData={updateFormData}
-                                editingMode={editingMode.current}
+                                // editingMode={editingMode.current}
+                                editingMode={editingMode}
                                 handleUpload={handleUpload}
                                 handleModify={handleModify}
                                 submitType={submitType.current}
@@ -186,7 +225,8 @@ export default function AdminCardEditor()
                                 <button
                                     onClick={handleUpload}
                                     className='form-control position-relative'
-                                    disabled={editingMode.current ? !validForModification() : !validForUpload()}>
+                                    // disabled={editingMode.current ? !validForModification() : !validForUpload()}>
+                                    disabled={inProgress || (editingMode ? !validForModification() : !validForUpload())}>
                                     <div
                                         className='progress position-absolute top-0 end-0 bottom-0 start-0 h-100 w-100 z-0'
                                         style={{ backgroundColor: "transparent" }}>
@@ -203,11 +243,12 @@ export default function AdminCardEditor()
                                         Upload
                                     </div>
                                 </button>
-                                {editingMode.current && (
+                                {/* {editingMode.current && ( */}
+                                {editingMode && (
                                     <button
                                         onClick={handleModify}
                                         className='form-control position-relative'
-                                        disabled={!validForModification()}>
+                                        disabled={inProgress || !validForModification()}>
                                         <div
                                             className='progress position-absolute top-0 end-0 bottom-0 start-0 h-100 w-100 z-0'
                                             style={{ backgroundColor: "transparent" }}>
@@ -361,36 +402,37 @@ export default function AdminCardEditor()
 
     async function resolveUpdates()
     {
-        consoleLog("resolve", { color: colors.attention });
+        false && consoleLog("resolve", { color: colors.attention });
         for (let formField in formData)
         {
             const fieldValue = formData[formField];
-            consoleLog({fieldValue, formField})
+            false && consoleLog({fieldValue, formField})
 
             switch (formField)
             {
                 case "thumbnail":
                     if (fieldValue === "")
                     {
-                        consoleLog(1, { color: colors.attention });
-                        if (editingMode.current)
+                        false && consoleLog(1, { color: colors.attention });
+                        // if (editingMode.current)
+                        if (editingMode)
                         {
-                            consoleLog(2, { color: colors.attention });
+                            false && consoleLog(2, { color: colors.attention });
                             updateCardData("thumbnailURL", cardDataFetched["thumbnailURL"]);
                         } else
                         {
                             updateCardData("thumbnailURL", "");
-                            consoleLog(3, { color: colors.attention });
+                            false && consoleLog(3, { color: colors.attention });
                         }
                     } else if (checkInputIsFile(fieldValue))
                     {
-                        consoleLog(4, { color: colors.attention });
+                        false && consoleLog(4, { color: colors.attention });
                         await convertImageToString(fieldValue[0]).then((imgDataURL) =>
                             updateCardData("thumbnailURL", imgDataURL),
                         );
                     } else
                     {
-                        consoleLog(5, { color: colors.attention });
+                        false && consoleLog(5, { color: colors.attention });
                         updateCardData("thumbnailURL", fieldValue);
                     }
                     break;
@@ -399,23 +441,24 @@ export default function AdminCardEditor()
                     break;
 
                 case "countryKey":
-                    consoleLog(6, { color: colors.attention });
+                    false && consoleLog(6, { color: colors.attention });
                     updateCardData(formField, fieldValue);
                     updateCardData("country", COUNTRIES[fieldValue]);
                     break;
 
                 default:
-                    consoleLog(7, { color: colors.attention });
+                    false && consoleLog(7, { color: colors.attention });
                     if (fieldValue === "")
                     {
-                        consoleLog(8, { color: colors.attention });
-                        if (editingMode.current)
+                        false && consoleLog(8, { color: colors.attention });
+                        // if (editingMode.current)
+                        if (editingMode)
                             updateCardData(formField, cardDataFetched[formField]);
                         else updateCardData(formField, fieldValue);
                     } else
                     {
                         updateCardData(formField, fieldValue);
-                        consoleLog(9, { color: colors.attention });
+                        false && consoleLog(9, { color: colors.attention });
                     }
             }
         }
@@ -447,10 +490,16 @@ export default function AdminCardEditor()
 
         if (submitType.current === "modify")
             updateDatabase(
-                editingMode.current,
+                cardID.current,
                 newCard,
+                function(){
+                    consoleLog('Modify final')
+                    abortFakeLoading();
+                    setUploadProgress(0.8)
+                    fakeLoading({cycles: 2});
+                },
                 // () => setUploadProgress(2),
-                // () => setUploadProgress(-1),
+                () => setUploadProgress(-1),
             );
         else
             postToDatabase(
@@ -458,15 +507,19 @@ export default function AdminCardEditor()
                 function (r)
                 {
                     // setUploadProgress(2);
+                    consoleLog('upload final')
+                    abortFakeLoading();
+                    setUploadProgress(0.8)
+                    fakeLoading({cycles: 2});
+
                     setTimeout(function ()
                     {
+                        cardID.current = r.id
                         navigator("./" + r.id);
-                        abortFakeLoading();
-                        setUploadProgress(0.8)
-                        fakeLoading({cycles: 2});
+                        refRanOnce.current = false
                     }, 1000);
                 },
-                // () => setUploadProgress(-1),
+                () => setUploadProgress(-1),
             );
     }
 

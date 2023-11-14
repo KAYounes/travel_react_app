@@ -20,6 +20,8 @@ export default function AdminDashboard() {
 
   const navigator = useNavigate();
   const [cardData, setCardData] = React.useState([]);
+  const [fetchingData, setFetchingData] = React.useState(true);
+  const [lastUpdate, setLastUpdate] = React.useState();
   const [deleteEvent, setDeleteEvent] = React.useState();
 
   const cardPlaceholdersDOM = range(placeholders).map(function (_, i) {
@@ -32,12 +34,7 @@ export default function AdminDashboard() {
 
   // Fetch data from database
   React.useEffect(function () {
-    fetch(MOCKAPI_ENDPOINT)
-      .then((res) => res.json())
-      .then((data) => {
-        setCardData(data);
-      })
-      .catch((err) => console.log(err));
+    fetchData()
   }, []);
 
   // Fetch data from database
@@ -63,12 +60,18 @@ export default function AdminDashboard() {
 
   return (
     <Section>
+      <div className="mb-8 text-center d-flex flex-column gap-3">
+        <button className="form-control" style={{backgroundColor: '#E8F7D4'}}onClick={handleClickUpdate}>Update</button>
+        <span className="form-text" style={{}}  onClick={handleClickUpdate}>Last update {lastUpdate}</span>
+      </div>
+
       <IKContext
         urlEndpoint="https://ik.imagekit.io/lgd9ykfw6/"
         publicKey="public_jYTemusiZpt+yCs8inkps77IdKo="
         authenticator={IKUploadAuthenticator}
       >
-        <Row mods="row-cols-1 row-cols-sm-2 row-cols-mid-3">
+        <Row mods="row-cols-1 row-cols-sm-2 row-cols-mid-3 position-relative">
+          {fetchingData && <LoadingOverlay />}
           <Col mods={"col py-8 px-0 px-xsm-4 px-lg-8"}>
             <AddCardButton />
           </Col>
@@ -79,9 +82,27 @@ export default function AdminDashboard() {
           {cardsDOM}
           {/* {cardData.length === 0 && } */}
         </Row>
+          {/* </LoadingOverlay> */}
       </IKContext>
     </Section>
   );
+  
+function handleClickUpdate()
+{
+  setFetchingData(true)
+  fetchData()
+}
+
+function fetchData(){
+  fetch(MOCKAPI_ENDPOINT)
+      .then((res) => res.json())
+      .then((data) => {
+        setCardData(data);
+        setLastUpdate(() => (new Date()).toLocaleString('en-us', {day: '2-digit', weekday: 'short', month: 'short', hour:'2-digit', minute:'2-digit'}))
+        setTimeout(() => setFetchingData(false), 1000)
+      })
+      .catch((err) => console.log(err));
+}
 
   function handleClickEdit(id) {
     navigator("./edit/" + id);
@@ -111,6 +132,7 @@ function AddCardButton() {
     // </div>
   );
 }
+
 function EmptyCard() {
   return (
     <div className="h-100" style={{ minHeight: 400 }}>
@@ -124,4 +146,26 @@ function EmptyCard() {
       </p>
     </div>
   );
+}
+
+function LoaderSection({ loading, children })
+{
+  return (
+    <Section>
+      {children}
+    <div className="position-absolute w-100 h-100 top-0 end-0 bottom-0 start-0" style={{backgroundColor: 'red'}}>
+    </div>
+    </Section>
+  )
+}
+
+function LoadingOverlay(){
+  return(
+      // <div className="position-relative">
+    <div className="position-absolute w-100 h-100" style={{backgroundColor: 'rgba(34 34 34 / 0.5)',zIndex: 1, pointerEvents: "", opacity: 1, backdropFilter: "blur(4px)", borderRadius: 10}}>
+      <div style={{position: 'sticky', textAlign: 'center', top: '30vh', marginTop: '20%'}}>
+      <div className="spinner-border" style={{color: "white"}}></div>
+      </div>
+  </div>
+  )
 }
