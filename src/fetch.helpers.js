@@ -2,7 +2,7 @@ import { colors } from "./colors";
 import { MOCKAPI_ENDPOINT } from "./constants";
 import { consoleLog } from "./logging";
 
-export async function SLFunctionRequest(options ={}, SLFunction = "slf")
+export async function SLFunctionRequest(options, SLFunction = "slf")
 {
   const { params, body, headers, method = "get" } = options;
   const SLFEndpoint = _generateSLFunctionURL(params, SLFunction);
@@ -114,7 +114,7 @@ export function postToDatabase(data, onSuccess, onFail)
     });
 }
 
-export function updateDatabase(id, data, onSuccess, onFail)
+export function updateDatabase(data, id, onSuccess, onFail)
 {
   let headers = {
     Accept: "application/json",

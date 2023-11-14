@@ -43,7 +43,7 @@ export default function AdminDashboard()
     fetchData();
   }, []);
 
-  // Fetch data from database
+  // Remove data from database
   React.useEffect(
     function ()
     {
@@ -93,6 +93,7 @@ export default function AdminDashboard()
         publicKey='public_jYTemusiZpt+yCs8inkps77IdKo='
         authenticator={IKUploadAuthenticator}>
         <Row mods='row-cols-1 row-cols-sm-2 row-cols-mid-3 position-relative'>
+          
           {fetchingData && <LoadingOverlay />}
           <Col mods={"col py-8 px-0 px-xsm-4 px-lg-8"}>
             <AddCardButton />
@@ -190,18 +191,6 @@ function EmptyCard()
         yet
       </p>
     </div>
-  );
-}
-
-function LoaderSection({ loading, children })
-{
-  return (
-    <Section>
-      {children}
-      <div
-        className='position-absolute w-100 h-100 top-0 end-0 bottom-0 start-0'
-        style={{ backgroundColor: "red" }}></div>
-    </Section>
   );
 }
 

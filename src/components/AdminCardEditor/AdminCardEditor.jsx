@@ -11,38 +11,38 @@ import { LoremIpsum } from "lorem-ipsum";
 import { useNavigate } from "react-router-dom";
 import { colors } from "../../colors";
 import { IKIO_ENDPOINT, IKIO_PUBKEY } from "../../constants";
-import
-    {
-        IKUploadAuthenticator,
-        SLFunctionRequest,
-        getFromDatabase,
-        postToDatabase,
-        updateDatabase,
-    } from "../../fetch.helpers";
-import { consoleLog } from "../../logging";
+import {
+    IKUploadAuthenticator,
+    SLFunctionRequest,
+    getFromDatabase,
+    postToDatabase,
+    updateDatabase,
+} from "../../fetch.helpers";
 import { COUNTRIES } from "../CardEditorForm/constants";
 import { checkInputIsFile, convertImageToString } from "./helpers";
+import { POST, PUT } from "./constants";
+import { consoleLog } from "../../logging";
 //
 //
 //
-export default function AdminCardEditor()
-{
+export default function AdminCardEditor() {
     const navigator = useNavigate();
+
+    //// refs
+    //
     const refRanOnce = React.useRef(false);
     const formState = React.useRef({});
-    const submitType = React.useRef("modify");
+    const submitType = React.useRef(PUT);
     const imageForm = React.useRef();
-    // const editingMode = React.useRef(false);
     const loadingIntervalId = React.useRef();
-    const cardID = React.useRef(window.location.pathname.match(/(?<=edit\/)\d+/)?.[0]);
-    // cardID.current = window.location.pathname.match(/(?<=edit\/)\d+/)?.[0]
+    const cardID = React.useRef(window.location.pathname.match(/(?<=edit\/)\d+/)?.[0]); // initial value from URL
 
-    // const [submitType, setSubmitType] = React.useState("");
-    // const [cardID, setCardID] = React.useState(window.location.pathname.match(/(?<=edit\/)\d+/)?.[0]);
-    // setCardID(window.location.pathname.match(/(?<=edit\/)\d+/)?.[0])
-
+    //// states
+    //
     const [editingMode, setEditingMode] = React.useState(false);
     const [uploadProgress, setUploadProgress] = React.useState(0);
+
+    // data sent to database
     const [cardData, setCardData] = React.useState({
         thumbnailURL: "",
         poi: "",
@@ -58,7 +58,8 @@ export default function AdminCardEditor()
         thumbnailID: "",
         id: "",
     });
-    const [cardDataFetched, setCardDataFetched] = React.useState();
+
+    // stores user input
     const [formData, setFormData] = React.useState({
         poi: "center",
         countryKey: "",
@@ -74,33 +75,35 @@ export default function AdminCardEditor()
         thumbnail: "",
     });
 
-    //
+    // stores card fetched from database
+    const [cardDataFetched, setCardDataFetched] = React.useState();
 
-    // const editingMode = window.location.pathname.match(/(?<=edit\/)\d+/);
-    const inProgress = uploadProgress > 0 && uploadProgress < 1
+    //// local variables
+    //
+    const inProgress = uploadProgress > 0 && uploadProgress < 1;
     const progressBarLength = uploadProgress * 90 + (uploadProgress && 10) + "%";
     const progressBarColor =
         (uploadProgress < 0 && "#E88484") ||
-        (uploadProgress === 0 && '#E8F7D4') ||
+        (uploadProgress === 0 && "#E8F7D4") ||
         (uploadProgress < 1 && "#bce784") ||
         (uploadProgress === 1 && "#E8F7D4");
-    // consoleLog(JSON.stringify({uploadProgress, progressBarColor, progressBarLength}), {fontSize: 30})
+
+    //// callback functions
     //
 
-    const updateCardData = useCallback(function (key, value)
-    {
-        setCardData(function (prev)
-        {
+    // wrapper around setCardData
+    const updateCardData = useCallback(function (key, value) {
+        setCardData(function (prev) {
             return {
                 ...prev,
                 [key]: value,
             };
         });
     }, []);
-    const updateFormData = useCallback(function (key, value)
-    {
-        setFormData(function (prev)
-        {
+
+    // wrapper around setFormData
+    const updateFormData = useCallback(function (key, value) {
+        setFormData(function (prev) {
             return {
                 ...prev,
                 [key]: value,
@@ -109,84 +112,43 @@ export default function AdminCardEditor()
     }, []);
     //
 
-    // consoleLog(cardID.current)
-    // consoleLog(cardDataFetched)
-    if(cardID.current)
-    {
-        if(! refRanOnce.current)
-        {
-            getFromDatabase(
-                { id: cardID.current },
-                function (data)
-                {
-                    consoleLog("Card Fetched", { color: colors.success, fontSize: 18 });
-                    consoleLog(data, { color: colors.success, fontSize: 18 });
-                    // editingMode.current = Boolean(cardID.current);
-                    setEditingMode(Boolean(cardID.current))
-                    const card = data[0];
-            
-                    if (!card) return navigator("../admin");
-            
-                    setCardDataFetched(card);
-            
-                    for (let key in formData)
-                    {
-                        if (key in card)
-                        {
-                            updateFormData(key, card[key]);
-                        }
-                    }
-                },
-                (err) => consoleLog(`Failed Fetch card ${err}`, { color: colors.fail }),
-            );
-            refRanOnce.current = true
-        }
-    }
-    ////////////////////////////////////////////////////////////////////////////////////
+    //// use effects
+    //
 
-    // React.useEffect(function ()
-    // {
-    //     consoleLog("Fetch Card", { color: colors.attention, fontSize: 18 });
-    //     consoleLog(cardID.current, { color: colors.attention, fontSize: 18 });
-
-    //     if (!cardID.current) return;
-    //     if (refRanOnce.current) return;
-
-    //     getFromDatabase(
-    //         { id: cardID.current },
-    //         function (data)
-    //         {
-    //             consoleLog("Card Fetched", { color: colors.success, fontSize: 18 });
-    //             consoleLog(data, { color: colors.success, fontSize: 18 });
-    //             editingMode.current = Boolean(cardID.current);
-    //             const card = data[0];
-
-    //             if (!card) return navigator("../admin");
-
-    //             setCardDataFetched(card);
-
-    //             for (let key in formData)
-    //             {
-    //                 if (key in card)
-    //                 {
-    //                     updateFormData(key, card[key]);
-    //                 }
-    //             }
-    //         },
-    //         (err) => consoleLog(`Failed Fetch card ${err}`, { color: colors.fail }),
-    //     );
-
-    //     refRanOnce.current = true;
-    // }, []);
-
+    // map form data to card data
     React.useEffect(
-        function ()
-        {
+        function () {
             resolveUpdates();
         },
         [formData],
     );
 
+    //// logic
+    //
+
+    // fetch card from database using card id from
+    if (cardID.current) {
+        if (!refRanOnce.current) {
+            getFromDatabase({ id: cardID.current }, function (data) {
+                // editingMode.current = Boolean(cardID.current);
+                setEditingMode(Boolean(cardID.current));
+                const card = data[0];
+
+                if (!card) return navigator("../admin");
+
+                setCardDataFetched(card);
+
+                for (let key in formData) {
+                    if (key in card) {
+                        updateFormData(key, card[key]);
+                    }
+                }
+            });
+            refRanOnce.current = true;
+        }
+    }
+
+    //// Rendering
     return (
         <>
             <AdminNavbar
@@ -214,19 +176,22 @@ export default function AdminCardEditor()
                                 updateFormData={updateFormData}
                                 // editingMode={editingMode.current}
                                 editingMode={editingMode}
-                                handleUpload={handleUpload}
-                                handleModify={handleModify}
+                                handlePost={handlePost}
+                                handlePut={handlePut}
                                 submitType={submitType.current}
                                 _uploadProgress={uploadProgress}
                                 formState={formState.current}
                             />
 
                             <div className='d-flex flex-column gap-5 pt-8'>
+                                {/* Upload a new card button */}
                                 <button
-                                    onClick={handleUpload}
+                                    onClick={handlePost}
                                     className='form-control position-relative'
-                                    // disabled={editingMode.current ? !validForModification() : !validForUpload()}>
-                                    disabled={inProgress || (editingMode ? !validForModification() : !validForUpload())}>
+                                    disabled={
+                                        inProgress ||
+                                        (editingMode ? !validForModification() : !validForUpload())
+                                    }>
                                     <div
                                         className='progress position-absolute top-0 end-0 bottom-0 start-0 h-100 w-100 z-0'
                                         style={{ backgroundColor: "transparent" }}>
@@ -234,7 +199,9 @@ export default function AdminCardEditor()
                                             className='progress-bar '
                                             style={{
                                                 zIndex: -1,
-                                                width: submitType.current === "upload" && progressBarLength,
+                                                width:
+                                                    submitType.current === POST &&
+                                                    progressBarLength,
                                                 backgroundColor: progressBarColor,
                                             }}
                                         />
@@ -243,10 +210,11 @@ export default function AdminCardEditor()
                                         Upload
                                     </div>
                                 </button>
-                                {/* {editingMode.current && ( */}
+
+                                {/* Modify current card button */}
                                 {editingMode && (
                                     <button
-                                        onClick={handleModify}
+                                        onClick={handlePut}
                                         className='form-control position-relative'
                                         disabled={inProgress || !validForModification()}>
                                         <div
@@ -256,7 +224,9 @@ export default function AdminCardEditor()
                                                 className='progress-bar '
                                                 style={{
                                                     zIndex: -1,
-                                                    width: submitType.current === "modify" && progressBarLength,
+                                                    width:
+                                                        submitType.current === PUT &&
+                                                        progressBarLength,
                                                     backgroundColor: progressBarColor,
                                                 }}
                                             />
@@ -269,6 +239,7 @@ export default function AdminCardEditor()
                                 )}
                             </div>
 
+                            {/* Hidden ImageKit component used for uploading */}
                             <div
                                 id='ikupload'
                                 className='d-none h-0'>
@@ -289,8 +260,7 @@ export default function AdminCardEditor()
                         <p className='mt-5 display-5'>formData</p>
                         <table className='table'>
                             <tbody>
-                                {Object.entries(formData).map(function (entry, i)
-                                {
+                                {Object.entries(formData).map(function (entry, i) {
                                     return (
                                         <tr key={i}>
                                             <th className='fw-bold'>{entry[0]?.toString()}</th>
@@ -305,8 +275,7 @@ export default function AdminCardEditor()
                         <p className='mt-5 display-5'>cardData</p>
                         <table className='table'>
                             <tbody>
-                                {Object.entries(cardData).map(function (entry, i)
-                                {
+                                {Object.entries(cardData).map(function (entry, i) {
                                     return (
                                         <tr key={i}>
                                             <th className='fw-bold'>{entry[0]?.toString()}</th>
@@ -322,8 +291,7 @@ export default function AdminCardEditor()
                         <table className='table'>
                             <tbody>
                                 {cardDataFetched &&
-                                    Object.entries(cardDataFetched).map(function (entry, i)
-                                    {
+                                    Object.entries(cardDataFetched).map(function (entry, i) {
                                         return (
                                             <tr key={i}>
                                                 <th className='fw-bold'>{entry[0]?.toString()}</th>
@@ -339,100 +307,112 @@ export default function AdminCardEditor()
         </>
     );
 
-    function handleUpload()
-    {
-        setUploadProgress(0);
-        // setSubmitType("upload");
-        submitType.current = "upload";
-        consoleLog("upload", { color: colors.attention });
+    function handlePost() {
+        submitType.current = POST;
+        setUploadProgress(0); // restart progress bar
+        handleUpload();
+        return;
 
-        if (formData.thumbnail)
-        {
-            consoleLog("upload > 1", { color: colors.attention });
+        // if user provided new thumbnail upload it
+        if (formData.thumbnail) {
             uploadImage();
-        } else
-        {
-            consoleLog("upload > 2", { color: colors.attention });
+        }
 
-            // setUploadProgress(1);
+        // else use current image
+        else {
             fakeLoading({ cycles: 8, cycleDuration: 600 });
+
             postToDatabase(
                 cardData,
                 () =>
-                {
-                    abortFakeLoading();
-                    setUploadProgress(0.8);
-                    fakeLoading({ cycles: 2, cycleDuration: 500 });
-                },
+                    // on success
+                    {
+                        finishLoading();
+                    },
                 () => setUploadProgress(-1),
             );
         }
     }
 
-    function handleModify()
-    {
-        consoleLog("modify", { color: colors.attention });
-        setUploadProgress(0);
-        // setSubmitType("modify");
-        submitType.current = "modify";
+    function handlePut() {
+        submitType.current = PUT;
+        setUploadProgress(0); //
+        handleUpload();
+        return;
 
-        if (formData.thumbnail)
-        {
-            consoleLog("modify > 1", { color: colors.attention });
+        if (formData.thumbnail) {
             uploadImage();
         } //if (editingMode.current)
-        else
-        {
-            consoleLog("modify > 2", { color: colors.attention });
+        else {
             // setUploadProgress(1);
             fakeLoading({ cycles: 8 });
             updateDatabase(
                 cardID.current,
                 cardData,
-                () =>
-                {
-                    abortFakeLoading();
-                    setUploadProgress(0.8);
-                    fakeLoading({ cycles: 2, cycleDuration: 500 });
+                () => {
+                    finishLoading();
                 }, // success
                 () => setUploadProgress(-1), // fail
             );
         }
     }
 
-    async function resolveUpdates()
-    {
-        false && consoleLog("resolve", { color: colors.attention });
-        for (let formField in formData)
-        {
-            const fieldValue = formData[formField];
-            false && consoleLog({fieldValue, formField})
+    function handleUpload() {
+        // if user provided new thumbnail upload it
+        if (formData.thumbnail) {
+            consoleLog("UPLOAD IMAGE", { color: colors.attention });
+            uploadImage();
+        }
 
-            switch (formField)
-            {
+        // else use current image
+        else {
+            fakeLoading({ cycles: 8, cycleDuration: 600 });
+
+            if (submitType.current === POST) {
+                consoleLog("POST", { color: colors.attention });
+                postToDatabase(
+                    cardData,
+                    () =>
+                        // on success
+                        {
+                            finishLoading();
+                        },
+                    () => setUploadProgress(-1),
+                );
+            }
+
+            if (submitType.current === PUT) {
+                consoleLog("PUT", { color: colors.attention });
+                updateDatabase(
+                    cardData,
+                    cardID.current,
+                    () => {
+                        finishLoading();
+                    }, // success
+                    () => setUploadProgress(-1), // fail
+                );
+            }
+        }
+    }
+
+    async function resolveUpdates() {
+        for (let formField in formData) {
+            const fieldValue = formData[formField];
+
+            switch (formField) {
                 case "thumbnail":
-                    if (fieldValue === "")
-                    {
-                        false && consoleLog(1, { color: colors.attention });
+                    if (fieldValue === "") {
                         // if (editingMode.current)
-                        if (editingMode)
-                        {
-                            false && consoleLog(2, { color: colors.attention });
+                        if (editingMode) {
                             updateCardData("thumbnailURL", cardDataFetched["thumbnailURL"]);
-                        } else
-                        {
+                        } else {
                             updateCardData("thumbnailURL", "");
-                            false && consoleLog(3, { color: colors.attention });
                         }
-                    } else if (checkInputIsFile(fieldValue))
-                    {
-                        false && consoleLog(4, { color: colors.attention });
+                    } else if (checkInputIsFile(fieldValue)) {
                         await convertImageToString(fieldValue[0]).then((imgDataURL) =>
                             updateCardData("thumbnailURL", imgDataURL),
                         );
-                    } else
-                    {
-                        false && consoleLog(5, { color: colors.attention });
+                    } else {
                         updateCardData("thumbnailURL", fieldValue);
                     }
                     break;
@@ -441,42 +421,32 @@ export default function AdminCardEditor()
                     break;
 
                 case "countryKey":
-                    false && consoleLog(6, { color: colors.attention });
                     updateCardData(formField, fieldValue);
                     updateCardData("country", COUNTRIES[fieldValue]);
                     break;
 
                 default:
-                    false && consoleLog(7, { color: colors.attention });
-                    if (fieldValue === "")
-                    {
-                        false && consoleLog(8, { color: colors.attention });
+                    if (fieldValue === "") {
                         // if (editingMode.current)
-                        if (editingMode)
-                            updateCardData(formField, cardDataFetched[formField]);
+                        if (editingMode) updateCardData(formField, cardDataFetched[formField]);
                         else updateCardData(formField, fieldValue);
-                    } else
-                    {
+                    } else {
                         updateCardData(formField, fieldValue);
-                        false && consoleLog(9, { color: colors.attention });
                     }
             }
         }
     }
 
-    function onUploadProgress(event)
-    {
+    function onUploadProgress(event) {
         console.log("onUploadProgress >>>", event);
-        setUploadProgress(0.8 * event.loaded / event.total);
+        setUploadProgress((0.8 * event.loaded) / event.total);
     }
 
-    function onError(event)
-    {
+    function onError(event) {
         console.log("onError >>>", event);
     }
 
-    function onSuccess(response)
-    {
+    function onSuccess(response) {
         console.log("onSuccess >>>", response, response.fileId);
         updateCardData("thumbnailID", response.fileId);
         updateCardData("thumbnailURL", response.filePath);
@@ -486,64 +456,57 @@ export default function AdminCardEditor()
             thumbnailURL: response.filePath,
         };
 
-        // consoleLog(submitType.current, { color: colors.attention, fontSize: 20 });
-
-        if (submitType.current === "modify")
+        if (submitType.current === PUT) {
+            consoleLog('PUT 2', {color: colors.attention})
             updateDatabase(
-                cardID.current,
                 newCard,
-                function(){
-                    consoleLog('Modify final')
+                cardID.current,
+                function () {
                     abortFakeLoading();
-                    setUploadProgress(0.8)
-                    fakeLoading({cycles: 2});
+                    setUploadProgress(0.8);
+                    fakeLoading({ cycles: 2 });
                 },
                 // () => setUploadProgress(2),
                 () => setUploadProgress(-1),
             );
-        else
+        } else
+        consoleLog('POST 2', {color: colors.attention})
             postToDatabase(
                 newCard,
-                function (r)
-                {
-                    // setUploadProgress(2);
-                    consoleLog('upload final')
+                function (r) {
+                    // consoleLog('post to database')
+                    // consoleLog(uploadProgress)
                     abortFakeLoading();
-                    setUploadProgress(0.8)
-                    fakeLoading({cycles: 2});
+                    setUploadProgress(0.8);
+                    fakeLoading({ cycles: 2 });
 
-                    setTimeout(function ()
-                    {
-                        cardID.current = r.id
+                    setTimeout(function () {
+                        cardID.current = r.id;
                         navigator("./" + r.id);
-                        refRanOnce.current = false
+                        refRanOnce.current = false;
                     }, 1000);
                 },
                 () => setUploadProgress(-1),
             );
     }
 
-    async function uploadImage()
-    {
+    async function uploadImage() {
         const value = formData.thumbnail;
 
-        if (value instanceof FileList)
-        {
+        if (value instanceof FileList) {
             const ikupload = document.querySelector("#ikupload > input");
             ikupload.files = value;
             ikupload.dispatchEvent(new Event("change", { bubbles: true }));
-        } else
-        {
+        } else {
             uploadImageURL(value);
-            fakeLoading()
+            fakeLoading();
         }
     }
 
-    async function uploadImageURL(url)
-    {
+    async function uploadImageURL(url) {
         SLFunctionRequest({
             params: {
-                action: "upload",
+                action: POST,
                 file: url,
                 fileName: "unsplash_" + url.match(/photo-[a-z0-9-]*/)[0],
                 folder: "tours",
@@ -552,17 +515,14 @@ export default function AdminCardEditor()
             },
         })
             .then((r2) => r2.json())
-            .then((r3) =>
-            {
+            .then((r3) => {
                 onSuccess(r3);
                 // setUploadProgress(0);
             });
     }
 
-    function validForUpload()
-    {
-        for (let fieldProperty in formState.current)
-        {
+    function validForUpload() {
+        for (let fieldProperty in formState.current) {
             if (!formState.current[fieldProperty].isValid) return false;
             if (formState.current[fieldProperty].isBlank) return false;
         }
@@ -570,38 +530,38 @@ export default function AdminCardEditor()
         return true;
     }
 
-    function validForModification()
-    {
-        for (let fieldProperty in formState.current)
-        {
+    function validForModification() {
+        for (let fieldProperty in formState.current) {
             if (!formState.current[fieldProperty].isValid) return false;
         }
 
         return true;
     }
 
-    function fakeLoading({ cycles = 8, cycleDuration = 600, step = 0.1 } = {}, onFinish)
-    {
+    function fakeLoading({ cycles = 8, cycleDuration = 600, step = 0.1 } = {}, onFinish) {
         if (loadingIntervalId.current) return;
 
-        loadingIntervalId.current = setInterval(function ()
-        {
+        loadingIntervalId.current = setInterval(function () {
             setUploadProgress((prev) => prev + step);
         }, 700);
 
-        setTimeout(function ()
-        {
+        setTimeout(function () {
             if (onFinish) onFinish();
             clearInterval(loadingIntervalId.current);
             loadingIntervalId.current = null;
         }, cycleDuration * (cycles + 1));
     }
 
-    function abortFakeLoading()
-    {
+    function abortFakeLoading() {
         if (!loadingIntervalId.current) return;
 
         clearInterval(loadingIntervalId.current);
         loadingIntervalId.current = null;
+    }
+
+    function finishLoading() {
+        abortFakeLoading();
+        setUploadProgress(0.8);
+        fakeLoading({ cycles: 2, cycleDuration: 500 });
     }
 }
