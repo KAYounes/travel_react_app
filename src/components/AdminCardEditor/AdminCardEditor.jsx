@@ -365,6 +365,7 @@ export default function AdminCardEditor()
         for (let formField in formData)
         {
             const fieldValue = formData[formField];
+            consoleLog({fieldValue, formField})
 
             switch (formField)
             {
@@ -410,6 +411,7 @@ export default function AdminCardEditor()
                         consoleLog(8, { color: colors.attention });
                         if (editingMode.current)
                             updateCardData(formField, cardDataFetched[formField]);
+                        else updateCardData(formField, fieldValue);
                     } else
                     {
                         updateCardData(formField, fieldValue);

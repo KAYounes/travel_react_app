@@ -14,7 +14,7 @@ import { isWithinRange } from "../helpers";
 import { MAX_DETAILS_LENGTH } from "../constants";
 //
 
-export default function InputText({
+const InputText = React.memo(function InputText({
   label,
   prefix,
   suffix,
@@ -64,7 +64,7 @@ export default function InputText({
 
   let suffixDOM;
   if (suffix) {
-    suffixDOM = <span className="input-group-text">{suffix}</span>;
+    suffixDOM = <span className="input-group-text">{suffix()}</span>;
   }
 
   let invalidFeedbackDOM;
@@ -145,4 +145,38 @@ export default function InputText({
     // console.log(event.target.value, setControlValue)
     setControlValue(event.target.value);
   }
-}
+},
+
+function (prev, now)
+{
+  // console.log('--------------------------')
+  // console.log(prev)
+  // console.log(now)
+
+  for (let prop in prev)
+  {
+    switch (prop)
+    {
+      case "control":
+        if (prev["control"][0] !== now["control"][0])
+          return (
+            // console.log("control not same",prop,": ",prev[prop]," !== ",now[prop],) ||
+             false
+          );
+        break;
+      default:
+        if (prev[prop] !== now[prop])
+          return (
+            // console.log("not same", prop, ": ", prev[prop], " !== ", now[prop]) ||
+            false
+          );
+    }
+  }
+
+  // console.log('same')
+  // console.log('--------------------------')
+  return true;
+},
+)
+
+export default InputText;

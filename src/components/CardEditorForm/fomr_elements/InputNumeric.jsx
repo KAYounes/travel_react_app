@@ -64,7 +64,7 @@ const InputNumeric = React.memo(
     let suffixDOM;
     if (suffix)
     {
-      suffixDOM = <span className='input-group-text'>{suffix}</span>;
+      suffixDOM = <span className='input-group-text'>{suffix()}</span>;
     }
 
     let invalidFeedbackDOM;
@@ -145,7 +145,8 @@ const InputNumeric = React.memo(
         inputRef.current.value = controlValue;
       }
     }
-  },
+  }
+  ,
   function (prev, now)
   {
     // console.log('--------------------------')
