@@ -15,7 +15,8 @@ import { MOCKAPI_ENDPOINT } from "../../constants";
 import { range } from "../../utils";
 import { IKUploadAuthenticator, SLFunctionRequest } from "../../fetch.helpers";
 
-export default function AdminDashboard() {
+export default function AdminDashboard()
+{
   // SLFunctionRequest()
   const placeholders = 12;
 
@@ -25,34 +26,41 @@ export default function AdminDashboard() {
   const [lastUpdate, setLastUpdate] = React.useState();
   const [deleteEvent, setDeleteEvent] = React.useState();
 
-  const cardPlaceholdersDOM = range(placeholders).map(function (_, i) {
+  const cardPlaceholdersDOM = range(placeholders).map(function (_, i)
+  {
     return (
-      <Col key={i} mods={"col py-8 px-0 px-xsm-4 px-lg-8"}>
+      <Col
+        key={i}
+        mods={"col py-8 px-0 px-xsm-4 px-lg-8"}>
         <TourCard cardData={{}} />
       </Col>
     );
   });
 
   // Fetch data from database
-  React.useEffect(function () {
-    fetchData()
+  React.useEffect(function ()
+  {
+    fetchData();
   }, []);
 
   // Fetch data from database
   React.useEffect(
-    function () {
+    function ()
+    {
       removeCard(deleteEvent);
     },
-    [deleteEvent]
+    [deleteEvent],
   );
 
-  const cardsDOM = cardData.map(function (card) {
+  const cardsDOM = cardData.map(function (card)
+  {
     return (
-      <Col key={card.id} mods={"col py-8 px-0 px-xsm-4 px-lg-8"}>
+      <Col
+        key={card.id}
+        mods={"col py-8 px-0 px-xsm-4 px-lg-8"}>
         <CardOverlay
           handleDelete={() => handelClickDelete(card.id)}
-          handleEdit={() => handleClickEdit(card.id)}
-        >
+          handleEdit={() => handleClickEdit(card.id)}>
           <TourCard cardData={card} />
         </CardOverlay>
       </Col>
@@ -61,83 +69,119 @@ export default function AdminDashboard() {
 
   return (
     <Section>
-      <div className="mb-8 text-center d-flex flex-column gap-3">
-        <button className="form-control" style={{backgroundColor: '#E8F7D4'}}onClick={handleClickUpdate}>Update</button>
-        <span className="form-text" style={{}}  onClick={handleClickUpdate}>Last update {lastUpdate}</span>
+      <div className='mb-8 text-center d-flex flex-column gap-3'>
+        <button
+          className='form-control'
+          style={{
+            backgroundColor: "#E8F7D4",
+            backgroundImage:
+              "linear-gradient(90deg, hsl(65deg 100% 93%) 0%, hsl(67deg 99% 92%) 11%, hsl(69deg 99% 91%) 22%, hsl(71deg 99% 90%) 33%, hsl(73deg 99% 89%) 44%, hsl(75deg 99% 89%) 56%, hsl(78deg 99% 88%) 67%, hsl(80deg 99% 87%) 78%, hsl(82deg 100% 87%) 89%, hsl(84deg 100% 86%) 100%)",
+          }}
+          onClick={handleClickUpdate}>
+          Update
+        </button>
+        <span
+          className='form-text'
+          style={{}}
+          onClick={handleClickUpdate}>
+          Last update {lastUpdate}
+        </span>
       </div>
 
       <IKContext
-        urlEndpoint="https://ik.imagekit.io/lgd9ykfw6/"
-        publicKey="public_jYTemusiZpt+yCs8inkps77IdKo="
-        authenticator={IKUploadAuthenticator}
-      >
-        <Row mods="row-cols-1 row-cols-sm-2 row-cols-mid-3 position-relative">
+        urlEndpoint='https://ik.imagekit.io/lgd9ykfw6/'
+        publicKey='public_jYTemusiZpt+yCs8inkps77IdKo='
+        authenticator={IKUploadAuthenticator}>
+        <Row mods='row-cols-1 row-cols-sm-2 row-cols-mid-3 position-relative'>
           {fetchingData && <LoadingOverlay />}
           <Col mods={"col py-8 px-0 px-xsm-4 px-lg-8"}>
             <AddCardButton />
           </Col>
-         { cardData.length === 0 &&
-         <Col mods={"col py-8 px-0 px-xsm-4 px-lg-8"}>
-            <EmptyCard />
-          </Col>}
+          {cardData.length === 0 && (
+            <Col mods={"col py-8 px-0 px-xsm-4 px-lg-8"}>
+              <EmptyCard />
+            </Col>
+          )}
           {cardsDOM}
           {/* {cardData.length === 0 && } */}
         </Row>
-          {/* </LoadingOverlay> */}
+        {/* </LoadingOverlay> */}
       </IKContext>
     </Section>
   );
-  
-function handleClickUpdate()
-{
-  setFetchingData(true)
-  fetchData()
-}
 
-function fetchData(){
-  fetch(MOCKAPI_ENDPOINT)
+  function handleClickUpdate()
+  {
+    setFetchingData(true);
+    fetchData();
+  }
+
+  function fetchData()
+  {
+    fetch(MOCKAPI_ENDPOINT)
       .then((res) => res.json())
-      .then((data) => {
+      .then((data) =>
+      {
         setCardData(data);
-        setLastUpdate(() => (new Date()).toLocaleString('en-us', {day: '2-digit', weekday: 'short', month: 'short', hour:'2-digit', minute:'2-digit'}))
-        setTimeout(() => setFetchingData(false), 1000)
+        setLastUpdate(() =>
+          new Date().toLocaleString("en-us", {
+            day: "2-digit",
+            weekday: "short",
+            month: "short",
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        );
+        setTimeout(() => setFetchingData(false), 1000);
       })
       .catch((err) => console.log(err));
-}
+  }
 
-  function handleClickEdit(id) {
+  function handleClickEdit(id)
+  {
     navigator("./edit/" + id);
   }
 
-  function handelClickDelete(id) {
-    fetch(MOCKAPI_ENDPOINT + "/" + id, { method: "delete" }).then(() =>
-      setDeleteEvent(id)
-    );
+  function handelClickDelete(id)
+  {
+    fetch(MOCKAPI_ENDPOINT + "/" + id, { method: "delete" }).then(() => setDeleteEvent(id));
   }
 
-  function removeCard(id) {
-    setCardData(function (prev) {
+  function removeCard(id)
+  {
+    setCardData(function (prev)
+    {
       return prev.filter((item) => item.id != id);
     });
   }
 }
 
-function AddCardButton() {
+function AddCardButton()
+{
   return (
-    <Link to="./edit" className="text-decoration-none">
+    <Link
+      to='./edit'
+      className='text-decoration-none'>
       {/* <div style={{ minHeight: 400 }}> */}
-      <div className={clsx(styles.addCardBtn)} style={{ minHeight: 400 }}>
-        <i className="bi-thin bi-file-plus-fill"></i>
+      <div
+        className={clsx(styles.addCardBtn)}
+        style={{ minHeight: 400 }}>
+        <i className='bi-thin bi-file-plus-fill'></i>
       </div>
     </Link>
     // </div>
   );
 }
 
-function EmptyCard() {
+function EmptyCard()
+{
   return (
-    <div className="h-100" style={{ minHeight: 400 }}>
-      <p className="text-muted h-100 w-100 d-flex text-center display-6 fw-medium border border-3 rounded-3 justify-content-center align-items-center bg-secondary" style={{lineHeight: 1.5}}>
+    <div
+      className='h-100'
+      style={{ minHeight: 400 }}>
+      <p
+        className='text-muted h-100 w-100 d-flex text-center display-6 fw-medium border border-3 rounded-3 justify-content-center align-items-center bg-secondary'
+        style={{ lineHeight: 1.5 }}>
         you have
         {/* <br /> */}
         <br />
@@ -154,19 +198,32 @@ function LoaderSection({ loading, children })
   return (
     <Section>
       {children}
-    <div className="position-absolute w-100 h-100 top-0 end-0 bottom-0 start-0" style={{backgroundColor: 'red'}}>
-    </div>
+      <div
+        className='position-absolute w-100 h-100 top-0 end-0 bottom-0 start-0'
+        style={{ backgroundColor: "red" }}></div>
     </Section>
-  )
+  );
 }
 
-function LoadingOverlay(){
-  return(
-      // <div className="position-relative">
-    <div className="position-absolute w-100 h-100" style={{backgroundColor: 'rgba(34 34 34 / 0.5)',zIndex: 1, pointerEvents: "", opacity: 1, backdropFilter: "blur(4px)", borderRadius: 10}}>
-      <div style={{position: 'sticky', textAlign: 'center', top: '30vh', marginTop: '20%'}}>
-      <div className="spinner-border" style={{color: "white"}}></div>
+function LoadingOverlay()
+{
+  return (
+    // <div className="position-relative">
+    <div
+      className='position-absolute w-100 h-100'
+      style={{
+        backgroundColor: "rgba(34 34 34 / 0.5)",
+        zIndex: 1,
+        pointerEvents: "",
+        opacity: 1,
+        backdropFilter: "blur(4px)",
+        borderRadius: 10,
+      }}>
+      <div style={{ position: "sticky", textAlign: "center", top: "30vh", marginTop: "20%" }}>
+        <div
+          className='spinner-border'
+          style={{ color: "white" }}></div>
       </div>
-  </div>
-  )
+    </div>
+  );
 }
